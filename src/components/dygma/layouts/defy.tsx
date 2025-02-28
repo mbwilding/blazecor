@@ -185,7 +185,7 @@ const keysColumnsPosition = {
     x13: 1107,
 };
 
-export class KeymapDEFY extends React.Component<DefyProps, DefyState> {
+export class KeymapDefy extends React.Component<DefyProps, DefyState> {
     constructor(props: DefyProps) {
         super(props);
         this.state = {

@@ -31,8 +31,10 @@ interface UnderGlowStripProps {
     dataKeyIndex: number;
     dataLayer: number;
     path: string;
-    stroke: string; // TODO: not used
-    strokeWidth: number; // TODO: not used
+
+    // TODO: not used
+    stroke: string;
+    strokeWidth: number;
 }
 
 function UnderGlowStrip(props: UnderGlowStripProps) {
