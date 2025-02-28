@@ -2,6 +2,11 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
+import { Button } from "./components/ui/button";
+import { Input } from "./components/ui/input";
+
+// TODO: Move
+document.documentElement.classList.add("dark");
 
 function App() {
     const [greetMsg, setGreetMsg] = useState("");
@@ -36,12 +41,12 @@ function App() {
                     greet();
                 }}
             >
-                <input
+                <Input
                     id="greet-input"
                     onChange={(e) => setName(e.currentTarget.value)}
                     placeholder="Enter a name..."
                 />
-                <button type="submit">Greet</button>
+                <Button type="submit">Greet</Button>
             </form>
             <p>{greetMsg}</p>
         </main>
