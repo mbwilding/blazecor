@@ -11,6 +11,7 @@ document.documentElement.classList.add("dark");
 
 function App() {
     // const [greetMsg, setGreetMsg] = useState("");
+    const [devicesMsg, setDevicesMsg] = useState("");
     const [versionMsg, setVersionMsg] = useState("");
     const [settingsMsg, setSettingsMsg] = useState("");
 
@@ -18,6 +19,11 @@ function App() {
     //     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     //     setGreetMsg(await invoke("greet", { name }));
     // }
+
+    async function devices() {
+        setDevicesMsg(await invoke("devices"));
+        console.log(devicesMsg);
+    }
 
     async function version() {
         setVersionMsg(await invoke("version"));
@@ -29,6 +35,16 @@ function App() {
 
     return (
         <main className="container">
+            <form
+                className="row"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    devices();
+                }}
+            >
+                <Button type="submit">Devices</Button>
+            </form>
+            <p>{devicesMsg}</p>
 
             <form
                 className="row"
