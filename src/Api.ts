@@ -43,7 +43,7 @@ export function useFocusData<T>(command: string, device?: Device): T | undefined
                 const result = await invoke<T>(command);
                 console.debug(`${command}: ${JSON.stringify(result)}`);
                 setData(result);
-            } catch (error) {
+            } catch (error: any) {
                 console.error(error);
                 setData(undefined);
             }
