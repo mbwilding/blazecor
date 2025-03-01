@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { invoke, InvokeArgs } from "@tauri-apps/api/core";
 import "./App.css";
 import { Button } from "./components/ui/button";
@@ -9,7 +9,7 @@ import { Settings } from "./types/ffi/settings";
 // TODO: Move
 document.documentElement.classList.add("dark");
 
-function useInvokeWithPort(device: Device | undefined) {
+function useInvokeWithPort(device?: Device) {
     return async function <T>(call: string, args?: InvokeArgs): Promise<T> {
         if (device) {
             const port = device.serialPort;
@@ -20,90 +20,81 @@ function useInvokeWithPort(device: Device | undefined) {
     };
 }
 
+function useCommand(command: string, device?: Device, onExecute?: () => void) {
+    const invokeWithPort = useInvokeWithPort(device);
+
+    useEffect(() => {
+        const executeCommand = async () => {
+            try {
+                await invokeWithPort(command);
+                if (onExecute) onExecute();
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        if (device) {
+            executeCommand();
+        }
+    }, [device, command]);
+}
+
 function useDevices() {
     const [devices, setDevices] = useState<Device[]>();
 
-    const fetchDevices = async () => {
+    const fetchDevices = useCallback(async () => {
         try {
-            const devices = await invoke<Device[]>("find_all_devices");
-            setDevices(devices);
+            const result = await invoke<Device[]>("find_all_devices");
+            setDevices(result);
         } catch (error) {
             console.error(error);
             setDevices(undefined);
         }
-    };
+    }, []);
 
     return { devices, fetchDevices };
 }
 
 function useConnect(device?: Device) {
+    useCommand("connect", device, () => {
+        if (device) {
+            console.debug(`Connecting: ${device.hardware.info.displayName} (${device.serialPort})`);
+        }
+    });
+}
+
+function useDeviceData<T>(command: string, device?: Device): T | undefined {
+    const [data, setData] = useState<T>();
     const invokeWithPort = useInvokeWithPort(device);
 
     useEffect(() => {
-        const connectDevice = async () => {
+        const fetchData = async () => {
             try {
-                await invokeWithPort("connect");
+                const result = await invokeWithPort<T>(command);
+                console.debug(`${command}: ${JSON.stringify(result)}`);
+                setData(result);
             } catch (error) {
                 console.error(error);
+                setData(undefined);
             }
         };
 
         if (device) {
-            console.debug(`Connecting: ${device.hardware.info.displayName} (${device.serialPort})`);
-            connectDevice();
+            fetchData();
+        } else {
+            setData(undefined);
         }
-    }, [device]);
+    }, [device, command]);
+
+    return data;
 }
 
 function useVersion(device?: Device) {
-    const [version, setVersion] = useState<string>();
-    const invokeWithPort = useInvokeWithPort(device);
-
-    useEffect(() => {
-        const fetchVersion = async () => {
-            try {
-                const version = await invokeWithPort<string>("version");
-                console.debug(`Version: ${version}`);
-                setVersion(version);
-            } catch (error) {
-                console.error(error);
-                setVersion(undefined);
-            }
-        };
-
-        if (device) {
-            fetchVersion();
-        } else {
-            setVersion(undefined);
-        }
-    }, [device]);
-
-    return version;
+    return useDeviceData<string>("version", device);
 }
 
 function useSettings(device?: Device) {
-    const [settings, setSettings] = useState<Settings>();
-    const invokeWithPort = useInvokeWithPort(device);
-
-    useEffect(() => {
-        const fetchSettings = async () => {
-            try {
-                const settings = await invokeWithPort<Settings>("settings_get");
-                setSettings(settings);
-            } catch (error) {
-                console.error(error);
-                setSettings(undefined);
-            }
-        };
-
-        if (device) {
-            fetchSettings();
-        } else {
-            setSettings(undefined);
-        }
-    }, [device]);
-
-    return settings;
+    return useDeviceData<Settings>("settings_get", device);
 }
 
 function App() {
