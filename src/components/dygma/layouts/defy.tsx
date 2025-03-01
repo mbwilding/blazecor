@@ -20,7 +20,7 @@
 import React, { MouseEvent } from "react";
 import Key from "../components/key";
 import UnderGlowStrip from "../components/under-glow-strip";
-import { RGB, RGBW } from "@/types/ffi/settings";
+import { Color } from "@/types/ffi/settings";
 
 export interface DefyProps {
     layer: number;
@@ -29,7 +29,7 @@ export interface DefyProps {
     selectedKey?: number;
     selectedLED?: number;
     darkMode: boolean;
-    palette?: RGB[] | RGBW[];
+    palette?: Color[];
     className?: string;
     showUnderglow: boolean;
     isStandardView: boolean;
@@ -221,10 +221,10 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
 
         const colormap = this.props.colormap || Array(177).fill(0);
 
-        const palette: RGB[] | RGBW[] =
+        const palette: Color[] =
             this.props.palette && this.props.palette.length > 0
                 ? this.props.palette
-                : Array(16).fill({ r: 255, g: 255, b: 255, w: 255 });
+                : Array(16).fill({ r: 255, g: 255, b: 255, w: undefined });
 
         const getColor = (row: number, col?: number) => {
             const ledIndex = col !== undefined ? led_map[row][col] : no_key_led_map[row - UNDERGLOW];

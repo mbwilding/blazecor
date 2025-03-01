@@ -15,9 +15,9 @@ export interface Settings {
     ledBrightnessKeysWireless?: number; // Option<u8>
     ledBrightnessUnderglowWireless?: number; // Option<u8>
     ledFade?: number; // Option<u16>
-    ledTheme: RGB[];
-    paletteRgb?: RGB[];
-    paletteRgbw?: RGBW[];
+    ledTheme: Color[];
+    paletteRgb?: Color[];
+    paletteRgbw?: Color[];
     colorMap: number[]; // Vec<u8>
     ledIdleTrueSleep?: boolean; // Option<bool>
     ledIdleTrueSleepTime?: number; // Option<Duration>
@@ -79,23 +79,14 @@ export enum Side {
     Left = 1,
 }
 
-export interface RGB {
+/** The LED color. */
+export interface Color {
     /** Red component of the color. */
     r: number;
     /** Green component of the color. */
     g: number;
     /** Blue component of the color. */
     b: number;
-}
-
-/** The LED RGBW color. */
-export interface RGBW {
-    /** Red component of the color. */
-    r: number;
-    /** Green component of the color. */
-    g: number;
-    /** Blue component of the color. */
-    b: number;
-    /** White component of the color. */
-    w: number;
+    /** Optional white component of the color. */
+    w?: number;
 }

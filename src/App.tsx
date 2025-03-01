@@ -4,7 +4,7 @@ import "./App.css";
 import { Button } from "./components/ui/button";
 import { LayoutDefy } from "./components/dygma/layouts/defy";
 import { Device } from "./types/ffi/hardware";
-import { RGBW, Settings } from "./types/ffi/settings";
+import { Settings } from "./types/ffi/settings";
 
 // TODO: Move
 document.documentElement.classList.add("dark");
