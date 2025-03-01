@@ -49,6 +49,7 @@ function useConnect(device?: Device) {
         };
 
         if (device) {
+            console.debug(`Connecting: ${device.hardware.info.displayName} (${device.serialPort})`);
             connectDevice();
         }
     }, [device]);
@@ -62,6 +63,7 @@ function useVersion(device?: Device) {
         const fetchVersion = async () => {
             try {
                 const version = await invokeWithPort<string>("version");
+                console.debug(`Version: ${version}`);
                 setVersion(version);
             } catch (error) {
                 console.error(error);
@@ -140,18 +142,11 @@ function App() {
                                 <span>Palette: </span>
                                 {settings.paletteRgbw?.map((x, index) => (
                                     <span
-                                      key={index}
-                                      className="inline-block w-5 h-5 text-white text-center leading-5"
-                                      // style={{ backgroundColor: `rgb(${x.r}, ${x.g}, ${x.b})` }}
-                                      style={{
-                                        backgroundColor: `rgb(
-                                          ${Math.min(255, x.r + x.w * (x.r / (x.r + x.g + x.b || 1)))},
-                                          ${Math.min(255, x.g + x.w * (x.g / (x.r + x.g + x.b || 1)))},
-                                          ${Math.min(255, x.b + x.w * (x.b / (x.r + x.g + x.b || 1)))}
-                                        )`,
-                                      }}
+                                        key={index}
+                                        className="inline-block w-5 h-5 text-white text-center leading-5"
+                                        style={{ backgroundColor: `rgb(${x.r}, ${x.g}, ${x.b})` }}
                                     >
-                                      {index}
+                                        {index}
                                     </span>
                                 ))}
                             </div>
