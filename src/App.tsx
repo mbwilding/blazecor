@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-// import reactLogo from "./assets/react.svg";
 import { invoke, InvokeArgs } from "@tauri-apps/api/core";
 import "./App.css";
 import { Button } from "./components/ui/button";
-// import { Input } from "./components/ui/input";
 import { LayoutDefy } from "./components/dygma/layouts/defy";
 import { Device } from "./types/ffi/hardware";
 import { RGBW, Settings } from "./types/ffi/settings";
@@ -11,74 +9,151 @@ import { RGBW, Settings } from "./types/ffi/settings";
 // TODO: Move
 document.documentElement.classList.add("dark");
 
-function App() {
-    const [devices, setDevices] = useState<Device[]>();
-    const [device, setDevice] = useState<Device>();
-    const [version, setVersion] = useState<string>();
-    const [settings, setSettings] = useState<Settings>();
-    const [paletteRGBW, setPaletteRGBW] = useState<RGBW[]>();
-    const [colorMap, setColorMap] = useState<number[]>();
-
-    useEffect(() => {
-        callVersion();
-        callPaletteRGBWGet();
-        callColorMapGet();
-    }, [device]);
-
-    function resetState() {
-        setDevices(undefined);
-        setDevice(undefined);
-        setVersion(undefined);
-        setSettings(undefined);
-        setPaletteRGBW(undefined);
-        setColorMap(undefined);
-    }
-
-    async function invokeWithPort<T>(call: string, args?: InvokeArgs): Promise<T> {
+function useInvokeWithPort(device: Device | undefined) {
+    return async function <T>(call: string, args?: InvokeArgs): Promise<T> {
         if (device) {
             const port = device.serialPort;
             return await invoke<T>(call, { port, args });
         } else {
-            resetState();
             throw new Error("Cannot contact device");
         }
-    }
+    };
+}
 
-    async function callDevices() {
-        const devices = await invoke<Device[]>("find_all_devices");
-        setDevices(devices);
-        setDevice(devices[0])
-    }
+function useDevices() {
+    const [devices, setDevices] = useState<Device[]>();
 
-    async function callVersion() {
-        setVersion(await invokeWithPort("version"));
-    }
+    const fetchDevices = async () => {
+        try {
+            const devices = await invoke<Device[]>("find_all_devices");
+            setDevices(devices);
+        } catch (error) {
+            console.error(error);
+            setDevices(undefined);
+        }
+    };
 
-    async function callSettingsGet() {
-        setSettings(await invokeWithPort("settings_get"));
-    }
+    return { devices, fetchDevices };
+}
 
-    async function callPaletteRGBWGet() {
-        setPaletteRGBW(await invokeWithPort("palette_rgbw_get"));
-    }
+function useConnect(device: Device | undefined) {
+    const invokeWithPort = useInvokeWithPort(device);
 
-    async function callColorMapGet() {
-        setColorMap(await invokeWithPort("color_map_get"));
-    }
+    useEffect(() => {
+        const connectDevice = async () => {
+            try {
+                await invokeWithPort("connect");
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        if (device) {
+            connectDevice();
+        }
+    }, [device]);
+}
+
+function useVersion(device: Device | undefined) {
+    const [version, setVersion] = useState<string>();
+    const invokeWithPort = useInvokeWithPort(device);
+
+    useEffect(() => {
+        const fetchVersion = async () => {
+            try {
+                const version = await invokeWithPort<string>("version");
+                setVersion(version);
+            } catch (error) {
+                console.error(error);
+                setVersion(undefined);
+            }
+        };
+
+        if (device) {
+            fetchVersion();
+        } else {
+            setVersion(undefined);
+        }
+    }, [device]);
+
+    return version;
+}
+
+function usePaletteRGBW(device: Device | undefined) {
+    const [paletteRGBW, setPaletteRGBW] = useState<RGBW[]>();
+    const invokeWithPort = useInvokeWithPort(device);
+
+    useEffect(() => {
+        const fetchPaletteRGBW = async () => {
+            try {
+                const palette = await invokeWithPort<RGBW[]>("palette_rgbw_get");
+                setPaletteRGBW(palette);
+            } catch (error) {
+                console.error(error);
+                setPaletteRGBW(undefined);
+            }
+        };
+
+        if (device) {
+            fetchPaletteRGBW();
+        } else {
+            setPaletteRGBW(undefined);
+        }
+    }, [device]);
+
+    return paletteRGBW;
+}
+
+function useColorMap(device: Device | undefined) {
+    const [colorMap, setColorMap] = useState<number[]>();
+    const invokeWithPort = useInvokeWithPort(device);
+
+    useEffect(() => {
+        const fetchColorMap = async () => {
+            try {
+                const colorMap = await invokeWithPort<number[]>("color_map_get");
+                setColorMap(colorMap);
+            } catch (error) {
+                console.error(error);
+                setColorMap(undefined);
+            }
+        };
+
+        if (device) {
+            fetchColorMap();
+        } else {
+            setColorMap(undefined);
+        }
+    }, [device]);
+
+    return colorMap;
+}
+
+function App() {
+    const [device, setDevice] = useState<Device>();
+    const { devices, fetchDevices } = useDevices();
+
+    useConnect(device);
+
+    const version = useVersion(device);
+    const paletteRGBW = usePaletteRGBW(device);
+    const colorMap = useColorMap(device);
 
     return (
         <main className="container">
             {device ? (
                 <>
                     {version && (
-                        <div id="version" className="text-lime-300">{"Version: " + version}</div>
+                        <div id="version" className="text-lime-300">
+                            {"Version: " + version}
+                        </div>
                     )}
 
                     {colorMap && (
                         <div id="color-map" className="text-amber-300">
                             <h2>Color Map</h2>
-                            {colorMap?.map(x => (
-                                <span>{x},</span>
+                            {colorMap?.map((x, index) => (
+                                <span key={index}>{x},</span>
                             ))}
                         </div>
                     )}
@@ -86,8 +161,10 @@ function App() {
                     {paletteRGBW && (
                         <div id="palette-rgbw" className="text-blue-300">
                             <h2>Palette</h2>
-                            {paletteRGBW?.map(x => (
-                                <div>r:{x.r}, g:{x.g}, b:{x.b}</div>
+                            {paletteRGBW?.map((x, index) => (
+                                <div key={index}>
+                                    r:{x.r}, g:{x.g}, b:{x.b}
+                                </div>
                             ))}
                         </div>
                     )}
@@ -106,36 +183,25 @@ function App() {
                         className="row"
                         onSubmit={(e) => {
                             e.preventDefault();
-                            callDevices();
+                            fetchDevices();
                         }}
                     >
                         <Button type="submit">Devices</Button>
                     </form>
 
-                    {devices?.map(device => (
-                        <Button type="submit" onClick={() => setDevice(device)}>{device.hardware.info.displayName}</Button>
+                    {devices?.map((device, index) => (
+                        <Button
+                            key={index}
+                            type="button"
+                            onClick={() => setDevice(device)}
+                        >
+                            {device.hardware.info.displayName}
+                        </Button>
                     ))}
                 </>
             )}
         </main>
     );
 }
-
-
-// <form
-//     className="row"
-//     onSubmit={(e) => {
-//         e.preventDefault();
-//         greet();
-//     }}
-// >
-//     <Input
-//         id="greet-input"
-//         onChange={(e) => setName(e.currentTarget.value)}
-//         placeholder="Enter a name..."
-//     />
-//     <Button type="submit">Greet</Button>
-// </form>
-// <p>{greetMsg}</p>
 
 export default App;
