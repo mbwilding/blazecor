@@ -21,10 +21,9 @@ async fn version(port: &str) -> Result<String> {
 }
 
 #[tauri::command]
-async fn settings_get() -> Result<Settings> {
-    let mut focus = Focus::new_first_available()?;
-    let result = focus.settings_get().await?;
-    Ok(result)
+async fn settings_get(port: &str) -> Result<Settings> {
+    let mut focus = Focus::new_via_port(port)?;
+    Ok(focus.settings_get().await?)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

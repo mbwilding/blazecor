@@ -1,11 +1,12 @@
 import { useState } from "react";
 // import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, InvokeArgs } from "@tauri-apps/api/core";
 import "./App.css";
 import { Button } from "./components/ui/button";
 // import { Input } from "./components/ui/input";
 import { LayoutDefy } from "./components/dygma/layouts/defy";
 import { Device } from "./types/ffi/hardware";
+import { Settings } from "./types/ffi/settings";
 
 // TODO: Move
 document.documentElement.classList.add("dark");
@@ -15,7 +16,16 @@ function App() {
     const [devices, setDevices] = useState<Device[]>();
     const [device, setDevice] = useState<Device>();
     const [version, setVersion] = useState<string>();
-    const [settings, setSettings] = useState<string>();
+    const [settings, setSettings] = useState<Settings>();
+
+    async function portCall<T>(call: string, args?: InvokeArgs): Promise<T> {
+        if (device) {
+            const port = device.serialPort;
+            return await invoke<T>(call, { port, args });
+        } else {
+            throw new Error("Device is undefined");
+        }
+    }
 
     // async function greet() {
     //     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -27,14 +37,11 @@ function App() {
     }
 
     async function callVersion() {
-        if (device) {
-            const port = device.serialPort;
-            setVersion(await invoke("version", { port }));
-        }
+        setVersion(await portCall("version"));
     }
 
     async function callSettingsGet() {
-        setSettings(await invoke("settings_get"));
+        setSettings(await portCall("settings_get"));
     }
 
     return (
@@ -53,28 +60,40 @@ function App() {
                 <Button type="submit" onClick={() => setDevice(device)}>{device.hardware.info.displayName}</Button>
             ))}
 
-            <form
-                className="row"
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    callVersion();
-                }}
-            >
-                <Button type="submit">{version ? "Version: " + version : "Version"}</Button>
-            </form>
+            {device ? (
+                <>
+                    <form
+                        className="row"
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            callVersion();
+                        }}
+                    >
+                        <Button type="submit">{version ? "Version: " + version : "Version"}</Button>
+                    </form>
 
-            <form
-                className="row"
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    callSettingsGet();
-                }}
-            >
-                <Button type="submit">Settings</Button>
-            </form>
-            <p>{settings}</p>
+                    <form
+                        className="row"
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            callSettingsGet();
+                        }}
+                    >
+                        <Button type="submit">Settings</Button>
+                    </form>
+                    <p>{settings}</p>
 
-            <LayoutDefy layer={0} darkMode={true} showUnderglow={true} isStandardView={false} onKeySelect={(e) => console.log(e)} />
+                    <LayoutDefy
+                        layer={0}
+                        darkMode={true}
+                        showUnderglow={true}
+                        isStandardView={false}
+                        onKeySelect={(e) => console.log(e)}
+                    />
+                </>
+            ) : (
+                <div>No device connected</div>
+            )}
         </main>
     );
 }
