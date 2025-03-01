@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
+import React, { MouseEvent } from "react";
 import Key from "../components/key";
 import UnderGlowStrip from "../components/under-glow-strip";
 
@@ -36,7 +36,7 @@ export interface DefyProps {
     className?: string;
     showUnderglow: boolean;
     isStandardView: boolean;
-    onKeySelect: (e: React.MouseEvent) => void;
+    onKeySelect: (e: MouseEvent) => void;
 }
 
 export interface DefyState {
@@ -185,7 +185,7 @@ const keysColumnsPosition = {
     x13: 1107,
 };
 
-export class KeymapDefy extends React.Component<DefyProps, DefyState> {
+export class LayoutDefy extends React.Component<DefyProps, DefyState> {
     constructor(props: DefyProps) {
         super(props);
         this.state = {
@@ -241,14 +241,14 @@ export class KeymapDefy extends React.Component<DefyProps, DefyState> {
         const getLEDIndex = (row: number, col?: number) =>
             col !== undefined ? led_map[row][col] : no_key_led_map[row - UNDERGLOW];
 
-        const onClick = (e: React.MouseEvent) => {
+        const onClick = (e: MouseEvent) => {
             this.setState({ underglowIndex: undefined });
             this.props.onKeySelect(e);
         };
 
         const layer = this.props.index;
 
-        const setUndeglowIndex = (index: number, e: React.MouseEvent) => {
+        const setUndeglowIndex = (index: number, e: MouseEvent) => {
             this.setState({ underglowIndex: keyIndex(index) });
             this.props.onKeySelect(e);
         };
@@ -362,7 +362,7 @@ export class KeymapDefy extends React.Component<DefyProps, DefyState> {
         const topsArr = ["LEDEFF.", "SCadet", "Steno", "M.Btn", "Leader", "Numpad", "Media", "OSL", "Mouse", "M.Wheel", "M.Warp"];
         const topsArrTransfer = ["SHIFTTO", "LockTo"];
 
-        const getCenterExtra = (row: number, col: number, xCord: number, yCord: number, smallKey = false) =>
+        const getCenterExtra = (row: number, col: number, _xCord: number, _yCord: number, _smallKey = false) =>
             React.isValidElement(getLabel(row, col).extraLabel)
                 ? getLabel(row, col).extraLabel
                 : getLabel(row, col).extraLabel?.includes("+")
@@ -1589,7 +1589,6 @@ export class KeymapDefy extends React.Component<DefyProps, DefyState> {
                         keyCode={getLabel(4, 0).keyCode}
                         selectedKey={getLabel(4, 0)}
                     />
-
                     <Key
                         keyType="defy-t2"
                         id="R4C2_keyshape"

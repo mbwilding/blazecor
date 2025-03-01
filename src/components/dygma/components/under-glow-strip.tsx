@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import React, { MouseEvent } from "react";
 import colorDarkerCalculation from "@/utils/colorDarkerCalculation";
-import React from "react";
 
 interface UnderGlowStripProps {
     id: string;
-    onClick: (e: React.MouseEvent) => void;
+    onClick: (e: MouseEvent) => void;
     fill: string;
     visibility: boolean;
     clickAble: boolean;

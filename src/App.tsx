@@ -1,10 +1,10 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
+// import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
-import { KeymapDefy } from "./components/dygma/layouts/defy";
+import { LayoutDefy } from "./components/dygma/layouts/defy";
 
 // TODO: Move
 document.documentElement.classList.add("dark");
@@ -36,7 +36,7 @@ function App() {
             </form>
             <p>{greetMsg}</p>
 
-            <KeymapDefy index={-1} darkMode={true} showUnderglow={true} isStandardView={false} onKeySelect={(e) => console.log(e)} />
+            <LayoutDefy index={-1} darkMode={true} showUnderglow={true} isStandardView={false} onKeySelect={(e) => console.log(e)} />
         </main>
     );
 }

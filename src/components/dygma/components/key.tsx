@@ -17,25 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// TODO: Begin remove
-interface ListModifiersProps {
-  keyCode: number;
-  size?: "xs" | "sm" | "md";
-  selectedKey: KeyType;
-}
-
-const ListModifiersKey = ({ keyCode, size = "xs", selectedKey }: ListModifiersProps) => {
-    console.log("ListModifiersKey: Not Implemented", keyCode, size, selectedKey);
-}
-// TODO: End remove
-
-import React, { useState, useEffect } from "react";
-// import ListModifiersKey from "@Renderer/components/molecules/ListModifiers/ListModifiersKey";
+import { MouseEvent, useState, useEffect } from "react";
+import ListModifiersKey from "../molecules/ListModifiers/ListModifiersKey";
 
 interface KeyShapeProps {
     keyType: string;
-    id: string;
-    onClick: (e: React.MouseEvent) => void;
+    id?: string;
+    onClick: (e: MouseEvent) => void;
     fill: string;
     stroke: string;
     width: number;
