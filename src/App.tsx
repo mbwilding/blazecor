@@ -104,56 +104,6 @@ function useSettings(device?: Device) {
     return settings;
 }
 
-function usePaletteRGBW(device?: Device) {
-    const [paletteRGBW, setPaletteRGBW] = useState<RGBW[]>();
-    const invokeWithPort = useInvokeWithPort(device);
-
-    useEffect(() => {
-        const fetchPaletteRGBW = async () => {
-            try {
-                const palette = await invokeWithPort<RGBW[]>("palette_rgbw_get");
-                setPaletteRGBW(palette);
-            } catch (error) {
-                console.error(error);
-                setPaletteRGBW(undefined);
-            }
-        };
-
-        if (device) {
-            fetchPaletteRGBW();
-        } else {
-            setPaletteRGBW(undefined);
-        }
-    }, [device]);
-
-    return paletteRGBW;
-}
-
-function useColorMap(device: Device | undefined) {
-    const [colorMap, setColorMap] = useState<number[]>();
-    const invokeWithPort = useInvokeWithPort(device);
-
-    useEffect(() => {
-        const fetchColorMap = async () => {
-            try {
-                const colorMap = await invokeWithPort<number[]>("color_map_get");
-                setColorMap(colorMap);
-            } catch (error) {
-                console.error(error);
-                setColorMap(undefined);
-            }
-        };
-
-        if (device) {
-            fetchColorMap();
-        } else {
-            setColorMap(undefined);
-        }
-    }, [device]);
-
-    return colorMap;
-}
-
 function App() {
     const [device, setDevice] = useState<Device>();
     const { devices, fetchDevices } = useDevices();
@@ -162,8 +112,6 @@ function App() {
 
     const version = useVersion(device);
     const settings = useSettings(device);
-    const paletteRGBW = usePaletteRGBW(device);
-    const colorMap = useColorMap(device);
 
     return (
         <main className="container">
@@ -176,29 +124,31 @@ function App() {
                     )}
 
                     {settings && (
-                        <div id="settings" className="text-pink-300">
-                            {"Mouse Speed: " + settings.mouse_speed}
-                        </div>
-                    )}
+                        <>
+                            <div id="settings" className="text-pink-300">
+                                {"Mouse Speed: " + settings.mouseSpeed}
+                            </div>
 
-                    {colorMap && (
-                        <div id="color-map" className="text-amber-300">
-                            <h2>Color Map</h2>
-                            {colorMap?.map((x, index) => (
-                                <span key={index}>{x},</span>
-                            ))}
-                        </div>
-                    )}
+                            <div id="color-map" className="text-amber-300">
+                                <h2>Color Map</h2>
+                                {settings.colorMap?.map((x, index) => (
+                                    <span key={index}>{x},</span>
+                                ))}
+                            </div>
 
-                    {paletteRGBW && (
-                        <div id="palette-rgbw" className="text-blue-300">
-                            <h2>Palette</h2>
-                            {paletteRGBW?.map((x, index) => (
-                                <div key={index}>
-                                    r:{x.r}, g:{x.g}, b:{x.b}
-                                </div>
-                            ))}
-                        </div>
+                            <div id="palette-rgbw" className="text-blue-300">
+                                <span>Palette: </span>
+                                {settings.paletteRgbw?.map((x, index) => (
+                                    <span
+                                      key={index}
+                                      className="inline-block w-5 h-5 text-white text-center leading-5"
+                                      style={{ backgroundColor: `rgb(${x.r}, ${x.g}, ${x.b})` }}
+                                    >
+                                      {index}
+                                    </span>
+                                ))}
+                            </div>
+                        </>
                     )}
 
                     <LayoutDefy

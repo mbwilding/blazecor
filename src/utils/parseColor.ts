@@ -1,8 +1,4 @@
-export interface RgbColor {
-    r: number;
-    g: number;
-    b: number;
-}
+import { RGB } from "@/types/ffi/settings";
 
 /**
  * Parse the supplied color to it's component R, G, B values.
@@ -10,7 +6,7 @@ export interface RgbColor {
  * @param {RgbColor} fallback The color to use if the supplied color cannot be parsed.
  * @returns {RgbColor} The color converted to an object containing the three color values.
  */
-export function parseColor(color: string, fallback: RgbColor): RgbColor {
+export function parseColor(color: string, fallback: RGB): RGB {
     const hexRegex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
     const rgbRegex = /^rgb\(([\d]+), ([\d]+), ([\d]+)\)$/i;
 
@@ -27,7 +23,7 @@ export function parseColor(color: string, fallback: RgbColor): RgbColor {
         }
     }
 
-    let result: RgbColor;
+    let result: RGB;
     if (hexRegex.test(color)) {
         result = parseRgbColor(color, hexRegex, 16);
     } else if (rgbRegex.test(color)) {
