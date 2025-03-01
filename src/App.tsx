@@ -158,6 +158,8 @@ function App() {
                         darkMode={true}
                         showUnderglow={true}
                         isStandardView={false}
+                        colormap={settings?.colorMap}
+                        palette={settings?.paletteRgb || settings?.paletteRgbw}
                         onKeySelect={(e) => console.log(e)}
                     />
                 </>
