@@ -6,6 +6,7 @@ import { Button } from "./components/ui/button";
 // import { Input } from "./components/ui/input";
 import { LayoutDefy } from "./components/dygma/layouts/defy";
 import { Device } from "./types/ffi/hardware";
+import { rustInvoke } from "./utils/rust";
 
 // TODO: Move
 document.documentElement.classList.add("dark");
@@ -13,8 +14,8 @@ document.documentElement.classList.add("dark");
 function App() {
     // const [greetMsg, setGreetMsg] = useState("");
     const [devices, setDevices] = useState<Device[]>();
-    const [version, setVersion] = useState("");
-    const [settings, setSettings] = useState("");
+    const [version, setVersion] = useState<string>();
+    const [settings, setSettings] = useState<string>();
 
     // async function greet() {
     //     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -22,13 +23,11 @@ function App() {
     // }
 
     async function callDevices() {
-        const response = await invoke<Device[]>("devices");
-        setDevices(response);
-        console.log("Devices: ", devices);
+        setDevices(await rustInvoke("devices"))
     }
 
     async function callVersion() {
-        setVersion(await invoke("version"));
+        setVersion(await rustInvoke("version"));
     }
 
     async function callSettingsGet() {
@@ -46,7 +45,10 @@ function App() {
             >
                 <Button type="submit">Devices</Button>
             </form>
-            <p>{devices?.length}</p>
+
+            {devices?.map(device => (
+              <p>{device.serialPort}</p>
+            ))}
 
             <form
                 className="row"
