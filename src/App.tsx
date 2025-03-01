@@ -12,13 +12,12 @@ import { Settings } from "./types/ffi/settings";
 document.documentElement.classList.add("dark");
 
 function App() {
-    // const [greetMsg, setGreetMsg] = useState("");
     const [devices, setDevices] = useState<Device[]>();
     const [device, setDevice] = useState<Device>();
     const [version, setVersion] = useState<string>();
     const [settings, setSettings] = useState<Settings>();
 
-    async function portCall<T>(call: string, args?: InvokeArgs): Promise<T> {
+    async function invokeWithPort<T>(call: string, args?: InvokeArgs): Promise<T> {
         if (device) {
             const port = device.serialPort;
             return await invoke<T>(call, { port, args });
@@ -27,21 +26,16 @@ function App() {
         }
     }
 
-    // async function greet() {
-    //     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    //     setGreetMsg(await invoke("greet", { name }));
-    // }
-
     async function callDevices() {
         setDevices(await invoke("devices"))
     }
 
     async function callVersion() {
-        setVersion(await portCall("version"));
+        setVersion(await invokeWithPort("version"));
     }
 
     async function callSettingsGet() {
-        setSettings(await portCall("settings_get"));
+        setSettings(await invokeWithPort("settings_get"));
     }
 
     return (
