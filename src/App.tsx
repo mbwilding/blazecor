@@ -75,7 +75,7 @@ function App() {
                     >
                         <Button type="submit">Settings</Button>
                     </form>
-                    <p>{settings}</p>
+                    <p>{settings?.mouse_speed}</p>
 
                     <LayoutDefy
                         layer={0}

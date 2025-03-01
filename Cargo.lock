@@ -929,9 +929,9 @@ checksum = "92773504d58c093f6de2459af4af33faa518c13451eb8f2b5698ed3d36e7c813"
 
 [[package]]
 name = "dygma_focus"
-version = "0.4.15"
+version = "0.4.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "386df62d8501b44a4109c011514602ae7b6ce17d8124194d3381db6c6bb996e6"
+checksum = "d378643c63de1f90b385e168eb25eaf1596a0d6d1d005fe3ae446d31b9eae9e3"
 dependencies = [
  "anyhow",
  "dygma_focus_proc_macros",
@@ -946,9 +946,9 @@ dependencies = [
 
 [[package]]
 name = "dygma_focus_proc_macros"
-version = "0.4.15"
+version = "0.4.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4897fa3efa5ea2fc00ad71fb4d19e5b2fc6385c1cc9eb2ccebdeffe2c3104ce1"
+checksum = "f0ccddf6b8a9bcd3a7bebbbf3d63a4cd1dedf3236177709649c57b382f62ceda"
 dependencies = [
  "quote",
  "syn 2.0.98",
@@ -4420,9 +4420,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-rustls"
-version = "0.26.1"
+version = "0.26.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5f6d0975eaace0cf0fcadee4e4aaa5da15b5c079146f2cffb67c113be122bf37"
+checksum = "8e727b36a1a0e8b74c376ac2211e40c2c8af09fb4013c60d910495810f008e9b"
 dependencies = [
  "rustls",
  "tokio",
