@@ -10,13 +10,12 @@ use tauri::Result;
 
 #[tauri::command]
 async fn devices() -> Result<Vec<Device>> {
-    let devices = Focus::find_all_devices()?;
-    Ok(devices)
+    Ok(Focus::find_all_devices()?)
 }
 
 #[tauri::command]
-async fn version() -> Result<String> {
-    let mut focus = Focus::new_first_available()?;
+async fn version(port: &str) -> Result<String> {
+    let mut focus = Focus::new_via_port(port)?;
     let version = focus.version().await?;
     Ok(version)
 }

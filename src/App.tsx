@@ -13,6 +13,7 @@ document.documentElement.classList.add("dark");
 function App() {
     // const [greetMsg, setGreetMsg] = useState("");
     const [devices, setDevices] = useState<Device[]>();
+    const [device, setDevice] = useState<Device>();
     const [version, setVersion] = useState<string>();
     const [settings, setSettings] = useState<string>();
 
@@ -26,7 +27,10 @@ function App() {
     }
 
     async function callVersion() {
-        setVersion(await invoke("version"));
+        if (device) {
+            const port = device.serialPort;
+            setVersion(await invoke("version", { port }));
+        }
     }
 
     async function callSettingsGet() {
@@ -46,7 +50,7 @@ function App() {
             </form>
 
             {devices?.map(device => (
-              <p>{device.serialPort}</p>
+                <Button type="submit" onClick={() => setDevice(device)}>{device.hardware.info.displayName}</Button>
             ))}
 
             <form
