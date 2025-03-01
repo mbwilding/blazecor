@@ -3,7 +3,9 @@ import { Settings } from "./types/ffi/settings";
 import { invoke, InvokeArgs } from "@tauri-apps/api/core";
 import { useCallback, useEffect, useState } from "react";
 
-export function useInvoke(device?: Device) {
+// Helpers
+
+function useInvoke(device?: Device) {
     return async function <T>(call: string, args?: InvokeArgs): Promise<T> {
         if (device) {
             const port = device.serialPort;
@@ -14,7 +16,7 @@ export function useInvoke(device?: Device) {
     };
 }
 
-export function useFocus(command: string, device?: Device, onExecute?: () => void) {
+function useFocus(command: string, device?: Device, onExecute?: () => void) {
     const invoke = useInvoke(device);
 
     useEffect(() => {
@@ -33,7 +35,7 @@ export function useFocus(command: string, device?: Device, onExecute?: () => voi
     }, [device, command]);
 }
 
-export function useFocusData<T>(command: string, device?: Device): T | undefined {
+function useFocusData<T>(command: string, device?: Device): T | undefined {
     const [data, setData] = useState<T>();
     const invoke = useInvoke(device);
 
@@ -41,7 +43,6 @@ export function useFocusData<T>(command: string, device?: Device): T | undefined
         const fetchData = async () => {
             try {
                 const result = await invoke<T>(command);
-                console.debug(`${command}: ${JSON.stringify(result)}`);
                 setData(result);
             } catch (error: any) {
                 console.error(error);
@@ -59,13 +60,15 @@ export function useFocusData<T>(command: string, device?: Device): T | undefined
     return data;
 }
 
+// API Exports
+
 export function useDevices() {
     const [devices, setDevices] = useState<Device[]>();
 
     const fetchDevices = useCallback(async () => {
         try {
-            const result = await invoke<Device[]>("find_all_devices");
-            setDevices(result);
+            const devices = await invoke<Device[]>("find_all_devices");
+            setDevices(devices);
         } catch (error: any) {
             console.error(error);
             setDevices(undefined);
