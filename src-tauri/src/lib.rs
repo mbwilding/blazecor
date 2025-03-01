@@ -9,13 +9,15 @@ use tauri::Result;
 // }
 
 #[tauri::command]
-async fn devices() -> Result<String> {
+async fn devices() -> Result<Vec<Device>> {
+    println!("Devices");
     let devices = Focus::find_all_devices()?;
-    Ok(serde_json::to_string(&devices)?)
+    Ok(devices)
 }
 
 #[tauri::command]
 async fn version() -> Result<String> {
+    println!("Version");
     let mut focus = Focus::new_first_available()?;
     let version = focus.version().await?;
     Ok(version)
@@ -23,6 +25,7 @@ async fn version() -> Result<String> {
 
 #[tauri::command]
 async fn settings_get() -> Result<String> {
+    println!("Settings Get");
     let mut focus = Focus::new_first_available()?;
     let settings = focus.settings_get().await?;
     Ok(serde_json::to_string(&settings)?)

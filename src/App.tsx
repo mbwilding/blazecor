@@ -5,32 +5,36 @@ import "./App.css";
 import { Button } from "./components/ui/button";
 // import { Input } from "./components/ui/input";
 import { LayoutDefy } from "./components/dygma/layouts/defy";
+import { Device } from "./types/ffi/hardware";
 
 // TODO: Move
 document.documentElement.classList.add("dark");
 
 function App() {
     // const [greetMsg, setGreetMsg] = useState("");
-    const [devicesMsg, setDevicesMsg] = useState("");
-    const [versionMsg, setVersionMsg] = useState("");
-    const [settingsMsg, setSettingsMsg] = useState("");
+    const [devices, setDevices] = useState<Device[]>();
+    const [version, setVersion] = useState("");
+    const [settings, setSettings] = useState("");
 
     // async function greet() {
     //     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     //     setGreetMsg(await invoke("greet", { name }));
     // }
 
-    async function devices() {
-        setDevicesMsg(await invoke("devices"));
-        console.log(devicesMsg);
+    async function callDevices() {
+        const response = await invoke<Device[] | undefined>("devices");
+        setDevices(response);
+        if (devices) {
+            console.log("Devices: ", devices);
+        }
     }
 
-    async function version() {
-        setVersionMsg(await invoke("version"));
+    async function callVersion() {
+        setVersion(await invoke("version"));
     }
 
-    async function settingsGet() {
-        setSettingsMsg(await invoke("settings_get"));
+    async function callSettingsGet() {
+        setSettings(await invoke("settings_get"));
     }
 
     return (
@@ -39,33 +43,33 @@ function App() {
                 className="row"
                 onSubmit={(e) => {
                     e.preventDefault();
-                    devices();
+                    callDevices();
                 }}
             >
                 <Button type="submit">Devices</Button>
             </form>
-            <p>{devicesMsg}</p>
+            <p>{devices?.length}</p>
 
             <form
                 className="row"
                 onSubmit={(e) => {
                     e.preventDefault();
-                    version();
+                    callVersion();
                 }}
             >
-                <Button type="submit">{versionMsg ? "Version: " + versionMsg : "Version"}</Button>
+                <Button type="submit">{version ? "Version: " + version : "Version"}</Button>
             </form>
 
             <form
                 className="row"
                 onSubmit={(e) => {
                     e.preventDefault();
-                    settingsGet();
+                    callSettingsGet();
                 }}
             >
                 <Button type="submit">Settings</Button>
             </form>
-            <p>{settingsMsg}</p>
+            <p>{settings}</p>
 
             <LayoutDefy layer={0} darkMode={true} showUnderglow={true} isStandardView={false} onKeySelect={(e) => console.log(e)} />
         </main>

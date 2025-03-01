@@ -20,6 +20,7 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 dygma_focus = { version = "0.4", default-features = false, features = [
     "is_async",
+    "serde",
 ] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
