@@ -66,7 +66,7 @@ export function useDevices() {
         try {
             const result = await invoke<Device[]>("find_all_devices");
             setDevices(result);
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             setDevices(undefined);
         }
