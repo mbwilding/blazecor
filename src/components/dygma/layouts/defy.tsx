@@ -231,7 +231,7 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
             const colorIndex = colormap[ledIndex];
 
             const color = palette[colorIndex];
-            const hex = `#${color.r.toString(16).padStart(2, '0')}${color.g.toString(16).padStart(2, '0')}${color.b.toString(16).padStart(2, '0')}`;
+            const hex = '#' + ((color.r << 16) | (color.g << 8) | color.b).toString(16).padStart(6, '0');
 
             return hex;
         };
