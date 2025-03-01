@@ -379,9 +379,8 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                     getDivideKeys(getLabel(row, col).label, +xCord + 10, yCord + 5, smallKey)
                     : getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 7, smallKey);
 
-        // TODO: Comment out
-        console.log("Selected Key: ", this.props.selectedKey);
-        console.log("Selected LED: ", this.props.selectedLED);
+        // console.log("Selected Key: ", this.props.selectedKey);
+        // console.log("Selected LED: ", this.props.selectedLED);
 
         const layer = this.props.layer;
 

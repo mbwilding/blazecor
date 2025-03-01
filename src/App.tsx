@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import reactLogo from "./assets/react.svg";
 import { invoke, InvokeArgs } from "@tauri-apps/api/core";
 import "./App.css";
@@ -17,17 +17,31 @@ function App() {
     const [version, setVersion] = useState<string>();
     const [settings, setSettings] = useState<Settings>();
 
+    function resetState() {
+        setDevices(undefined);
+        setDevice(undefined);
+        setVersion(undefined);
+        setSettings(undefined);
+    }
+
     async function invokeWithPort<T>(call: string, args?: InvokeArgs): Promise<T> {
         if (device) {
             const port = device.serialPort;
             return await invoke<T>(call, { port, args });
         } else {
-            throw new Error("Device is undefined");
+            resetState();
+            throw new Error("Cannot contact device");
         }
     }
 
+    // useEffect(() => {
+    //     resetState();
+    // }, [device]);
+
     async function callDevices() {
-        setDevices(await invoke("devices"))
+        const devices = await invoke<Device[]>("devices");
+        setDevices(devices);
+        setDevice(devices[0])
     }
 
     async function callVersion() {
@@ -40,20 +54,6 @@ function App() {
 
     return (
         <main className="container">
-            <form
-                className="row"
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    callDevices();
-                }}
-            >
-                <Button type="submit">Devices</Button>
-            </form>
-
-            {devices?.map(device => (
-                <Button type="submit" onClick={() => setDevice(device)}>{device.hardware.info.displayName}</Button>
-            ))}
-
             {device ? (
                 <>
                     <form
@@ -86,7 +86,21 @@ function App() {
                     />
                 </>
             ) : (
-                <div>No device connected</div>
+                <>
+                    <form
+                        className="row"
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            callDevices();
+                        }}
+                    >
+                        <Button type="submit">Devices</Button>
+                    </form>
+
+                    {devices?.map(device => (
+                        <Button type="submit" onClick={() => setDevice(device)}>{device.hardware.info.displayName}</Button>
+                    ))}
+                </>
             )}
         </main>
     );
