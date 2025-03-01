@@ -195,8 +195,7 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
 
     render() {
         const { underglowIndex } = this.state;
-        const keymap =
-            this.props.keymap || Array(80).fill(0);
+        const keymap = this.props.keymap || Array(80).fill(0);
 
         const getContrastText = (color: any) => {
             const colors = color.match(/\d+/g);
