@@ -24,7 +24,7 @@ function App() {
     }
 
     async function settingsGet() {
-        setSettingsMsg(await invoke("settings"));
+        setSettingsMsg(await invoke("settings_get"));
     }
 
     return (
