@@ -3,7 +3,6 @@ resolver = "2"
 members = ["src-tauri"]
 
 [workspace.package]
-name = "blazecor"
 version = "0.1.0"
 description = "Configurator for Dygma keyboards"
 authors = ["Matthew Wilding <mbwilding@gmail.com"]

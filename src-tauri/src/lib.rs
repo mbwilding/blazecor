@@ -1,15 +1,25 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
-// use tauri::Result;
+use tauri::Result;
+use dygma_focus::prelude::*;
 
 // #[tauri::command]
-// async fn greet(name: &str) -> Result<String> {
-//     Ok(format!("Hello, {}! You've been greeted from Rust!", name))
+// fn greet(name: &str) -> String {
+//     format!("Hello, {}! You've been greeted from Rust!", name)
 // }
 
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+async fn version() -> Result<String> {
+    let mut focus = Focus::new_first_available()?;
+    let version = focus.version().await?;
+    Ok(version)
+}
+
+#[tauri::command]
+async fn settings_get() -> Result<String> {
+    let mut focus = Focus::new_first_available()?;
+    let settings = focus.settings_get().await?;
+    Ok(serde_json::to_string_pretty(&settings)?)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -17,7 +27,9 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        // .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![version])
+        // .invoke_handler(tauri::generate_handler![settings_get])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
