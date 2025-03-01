@@ -26,7 +26,7 @@ export interface Palette {
 }
 
 export interface DefyProps {
-    index: number;
+    layer: number;
     keymap?: number[];
     colormap?: number[];
     selectedKey?: number;
@@ -246,8 +246,6 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
             this.props.onKeySelect(e);
         };
 
-        const layer = this.props.index;
-
         const setUndeglowIndex = (index: number, e: MouseEvent) => {
             this.setState({ underglowIndex: keyIndex(index) });
             this.props.onKeySelect(e);
@@ -382,8 +380,11 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                     getDivideKeys(getLabel(row, col).label, +xCord + 10, yCord + 5, smallKey)
                     : getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 7, smallKey);
 
-        // console.log("Selected Key: ", this.props.selectedKey);
-        // console.log("Selected LED: ", this.props.selectedLED);
+        // TODO: Comment out
+        console.log("Selected Key: ", this.props.selectedKey);
+        console.log("Selected LED: ", this.props.selectedLED);
+
+        const layer = this.props.layer;
 
         return (
             <svg

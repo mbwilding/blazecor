@@ -36,7 +36,7 @@ function App() {
             </form>
             <p>{greetMsg}</p>
 
-            <LayoutDefy index={-1} darkMode={true} showUnderglow={true} isStandardView={false} onKeySelect={(e) => console.log(e)} />
+            <LayoutDefy layer={0} darkMode={true} showUnderglow={true} isStandardView={false} onKeySelect={(e) => console.log(e)} />
         </main>
     );
 }

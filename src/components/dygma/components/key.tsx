@@ -32,7 +32,7 @@ interface KeyShapeProps {
     y: number;
     dataLedIndex: number;
     dataKeyIndex: number;
-    dataLayer: number;
+    dataLayer?: number;
     centerPrimary: boolean;
     centerExtra: boolean;
     selectedKey: any;
