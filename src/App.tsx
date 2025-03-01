@@ -6,7 +6,7 @@ import { Button } from "./components/ui/button";
 // import { Input } from "./components/ui/input";
 import { LayoutDefy } from "./components/dygma/layouts/defy";
 import { Device } from "./types/ffi/hardware";
-import { Settings } from "./types/ffi/settings";
+import { RGBW, Settings } from "./types/ffi/settings";
 
 // TODO: Move
 document.documentElement.classList.add("dark");
@@ -16,12 +16,22 @@ function App() {
     const [device, setDevice] = useState<Device>();
     const [version, setVersion] = useState<string>();
     const [settings, setSettings] = useState<Settings>();
+    const [paletteRGBW, setPaletteRGBW] = useState<RGBW[]>();
+    const [colorMap, setColorMap] = useState<number[]>();
+
+    useEffect(() => {
+        callVersion();
+        callPaletteRGBWGet();
+        callColorMapGet();
+    }, [device]);
 
     function resetState() {
         setDevices(undefined);
         setDevice(undefined);
         setVersion(undefined);
         setSettings(undefined);
+        setPaletteRGBW(undefined);
+        setColorMap(undefined);
     }
 
     async function invokeWithPort<T>(call: string, args?: InvokeArgs): Promise<T> {
@@ -34,12 +44,8 @@ function App() {
         }
     }
 
-    // useEffect(() => {
-    //     resetState();
-    // }, [device]);
-
     async function callDevices() {
-        const devices = await invoke<Device[]>("devices");
+        const devices = await invoke<Device[]>("find_all_devices");
         setDevices(devices);
         setDevice(devices[0])
     }
@@ -52,30 +58,39 @@ function App() {
         setSettings(await invokeWithPort("settings_get"));
     }
 
+    async function callPaletteRGBWGet() {
+        setPaletteRGBW(await invokeWithPort("palette_rgbw_get"));
+    }
+
+    async function callColorMapGet() {
+        setColorMap(await invokeWithPort("color_map_get"));
+    }
+
     return (
         <main className="container">
             {device ? (
                 <>
-                    <form
-                        className="row"
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            callVersion();
-                        }}
-                    >
-                        <Button type="submit">{version ? "Version: " + version : "Version"}</Button>
-                    </form>
+                    {version && (
+                        <div id="version" className="text-lime-300">{"Version: " + version}</div>
+                    )}
 
-                    <form
-                        className="row"
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            callSettingsGet();
-                        }}
-                    >
-                        <Button type="submit">Settings</Button>
-                    </form>
-                    <p>{settings?.mouse_speed}</p>
+                    {colorMap && (
+                        <div id="color-map" className="text-amber-300">
+                            <h2>Color Map</h2>
+                            {colorMap?.map(x => (
+                                <span>{x},</span>
+                            ))}
+                        </div>
+                    )}
+
+                    {paletteRGBW && (
+                        <div id="palette-rgbw" className="text-blue-300">
+                            <h2>Palette</h2>
+                            {paletteRGBW?.map(x => (
+                                <div>r:{x.r}, g:{x.g}, b:{x.b}</div>
+                            ))}
+                        </div>
+                    )}
 
                     <LayoutDefy
                         layer={0}
