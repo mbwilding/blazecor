@@ -9,7 +9,7 @@ use tauri::Result;
 // }
 
 #[tauri::command]
-async fn devices() -> Result<Vec<Device>> {
+fn devices() -> Result<Vec<Device>> {
     Ok(Focus::find_all_devices()?)
 }
 
