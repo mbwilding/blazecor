@@ -9,11 +9,9 @@ use tauri::Result;
 // }
 
 #[tauri::command]
-async fn devices() -> Result<String> {
+async fn devices() -> Result<Vec<Device>> {
     let devices = Focus::find_all_devices()?;
-    let json = serde_json::to_string(&devices)?;
-    println!("JSON: {}", json);
-    Ok(json)
+    Ok(devices)
 }
 
 #[tauri::command]

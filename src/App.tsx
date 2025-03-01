@@ -6,7 +6,6 @@ import { Button } from "./components/ui/button";
 // import { Input } from "./components/ui/input";
 import { LayoutDefy } from "./components/dygma/layouts/defy";
 import { Device } from "./types/ffi/hardware";
-import { rustInvoke } from "./utils/rust";
 
 // TODO: Move
 document.documentElement.classList.add("dark");
@@ -23,11 +22,11 @@ function App() {
     // }
 
     async function callDevices() {
-        setDevices(await rustInvoke("devices"))
+        setDevices(await invoke("devices"))
     }
 
     async function callVersion() {
-        setVersion(await rustInvoke("version"));
+        setVersion(await invoke("version"));
     }
 
     async function callSettingsGet() {
