@@ -24,11 +24,11 @@ async fn version() -> Result<String> {
 }
 
 #[tauri::command]
-async fn settings_get() -> Result<String> {
+async fn settings_get() -> Result<Settings> {
     println!("Settings Get");
     let mut focus = Focus::new_first_available()?;
-    let settings = focus.settings_get().await?;
-    Ok(serde_json::to_string(&settings)?)
+    let result = focus.settings_get().await?;
+    Ok(result)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

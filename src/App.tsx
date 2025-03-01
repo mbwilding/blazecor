@@ -22,11 +22,9 @@ function App() {
     // }
 
     async function callDevices() {
-        const response = await invoke<Device[] | undefined>("devices");
+        const response = await invoke<Device[]>("devices");
         setDevices(response);
-        if (devices) {
-            console.log("Devices: ", devices);
-        }
+        console.log("Devices: ", devices);
     }
 
     async function callVersion() {
