@@ -1,41 +1,41 @@
 export interface Settings {
-    keymap_custom: number[]; // Vec<u16>
-    keymap_default: number[]; // Vec<u16>
-    keymap_only_custom: boolean;
-    settings_default_layer: number; // u8
-    superkeys_map: number[]; // Vec<u16>
-    superkeys_wait_for: number; // Duration
-    superkeys_timeout: number; // Duration
-    superkeys_repeat: number; // Duration
-    superkeys_hold_start: number; // Duration
-    superkeys_overlap: number; // u8
-    led_mode: LedMode;
-    led_brightness_keys_wired: number; // u8
-    led_brightness_underglow_wired?: number; // Option<u8>
-    led_brightness_keys_wireless?: number; // Option<u8>
-    led_brightness_underglow_wireless?: number; // Option<u8>
-    led_fade?: number; // Option<u16>
-    led_theme: RGB[];
-    palette_rgb?: RGB[];
-    palette_rgbw?: RGBW[];
-    color_map: number[]; // Vec<u8>
-    led_idle_true_sleep?: boolean; // Option<bool>
-    led_idle_true_sleep_time?: number; // Option<Duration>
-    led_idle_time_limit_wired: number; // Duration
-    led_idle_time_limit_wireless?: number; // Option<Duration>
-    qukeys_hold_timeout: number; // Duration
-    qukeys_overlap_threshold: number; // Duration
-    macros_map: number[]; // Vec<u8>
-    mouse_speed: number; // u8
-    mouse_delay: number; // Duration
-    mouse_acceleration_speed: number; // u8
-    mouse_acceleration_delay: number; // Duration
-    mouse_wheel_speed: number; // u8
-    mouse_wheel_delay: number; // Duration
-    mouse_speed_limit: number; // u8
-    wireless_battery_saving_mode?: boolean; // Option<bool>
-    wireless_rf_power_level?: WirelessPowerMode; // Option<WirelessPowerMode>
-    wireless_rf_channel_hop?: boolean; // Option<bool>
+    keymapCustom: number[]; // Vec<u16>
+    keymapDefault: number[]; // Vec<u16>
+    keymapOnlyCustom: boolean;
+    settingsDefaultlayer: number; // u8
+    superkeysMap: number[]; // Vec<u16>
+    superkeysWaitFor: number; // Duration
+    superkeysTimeout: number; // Duration
+    superkeysRepeat: number; // Duration
+    superkeysHoldStart: number; // Duration
+    superkeysOverlap: number; // u8
+    ledMode: LedMode;
+    ledBrightnessKeysWired: number; // u8
+    ledBrightnessUnderglowWired?: number; // Option<u8>
+    ledBrightnessKeysWireless?: number; // Option<u8>
+    ledBrightnessUnderglowWireless?: number; // Option<u8>
+    ledFade?: number; // Option<u16>
+    ledTheme: RGB[];
+    paletteRgb?: RGB[];
+    paletteRgbw?: RGBW[];
+    colorMap: number[]; // Vec<u8>
+    ledIdleTrueSleep?: boolean; // Option<bool>
+    ledIdleTrueSleepTime?: number; // Option<Duration>
+    ledIdleTimeLimitWired: number; // Duration
+    ledIdleTimeLimitWireless?: number; // Option<Duration>
+    qukeysHoldTimeout: number; // Duration
+    qukeysOverlapThreshold: number; // Duration
+    macrosMap: number[]; // Vec<u8>
+    mouseSpeed: number; // u8
+    mouseDelay: number; // Duration
+    mouseAccelerationSpeed: number; // u8
+    mouseAccelerationDelay: number; // Duration
+    mouseWheelSpeed: number; // u8
+    mouseWheelDelay: number; // Duration
+    mouseSpeedLimit: number; // u8
+    wirelessBatterySavingMode?: boolean; // Option<bool>
+    wirelessRfPowerLevel?: WirelessPowerMode; // Option<WirelessPowerMode>
+    wirelessRfChannelHop?: boolean; // Option<bool>
 }
 
 export enum LedMode {

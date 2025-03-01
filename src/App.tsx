@@ -36,7 +36,7 @@ function useDevices() {
     return { devices, fetchDevices };
 }
 
-function useConnect(device: Device | undefined) {
+function useConnect(device?: Device) {
     const invokeWithPort = useInvokeWithPort(device);
 
     useEffect(() => {
@@ -54,7 +54,7 @@ function useConnect(device: Device | undefined) {
     }, [device]);
 }
 
-function useVersion(device: Device | undefined) {
+function useVersion(device?: Device) {
     const [version, setVersion] = useState<string>();
     const invokeWithPort = useInvokeWithPort(device);
 
@@ -79,7 +79,32 @@ function useVersion(device: Device | undefined) {
     return version;
 }
 
-function usePaletteRGBW(device: Device | undefined) {
+function useSettings(device?: Device) {
+    const [settings, setSettings] = useState<Settings>();
+    const invokeWithPort = useInvokeWithPort(device);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const settings = await invokeWithPort<Settings>("settings_get");
+                setSettings(settings);
+            } catch (error) {
+                console.error(error);
+                setSettings(undefined);
+            }
+        };
+
+        if (device) {
+            fetchSettings();
+        } else {
+            setSettings(undefined);
+        }
+    }, [device]);
+
+    return settings;
+}
+
+function usePaletteRGBW(device?: Device) {
     const [paletteRGBW, setPaletteRGBW] = useState<RGBW[]>();
     const invokeWithPort = useInvokeWithPort(device);
 
@@ -136,6 +161,7 @@ function App() {
     useConnect(device);
 
     const version = useVersion(device);
+    const settings = useSettings(device);
     const paletteRGBW = usePaletteRGBW(device);
     const colorMap = useColorMap(device);
 
@@ -146,6 +172,12 @@ function App() {
                     {version && (
                         <div id="version" className="text-lime-300">
                             {"Version: " + version}
+                        </div>
+                    )}
+
+                    {settings && (
+                        <div id="settings" className="text-pink-300">
+                            {"Mouse Speed: " + settings.mouse_speed}
                         </div>
                     )}
 
