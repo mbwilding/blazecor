@@ -3,11 +3,6 @@
 use dygma_focus::prelude::*;
 use tauri::Result;
 
-// #[tauri::command]
-// fn greet(name: &str) -> String {
-//     format!("Hello, {}! You've been greeted from Rust!", name)
-// }
-
 #[tauri::command]
 fn find_all_devices() -> Result<Vec<Device>> {
     Ok(Focus::find_all_devices()?)
