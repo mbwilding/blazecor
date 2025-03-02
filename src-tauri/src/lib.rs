@@ -11,7 +11,11 @@ struct Storage {
 
 #[tauri::command]
 fn find_all_devices() -> Result<Vec<Device>> {
-    Ok(Focus::find_all_devices()?)
+    Ok(Focus::find_all_devices()?
+        .into_iter()
+        // For macOS as it will return 2 serial devices per dygma device
+        .filter(|device| !device.serial_port.starts_with("/dev/cu."))
+        .collect())
 }
 
 #[tauri::command]
