@@ -1,5 +1,5 @@
 import { LayoutDefy } from "@/components/dygma/layouts/defy";
-import { ColorPalette } from "@/components/custom/colorPalette";
+import { ColorPalette } from "@/components/custom/ColorPalette";
 import { Color, Settings } from "@/types/ffi/settings";
 import { useState } from "react";
 

@@ -1,7 +1,7 @@
 import { useState, useCallback, memo } from "react";
-import { ColorPicker } from "./colorPicker";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Color } from "@/types/ffi/settings";
+import { ColorPicker } from "./colorPicker";
 
 interface ColorPaletteProps {
     colors: Color[];
