@@ -8,11 +8,7 @@ export interface PageColorsProps {
 }
 
 export default function PageColors({ settings }: PageColorsProps) {
-    const [colorIndex, setColorIndex] = useState<number>();
-
     const handleSelectedColorChange = (index: number, newColor: Color) => {
-        setColorIndex(index);
-
         if (settings.paletteRgbw) {
             settings.paletteRgbw[index] = newColor;
         }
