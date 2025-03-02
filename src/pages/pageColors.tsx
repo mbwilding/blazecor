@@ -13,7 +13,7 @@ export interface PageColorsProps {
 export default function PageColors({ device, settings }: PageColorsProps) {
     const [selectedLayer, setSelectedLayer] = useState(settings.settingsDefaultLayer + 1);
 
-    let palette = settings.paletteRgb || settings.paletteRgbw;
+    let palette = device.hardware.rgbwMode ? settings.paletteRgbw : settings.paletteRgb;
 
     const handleSelectedColorChange = (index: number, newColor: Color) => {
         if (palette) {
