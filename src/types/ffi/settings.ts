@@ -2,7 +2,7 @@ export interface Settings {
     keymapCustom: number[]; // Vec<u16>
     keymapDefault: number[]; // Vec<u16>
     keymapOnlyCustom: boolean;
-    settingsDefaultlayer: number; // u8
+    settingsDefaultLayer: number; // u8
     superkeysMap: number[]; // Vec<u16>
     superkeysWaitFor: number; // Duration
     superkeysTimeout: number; // Duration
