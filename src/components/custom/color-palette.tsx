@@ -63,14 +63,7 @@ export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
             {colors.map((color, index) => (
                 <Dialog key={index}>
                     <DialogTrigger asChild>
-                        <div>
-                            <ColorSwatch
-                                color={color}
-                                index={index}
-                                selected={selectedIndex === index}
-                                onClick={handleSwatchClick}
-                            />
-                        </div>
+                        <ColorSwatch color={color} index={index} selected={selectedIndex === index} onClick={handleSwatchClick} />
                     </DialogTrigger>
                     <DialogContent className="w-fit">
                         <DialogHeader>
