@@ -1,24 +1,24 @@
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface LayerSelectorProps {
-    defaultLayer: number
-    layers: number
-    onChange?: (layer: number) => void
+    defaultLayer: number;
+    layers: number;
+    onChange?: (layer: number) => void;
 }
 
 export function LayerSelector({ defaultLayer = 1, layers, onChange }: LayerSelectorProps) {
-    const [selectedLayer, setSelectedLayer] = useState(defaultLayer)
+    const [selectedLayer, setSelectedLayer] = useState(defaultLayer);
 
     const handleLayerChange = (layer: number) => {
-        setSelectedLayer(layer)
-        onChange?.(layer)
-    }
+        setSelectedLayer(layer);
+        onChange?.(layer);
+    };
 
     return (
         <div className="flex flex-wrap gap-2">
-            {Array.from({ length: layers }, (_, i) => i + 1).map((layer) => (
+            {Array.from({ length: layers }, (_, i) => i + 1).map(layer => (
                 <Button
                     key={layer}
                     variant={selectedLayer === layer ? "default" : "outline"}
@@ -35,5 +35,5 @@ export function LayerSelector({ defaultLayer = 1, layers, onChange }: LayerSelec
                 </Button>
             ))}
         </div>
-    )
+    );
 }

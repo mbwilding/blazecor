@@ -1,6 +1,7 @@
 import { LayoutDefy } from "@/components/dygma/layouts/defy";
 import { ColorPalette } from "@/components/custom/ColorPalette";
 import { Color, Settings } from "@/types/ffi/settings";
+import { LayerSelector } from "@/components/custom/LayerSelector";
 
 export interface PageColorsProps {
     settings: Settings;
@@ -19,6 +20,7 @@ export default function PageColors({ settings }: PageColorsProps) {
     return (
         <div className="flex flex-col justify-center items-center">
             <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
+            <LayerSelector defaultLayer={settings.settingsDefaultlayer} layers={10} />
             <LayoutDefy
                 layer={0}
                 darkMode={true}
