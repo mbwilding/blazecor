@@ -3,13 +3,13 @@
 import { Neuron } from "./neurons";
 
 export interface DeviceListType {
-  name: string;
-  available: boolean;
-  connected: boolean;
-  config: Neuron;
-  file: boolean;
-  // TODO
-  // device: Device;
-  serialNumber: string;
-  index: number;
+    name: string;
+    available: boolean;
+    connected: boolean;
+    config: Neuron;
+    file: boolean;
+    // TODO
+    // device: Device;
+    serialNumber: string;
+    index: number;
 }

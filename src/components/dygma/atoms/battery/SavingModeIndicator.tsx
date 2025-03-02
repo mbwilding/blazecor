@@ -21,26 +21,26 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@Rende
 import { IconLeaf } from "@Renderer/components/atoms/icons";
 
 interface SavingModeIndicatorProps {
-  isSavingMode: boolean;
+    isSavingMode: boolean;
 }
 
 function SavingModeIndicator({ isSavingMode }: SavingModeIndicatorProps) {
-  return (
-    <div
-      className={`batterySavingMode absolute top-[98px] left-1/2 transition-colors ${isSavingMode ? "savingModeEnabled status--saving" : "savingModeDisabled status--default"}`}
-    >
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <IconLeaf />
-          </TooltipTrigger>
-          <TooltipContent>
-            Saving mode <strong>{isSavingMode ? "enabled" : "disabled"}</strong>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
-  );
+    return (
+        <div
+            className={`batterySavingMode absolute top-[98px] left-1/2 transition-colors ${isSavingMode ? "savingModeEnabled status--saving" : "savingModeDisabled status--default"}`}
+        >
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger>
+                        <IconLeaf />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        Saving mode <strong>{isSavingMode ? "enabled" : "disabled"}</strong>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+        </div>
+    );
 }
 
 export default SavingModeIndicator;

@@ -17,39 +17,39 @@
 import { JSX } from "react";
 
 export interface MacrosType {
-  actions: MacroActionsType[];
-  id?: number;
-  name: string;
-  macro: string;
+    actions: MacroActionsType[];
+    id?: number;
+    name: string;
+    macro: string;
 }
 
 export interface MacroActionsType {
-  keyCode: number | number[];
-  type: number;
-  id?: number;
+    keyCode: number | number[];
+    type: number;
+    id?: number;
 }
 
 export type MacroEAType = {
-  enum: string;
-  name: string;
-  id?: number;
-  icon?: string | JSX.Element;
-  smallIcon?: string | JSX.Element;
+    enum: string;
+    name: string;
+    id?: number;
+    icon?: string | JSX.Element;
+    smallIcon?: string | JSX.Element;
 };
 
 export type MacroModType = {
-  id: number;
-  name: string;
-  keyCode: number;
-  color: string;
+    id: number;
+    name: string;
+    keyCode: number;
+    color: string;
 };
 
 export interface RowsRepresentation {
-  symbol: string | JSX.Element;
-  keyCode: number | number[];
-  type: number;
-  id: number;
-  uid: number;
-  color: string;
-  ucolor: string;
+    symbol: string | JSX.Element;
+    keyCode: number | number[];
+    type: number;
+    id: number;
+    uid: number;
+    color: string;
+    ucolor: string;
 }

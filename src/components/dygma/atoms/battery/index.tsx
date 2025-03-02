@@ -22,10 +22,10 @@ import PileIndicator from "./PileIndicator";
 import SavingModeIndicator from "./SavingModeIndicator";
 
 export {
-  BatteryStatusSide,
-  DefyBatteryIndicator,
-  DefyBatteryIndicatorLeft,
-  DefyBatteryIndicatorRight,
-  PileIndicator,
-  SavingModeIndicator,
+    BatteryStatusSide,
+    DefyBatteryIndicator,
+    DefyBatteryIndicatorLeft,
+    DefyBatteryIndicatorRight,
+    PileIndicator,
+    SavingModeIndicator,
 };

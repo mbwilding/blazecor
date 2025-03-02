@@ -20,37 +20,37 @@ import { MacrosType } from "./macros";
 // import { KeymapDB } from "../../api/keymap";
 
 export interface SuperkeysType {
-  actions: number[];
-  name: string;
-  id: number;
-  superkey?: string;
+    actions: number[];
+    name: string;
+    id: number;
+    superkey?: string;
 }
 
 export interface SuperKeyActionsProps {
-  superkeys: SuperkeysType[];
-  selected: number;
-  selectedAction: number;
-  macros: MacrosType[];
-  changeSelected: (id: number) => void;
-  updateSuper: (newSuper: SuperkeysType[], newID: number) => void;
-  updateAction: (actionNumber: number, newAction: unknown) => void;
-  changeAction: (id: number) => void;
-  // TODO
-  // keymapDB: KeymapDB;
+    superkeys: SuperkeysType[];
+    selected: number;
+    selectedAction: number;
+    macros: MacrosType[];
+    changeSelected: (id: number) => void;
+    updateSuper: (newSuper: SuperkeysType[], newID: number) => void;
+    updateAction: (actionNumber: number, newAction: unknown) => void;
+    changeAction: (id: number) => void;
+    // TODO
+    // keymapDB: KeymapDB;
 }
 
 export interface SuperkeyPickerProps {
-  superkeys: SuperkeysType[];
-  selected: number;
-  macros: MacrosType[];
-  updateAction: (actionNumber: number, newAction: unknown) => void;
-  // TODO
-  // keymapDB: KeymapDB;
-  onClick: (id: number) => void;
-  index: number;
-  icon?: JSX.Element;
-  title: string;
-  description: string;
-  elementActive: boolean;
-  variant?: "subtle" | "regular";
+    superkeys: SuperkeysType[];
+    selected: number;
+    macros: MacrosType[];
+    updateAction: (actionNumber: number, newAction: unknown) => void;
+    // TODO
+    // keymapDB: KeymapDB;
+    onClick: (id: number) => void;
+    index: number;
+    icon?: JSX.Element;
+    title: string;
+    description: string;
+    elementActive: boolean;
+    variant?: "subtle" | "regular";
 }

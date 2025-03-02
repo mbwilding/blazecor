@@ -18,35 +18,35 @@
 // import { DeviceClass } from "./devices";
 
 export interface SelectKeyboardProps {
-  onConnect: (...args: any[]) => any;
-  onDisconnect: () => void;
-  connected: boolean;
-  device: unknown;
-  darkMode: boolean;
-  restoredOk: boolean;
-  setLoading: (loading: boolean) => void;
+    onConnect: (...args: any[]) => any;
+    onDisconnect: () => void;
+    connected: boolean;
+    device: unknown;
+    darkMode: boolean;
+    restoredOk: boolean;
+    setLoading: (loading: boolean) => void;
 }
 
 export interface NeuronConnectionProps {
-  loading: boolean;
-  scanFoundDevices: boolean;
-  scanDevices: () => void;
-  onKeyboardConnect: () => Promise<void>;
-  connected: boolean;
-  onDisconnect: () => Promise<void>;
-  onDisconnectConnect: () => Promise<void>;
-  deviceItems: any;
-  selectPort: (event: any) => void;
-  selectedPortIndex: number;
-  isVirtual: boolean;
-  // TODO
-  // virtualDevice: DeviceClass;
-  connectedDeviceIndex: number;
+    loading: boolean;
+    scanFoundDevices: boolean;
+    scanDevices: () => void;
+    onKeyboardConnect: () => Promise<void>;
+    connected: boolean;
+    onDisconnect: () => Promise<void>;
+    onDisconnectConnect: () => Promise<void>;
+    deviceItems: any;
+    selectPort: (event: any) => void;
+    selectedPortIndex: number;
+    isVirtual: boolean;
+    // TODO
+    // virtualDevice: DeviceClass;
+    connectedDeviceIndex: number;
 }
 
 export interface DeviceItemsType {
-  index: number;
-  displayName: string;
-  userName: string;
-  path: string;
+    index: number;
+    displayName: string;
+    userName: string;
+    path: string;
 }

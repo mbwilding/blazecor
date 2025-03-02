@@ -35,51 +35,51 @@ import Heading from "@Renderer/components/atoms/Heading";
  */
 
 interface ToasMessageProps {
-  title: string;
-  content?: string;
-  icon?: React.ReactNode;
-  onClickAction?: (...args: any[]) => any;
-  clickActionText?: string;
-  onClickDismiss?: (...args: any[]) => any;
-  clickDismissText?: string;
+    title: string;
+    content?: string;
+    icon?: React.ReactNode;
+    onClickAction?: (...args: any[]) => any;
+    clickActionText?: string;
+    onClickDismiss?: (...args: any[]) => any;
+    clickDismissText?: string;
 }
 
 const ToastMessage: React.FC<ToasMessageProps> = ({
-  title,
-  content,
-  icon,
-  onClickAction,
-  clickActionText,
-  onClickDismiss,
-  clickDismissText,
+    title,
+    content,
+    icon,
+    onClickAction,
+    clickActionText,
+    onClickDismiss,
+    clickDismissText,
 }) => (
-  <div className="toastContentWrapper">
-    <div
-      className={`toastBody flex flex-nowrap py-6 px-8 ${onClickAction ? "yeah" : "meh"} ${icon ? "hasIcon pl-[1rem]" : "noIcon"}`}
-    >
-      {icon && <div className="toastIcon w-[32px] [&_svg]:mt-[-6px]">{icon}</div>}
-      <div className={`toastBodyInner ${icon ? "pl-[8px]" : ""}`}>
-        {title && (
-          <Heading text={title} headingLevel={4} renderAs="h4" className="mb-1 -mt-1">
-            {title}
-          </Heading>
+    <div className="toastContentWrapper">
+        <div
+            className={`toastBody flex flex-nowrap py-6 px-8 ${onClickAction ? "yeah" : "meh"} ${icon ? "hasIcon pl-[1rem]" : "noIcon"}`}
+        >
+            {icon && <div className="toastIcon w-[32px] [&_svg]:mt-[-6px]">{icon}</div>}
+            <div className={`toastBodyInner ${icon ? "pl-[8px]" : ""}`}>
+                {title && (
+                    <Heading text={title} headingLevel={4} renderAs="h4" className="mb-1 -mt-1">
+                        {title}
+                    </Heading>
+                )}
+                <div className="toastContent text-2ssm font-medium leading-snug" dangerouslySetInnerHTML={{ __html: content }} />
+            </div>
+        </div>
+        {onClickAction || onClickDismiss ? (
+            <div className="toastFooter flex flex-nowrap justify-end pt-0 px-[32px] pb-[24px] gap-2">
+                <Button variant="outline" onClick={onClickDismiss} size="sm">
+                    {clickDismissText}
+                </Button>
+                <Button variant="primary" onClick={onClickAction} size="sm">
+                    {clickActionText}
+                </Button>
+            </div>
+        ) : (
+            ""
         )}
-        <div className="toastContent text-2ssm font-medium leading-snug" dangerouslySetInnerHTML={{ __html: content }} />
-      </div>
     </div>
-    {onClickAction || onClickDismiss ? (
-      <div className="toastFooter flex flex-nowrap justify-end pt-0 px-[32px] pb-[24px] gap-2">
-        <Button variant="outline" onClick={onClickDismiss} size="sm">
-          {clickDismissText}
-        </Button>
-        <Button variant="primary" onClick={onClickAction} size="sm">
-          {clickActionText}
-        </Button>
-      </div>
-    ) : (
-      ""
-    )}
-  </div>
 );
 
 export default ToastMessage;

@@ -17,72 +17,72 @@
 import { JSX, ReactNode } from "react";
 
 export interface LayoutEditorProps {
-  onDisconnect: () => void;
-  startContext: () => void;
-  cancelContext: () => void;
-  darkMode: boolean;
-  setLoading: (lding: boolean) => void;
-  inContext: boolean;
-  restoredOk: boolean;
-  handleSetRestoredOk: (status: boolean) => void;
-  saveButtonRef: React.RefObject<HTMLButtonElement>;
-  discardChangesButtonRef: React.RefObject<HTMLButtonElement>;
+    onDisconnect: () => void;
+    startContext: () => void;
+    cancelContext: () => void;
+    darkMode: boolean;
+    setLoading: (lding: boolean) => void;
+    inContext: boolean;
+    restoredOk: boolean;
+    handleSetRestoredOk: (status: boolean) => void;
+    saveButtonRef: React.RefObject<HTMLButtonElement>;
+    discardChangesButtonRef: React.RefObject<HTMLButtonElement>;
 }
 
 export interface KeyType {
-  keyCode: number;
-  label: string | JSX.Element;
-  extraLabel?: string | JSX.Element;
-  verbose?: string | JSX.Element;
-  alt?: boolean;
+    keyCode: number;
+    label: string | JSX.Element;
+    extraLabel?: string | JSX.Element;
+    verbose?: string | JSX.Element;
+    alt?: boolean;
 }
 
 export interface SegmentedKeyType {
-  base: number;
-  modified: number;
+    base: number;
+    modified: number;
 }
 
 export interface KeymapType {
-  custom: KeyType[][];
-  default: KeyType[][];
-  onlyCustom: boolean;
+    custom: KeyType[][];
+    default: KeyType[][];
+    onlyCustom: boolean;
 }
 
 export interface PaletteType {
-  r: number;
-  g: number;
-  b: number;
-  rgb: string;
+    r: number;
+    g: number;
+    b: number;
+    rgb: string;
 }
 
 export interface ColormapType {
-  palette: PaletteType[];
-  colorMap: number[][];
+    palette: PaletteType[];
+    colorMap: number[][];
 }
 export interface OperationSystemIcons {
-  shift: {
-    xs: string;
-    sm: string;
-    md: string;
-  };
-  control: {
-    xs: string;
-    sm: string;
-    md: string;
-  };
-  os: {
-    xs: ReactNode;
-    sm: ReactNode;
-    md: ReactNode;
-  };
-  alt: {
-    xs: string;
-    sm: string;
-    md: string;
-  };
-  altGr: {
-    xs: string;
-    sm: string;
-    md: string;
-  };
+    shift: {
+        xs: string;
+        sm: string;
+        md: string;
+    };
+    control: {
+        xs: string;
+        sm: string;
+        md: string;
+    };
+    os: {
+        xs: ReactNode;
+        sm: ReactNode;
+        md: ReactNode;
+    };
+    alt: {
+        xs: string;
+        sm: string;
+        md: string;
+    };
+    altGr: {
+        xs: string;
+        sm: string;
+        md: string;
+    };
 }

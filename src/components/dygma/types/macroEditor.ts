@@ -22,58 +22,58 @@ import { Neuron } from "./neurons";
 import { SuperkeysType } from "./superkeys";
 
 export interface MacroEditorProps {
-  onDisconnect: () => void;
-  startContext: () => void;
-  cancelContext: () => void;
-  setLoading: (lding: boolean) => void;
-  saveButtonRef: React.RefObject<HTMLButtonElement>;
-  discardChangesButtonRef: React.RefObject<HTMLButtonElement>;
+    onDisconnect: () => void;
+    startContext: () => void;
+    cancelContext: () => void;
+    setLoading: (lding: boolean) => void;
+    saveButtonRef: React.RefObject<HTMLButtonElement>;
+    discardChangesButtonRef: React.RefObject<HTMLButtonElement>;
 }
 
 export interface MacroEditorInitialStateType {
-  keymap: KeymapType;
-  macros: MacrosType[];
-  superkeys: SuperkeysType[];
-  storedMacros: MacrosType[];
-  storedSuper: SuperkeysType[];
-  neurons: Neuron[];
-  neuronID: string;
-  maxMacros: number;
-  modified: boolean;
-  selectedMacro: number;
-  showDeleteModal: boolean;
-  listToDelete: ListToDeleteType[];
-  listToDeleteS: ListToDeleteSType[];
-  listToDeleteM: ListToDeleteMType[];
-  futureMacros: MacrosType[];
-  selectedList: number;
-  usedMemory: number;
-  totalMemory: number;
-  macrosEraser: string;
-  loading: boolean;
-  // TODO
-  // currentLanguageLayout: LanguageType;
-  kbtype: string;
-  scrollPos: number;
+    keymap: KeymapType;
+    macros: MacrosType[];
+    superkeys: SuperkeysType[];
+    storedMacros: MacrosType[];
+    storedSuper: SuperkeysType[];
+    neurons: Neuron[];
+    neuronID: string;
+    maxMacros: number;
+    modified: boolean;
+    selectedMacro: number;
+    showDeleteModal: boolean;
+    listToDelete: ListToDeleteType[];
+    listToDeleteS: ListToDeleteSType[];
+    listToDeleteM: ListToDeleteMType[];
+    futureMacros: MacrosType[];
+    selectedList: number;
+    usedMemory: number;
+    totalMemory: number;
+    macrosEraser: string;
+    loading: boolean;
+    // TODO
+    // currentLanguageLayout: LanguageType;
+    kbtype: string;
+    scrollPos: number;
 }
 
 export interface ListToDeleteType {
-  key: KeyType;
-  newKey: number;
-  layer: number;
-  pos: number;
+    key: KeyType;
+    newKey: number;
+    layer: number;
+    pos: number;
 }
 
 export interface ListToDeleteSType {
-  action: number;
-  newKey: number;
-  superIdx: number;
-  pos: number;
+    action: number;
+    newKey: number;
+    superIdx: number;
+    pos: number;
 }
 
 export interface ListToDeleteMType {
-  actions: MacroActionsType[];
-  newKey: number;
-  macroIdx: number;
-  pos: number;
+    actions: MacroActionsType[];
+    newKey: number;
+    macroIdx: number;
+    pos: number;
 }

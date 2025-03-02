@@ -19,20 +19,20 @@ import { MacrosType } from "./macros";
 import { SuperkeysType } from "./superkeys";
 
 export interface LayerType {
-  id: number;
-  name: string;
+    id: number;
+    name: string;
 }
 
 export interface Neuron {
-  id: string;
-  name: string;
-  layers: Array<LayerType>;
-  macros: Array<MacrosType>;
-  superkeys: Array<SuperkeysType>;
-  device?: DygmaDeviceType;
+    id: string;
+    name: string;
+    layers: Array<LayerType>;
+    macros: Array<MacrosType>;
+    superkeys: Array<SuperkeysType>;
+    device?: DygmaDeviceType;
 }
 
 export interface Neurons {
-  neurons: Neuron[];
-  selectedNeuron: number;
+    neurons: Neuron[];
+    selectedNeuron: number;
 }

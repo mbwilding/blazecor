@@ -20,21 +20,21 @@ import React from "react";
 import OSKey from "@Renderer/components/molecules/KeyTags/OSKey";
 
 interface LabelModifierProps {
-  label?: "control" | "shift" | "os" | "alt" | "altGr" | "Hyper" | "Meh";
-  size?: "xs" | "sm" | "md";
+    label?: "control" | "shift" | "os" | "alt" | "altGr" | "Hyper" | "Meh";
+    size?: "xs" | "sm" | "md";
 }
 
 const LabelModifier = ({ label, size = "md" }: LabelModifierProps) => (
-  <div
-    className={`font-semibold tracking-tight rounded-xl backdrop-blur-sm ${
-      size === "md"
-        ? "border-[1px] border-solid border-gray-800/10 dark:border-gray-800/50 text-gray-25 dark:text-gray-50 bg-gray-400/50 px-[8px] py-[4px] text-[11px]"
-        : ""
-    } 
+    <div
+        className={`font-semibold tracking-tight rounded-xl backdrop-blur-sm ${
+            size === "md"
+                ? "border-[1px] border-solid border-gray-800/10 dark:border-gray-800/50 text-gray-25 dark:text-gray-50 bg-gray-400/50 px-[8px] py-[4px] text-[11px]"
+                : ""
+        } 
     ${size === "sm" ? "text-gray-200 bg-gray-600/60 px-[3px] py-[6px] text-[10px]" : ""}`}
-  >
-    {label === "Hyper" || label === "Meh" ? label : <OSKey renderKey={label} size={size} />}
-  </div>
+    >
+        {label === "Hyper" || label === "Meh" ? label : <OSKey renderKey={label} size={size} />}
+    </div>
 );
 
 export default LabelModifier;

@@ -19,51 +19,51 @@ import React, { MouseEvent } from "react";
 import colorDarkerCalculation from "@/utils/colorDarkerCalculation";
 
 interface UnderGlowStripProps {
-  id: string;
-  onClick: (e: MouseEvent) => void;
-  fill: string;
-  visibility: boolean;
-  clickAble: boolean;
-  x: number;
-  y: number;
-  selectedLED?: number;
-  dataLedIndex: number;
-  dataKeyIndex: number;
-  dataLayer: number;
-  path: string;
+    id: string;
+    onClick: (e: MouseEvent) => void;
+    fill: string;
+    visibility: boolean;
+    clickAble: boolean;
+    x: number;
+    y: number;
+    selectedLED?: number;
+    dataLedIndex: number;
+    dataKeyIndex: number;
+    dataLayer: number;
+    path: string;
 
-  // TODO: not used
-  stroke: string;
-  strokeWidth: number;
+    // TODO: not used
+    stroke: string;
+    strokeWidth: number;
 }
 
 function UnderGlowStrip(props: UnderGlowStripProps) {
-  const [color, setColor] = React.useState("rgb(255,255,255)");
-  const [strokeColor, setStrokeColor] = React.useState(colorDarkerCalculation("rgb(255,255,255)"));
-  const { id, onClick, fill, visibility, clickAble, x, y, selectedLED, dataLedIndex, dataKeyIndex, dataLayer, path } = props;
+    const [color, setColor] = React.useState("rgb(255,255,255)");
+    const [strokeColor, setStrokeColor] = React.useState(colorDarkerCalculation("rgb(255,255,255)"));
+    const { id, onClick, fill, visibility, clickAble, x, y, selectedLED, dataLedIndex, dataKeyIndex, dataLayer, path } = props;
 
-  React.useEffect(() => {
-    setColor(fill);
-    setStrokeColor(colorDarkerCalculation(fill));
-  }, [fill]);
+    React.useEffect(() => {
+        setColor(fill);
+        setStrokeColor(colorDarkerCalculation(fill));
+    }, [fill]);
 
-  if (!visibility) return null;
-  return (
-    <>
-      <g
-        id={id}
-        onClick={clickAble ? onClick : () => {}}
-        data-led-index={dataLedIndex}
-        data-key-index={dataKeyIndex}
-        data-layer={dataLayer}
-        className={`${selectedLED === dataLedIndex ? "keyOnFocus" : "keyOnHold"} underGlowStrip ${clickAble ? "clickAble" : ""}`}
-        transform={`translate(${x},${y})`}
-      >
-        <path d={path} fill={color} className="underGlowStripShadow" />
-        <path d={path} fill={color} />
-        <path d={path} fill="transparent" strokeWidth={1.5} stroke={strokeColor} className="underGlowStripStroke" />
-      </g>
-    </>
-  );
+    if (!visibility) return null;
+    return (
+        <>
+            <g
+                id={id}
+                onClick={clickAble ? onClick : () => {}}
+                data-led-index={dataLedIndex}
+                data-key-index={dataKeyIndex}
+                data-layer={dataLayer}
+                className={`${selectedLED === dataLedIndex ? "keyOnFocus" : "keyOnHold"} underGlowStrip ${clickAble ? "clickAble" : ""}`}
+                transform={`translate(${x},${y})`}
+            >
+                <path d={path} fill={color} className="underGlowStripShadow" />
+                <path d={path} fill={color} />
+                <path d={path} fill="transparent" strokeWidth={1.5} stroke={strokeColor} className="underGlowStripStroke" />
+            </g>
+        </>
+    );
 }
 export default UnderGlowStrip;
