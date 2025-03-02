@@ -22,8 +22,8 @@ const ColorSwatch = memo(
 ColorSwatch.displayName = "ColorSwatch"
 
 export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
-    const [selectedColor, setSelectedColor] = useState<Color | null>(null)
-    const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
+    const [selectedColor, setSelectedColor] = useState<Color>()
+    const [selectedIndex, setSelectedIndex] = useState<number>()
 
     const handleSwatchClick = useCallback(
         (index: number) => {
@@ -36,7 +36,7 @@ export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
     const handleColorChange = useCallback(
         (color: Color) => {
             setSelectedColor(color)
-            if (selectedIndex !== null && onChange) {
+            if (selectedIndex && onChange) {
                 onChange(selectedIndex, color)
             }
         },

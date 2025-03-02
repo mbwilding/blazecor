@@ -327,14 +327,21 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
 
 // Update color conversion utilities to work with Color type
 function hexToRgb(hex: string): Color {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-    return result
-        ? {
-            r: Number.parseInt(result[1], 16),
-            g: Number.parseInt(result[2], 16),
-            b: Number.parseInt(result[3], 16),
-        }
-        : { r: 0, g: 0, b: 0 }
+    if (hex.startsWith('#')) {
+        console.debug(`Color hex doesn't start with #: ${hex}`);
+        hex = hex.slice(1);
+    }
+
+    if (hex.length !== 6) {
+        console.debug(`Color string invalid: ${hex}`);
+        return { r: 0, g: 0, b: 0 };
+    }
+
+    const r = Number.parseInt(hex.slice(0, 2), 16);
+    const g = Number.parseInt(hex.slice(2, 4), 16);
+    const b = Number.parseInt(hex.slice(4, 6), 16);
+
+    return { r, g, b };
 }
 
 function rgbToHex(r: number, g: number, b: number): string {
