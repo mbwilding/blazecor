@@ -10,7 +10,9 @@ export interface PageColorsProps {
     settings: Settings;
 }
 
-const leds = 177; // NOTE: Defy
+ // NOTE: Defy
+const layers = 10;
+const leds = 177;
 
 export default function PageColors({ device, settings }: PageColorsProps) {
     const [currentLayer, setCurrentLayer] = useState(settings.settingsDefaultLayer);
@@ -36,7 +38,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     return (
         <div className="flex flex-col justify-center items-center">
             <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
-            <LayerSelector defaultLayer={currentLayer + 1} layers={10} onChange={handleSelectedLayerChange} />
+            <LayerSelector defaultLayer={currentLayer + 1} layers={layers} onChange={handleSelectedLayerChange} />
             <LayoutDefy
                 layer={currentLayer + 1} // TODO: Remove + 1?
                 darkMode={true}
