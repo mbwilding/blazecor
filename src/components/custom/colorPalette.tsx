@@ -51,7 +51,7 @@ export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
                         <DialogTrigger asChild>
                             <ColorSwatch color={color} index={index} onClick={handleSwatchClick} />
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
+                        <DialogContent className="w-[425px]">
                             <DialogHeader>
                                 <DialogTitle>Edit Color</DialogTitle>
                             </DialogHeader>
