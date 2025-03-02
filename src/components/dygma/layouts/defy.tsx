@@ -19,7 +19,7 @@
 
 import React, { MouseEvent } from "react";
 import Key from "../components/key";
-import UnderGlowStrip from "../components/under-glow-strip";
+import UnderGlowStrip from "../components/underGlowStrip";
 import { Color } from "@/types/ffi/settings";
 
 export interface DefyProps {
