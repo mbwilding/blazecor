@@ -39,7 +39,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     return (
         <div className="flex flex-col justify-center items-center">
             <div className="flex flex-row gap-4">
-              <Card className="w-fit">
+              <Card className="w-fit flex flex-row items-center">
                 <CardHeader>
                   <CardTitle>Palette</CardTitle>
                 </CardHeader>
@@ -47,7 +47,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
                   <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
                 </CardContent>
               </Card>
-              <Card className="w-fit">
+              <Card className="w-fit flex flex-row items-center">
                 <CardHeader>
                   <CardTitle>Layers</CardTitle>
                 </CardHeader>
