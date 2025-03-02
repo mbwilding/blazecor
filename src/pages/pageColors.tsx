@@ -34,7 +34,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
                 darkMode={true}
                 showUnderglow={device.hardware.keyboardUnderglow !== undefined}
                 isStandardView={false}
-                colormap={settings.colorMap}
+                colormap={settings.colorMap} // TODO: Slice the array
                 palette={palette}
                 onKeySelect={e => console.log(e)}
             />
