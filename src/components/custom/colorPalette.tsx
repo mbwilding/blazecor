@@ -33,8 +33,11 @@ export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
     const handleColorChange = useCallback(
         (color: Color) => {
             setSelectedColor(color);
-            if (selectedIndex !== undefined && onChange) {
-                onChange(selectedIndex, color);
+            if (selectedIndex) {
+                colors[selectedIndex] = color;
+                if (onChange) {
+                    onChange(selectedIndex, color);
+                }
             }
         },
         [selectedIndex, onChange],
