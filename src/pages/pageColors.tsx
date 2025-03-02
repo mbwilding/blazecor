@@ -18,7 +18,7 @@ export default function PageColors({ settings }: PageColorsProps) {
 
     return (
         <div className="flex flex-col justify-center items-center">
-            <ColorPalette colors={palette} onChange={handleSelectedColorChange} />
+            <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
             <LayoutDefy
                 layer={0}
                 darkMode={true}
