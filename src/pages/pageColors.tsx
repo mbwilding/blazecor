@@ -7,8 +7,10 @@ export interface PageColorsProps {
 }
 
 export default function PageColors({ settings }: PageColorsProps) {
+    let palette = settings.paletteRgb || settings.paletteRgbw;
+    let colorMap = settings.colorMap;
+
     const handleSelectedColorChange = (index: number, newColor: Color) => {
-        let palette = settings.paletteRgb || settings.paletteRgbw;
         if (palette) {
             palette[index] = newColor;
         }
@@ -16,14 +18,14 @@ export default function PageColors({ settings }: PageColorsProps) {
 
     return (
         <div className="flex flex-col justify-center items-center">
-            <ColorPalette colors={settings.paletteRgb || settings.paletteRgbw || []} onChange={handleSelectedColorChange} />
+            <ColorPalette colors={palette} onChange={handleSelectedColorChange} />
             <LayoutDefy
                 layer={0}
                 darkMode={true}
                 showUnderglow={true}
                 isStandardView={false}
-                colormap={settings?.colorMap}
-                palette={settings?.paletteRgb || settings?.paletteRgbw}
+                colormap={colorMap}
+                palette={palette}
                 onKeySelect={e => console.log(e)}
             />
         </div>
