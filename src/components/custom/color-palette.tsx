@@ -35,8 +35,6 @@ const ColorSwatch = memo(
     ),
 );
 
-ColorSwatch.displayName = "ColorSwatch";
-
 export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
     const [selectedColor, setSelectedColor] = useState<Color>();
     const [selectedIndex, setSelectedIndex] = useState<number>();
