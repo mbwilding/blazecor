@@ -25,7 +25,7 @@ import { Color } from "@/types/ffi/settings";
 export interface DefyProps {
     layer: number;
     keymap?: number[];
-    colormap?: number[];
+    colorMap?: number[];
     selectedKey?: number;
     selectedLED?: number;
     darkMode: boolean;
@@ -220,7 +220,7 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
 
         const getStrokeWidth = (row: number, col?: number): number => (isSelected(row, col) ? 3.0 : 1.5);
 
-        const colormap = this.props.colormap || Array(177).fill(0);
+        const colormap = this.props.colorMap || Array(177).fill(0);
 
         const palette: Color[] =
             this.props.palette && this.props.palette.length > 0

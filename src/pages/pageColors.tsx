@@ -42,7 +42,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
                 darkMode={true}
                 showUnderglow={device.hardware.keyboardUnderglow !== undefined}
                 isStandardView={false}
-                colormap={colorMap}
+                colorMap={colorMap}
                 palette={palette}
                 onKeySelect={e => console.log(e)}
             />
