@@ -12,6 +12,15 @@ export default function PageColors({ settings }: PageColorsProps) {
 
     const handleSelectedColorChange = (index: number, newColor: Color) => {
         setColorIndex(index);
+
+        if (settings.paletteRgbw) {
+            settings.paletteRgbw[index] = newColor;
+        }
+
+        if (settings.paletteRgb) {
+            settings.paletteRgb[index] = newColor;
+        }
+
         console.log(`Color at index ${index} changed to: ${newColor.r}, ${newColor.g}, ${newColor.b}`);
     };
 
