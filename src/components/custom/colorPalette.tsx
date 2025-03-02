@@ -1,5 +1,5 @@
 import { useState, useCallback, memo } from "react";
-import { ColorPicker } from "./color-picker";
+import { ColorPicker } from "./colorPicker";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Color } from "@/types/ffi/settings";
 
