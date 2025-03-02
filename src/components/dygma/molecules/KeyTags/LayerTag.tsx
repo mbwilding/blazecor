@@ -1,4 +1,5 @@
-import { IconLayerLock, IconLayerShift } from "../../atoms/icons";
+import IconLayerLock from "../../atoms/icons/IconLayerLock";
+import IconLayerShift from "../../atoms/icons/IconLayerShift";
 
 interface LayerTagProps {
     type: "shift" | "lock";

@@ -1,5 +1,5 @@
 import OSKey from "./OSKey";
-import { IconOneShotMode } from "../../atoms/icons";
+import IconOneShotMode from "../../atoms/icons/IconOneShotMode";
 
 interface OneShotTagProps {
     layerNumber?: number;

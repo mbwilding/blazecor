@@ -1,5 +1,3 @@
-import React from "react";
-
 interface IconOneShotModeProps {
     mode?: "layer" | "modifier";
 }

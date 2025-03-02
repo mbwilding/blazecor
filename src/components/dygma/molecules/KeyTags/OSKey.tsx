@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { FaLinux } from "react-icons/fa";
 import { AiFillWindows } from "react-icons/ai";
-import { IconCommandMacOs } from "../../atoms/icons";
 import { OperationSystemIcons } from "../../types/layout";
+import IconCommandMacOs from "../../atoms/icons/IconCommandMacOs";
 
 type OperationSystemKey = "shift" | "control" | "os" | "alt" | "altGr";
 

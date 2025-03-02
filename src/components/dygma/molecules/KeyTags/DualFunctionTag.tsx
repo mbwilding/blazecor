@@ -1,5 +1,5 @@
 import OSKey from "./OSKey";
-import { IconLayerShift } from "../../atoms/icons";
+import IconLayerShift from "../../atoms/icons/IconLayerShift";
 
 interface DualFunctionTagProps {
     layerNumber?: number;
