@@ -11,9 +11,9 @@ export interface PageColorsProps {
 }
 
 export default function PageColors({ device, settings }: PageColorsProps) {
-    const [selectedLayer, setSelectedLayer] = useState(settings.settingsDefaultLayer + 1);
-
-    let palette = device.hardware.rgbwMode ? settings.paletteRgbw : settings.paletteRgb;
+    const [currentLayer, setCurrentLayer] = useState(settings.settingsDefaultLayer + 1);
+    const [palette, setPalette] = useState(device.hardware.rgbwMode ? settings.paletteRgbw : settings.paletteRgb);
+    const [colorMap, setColorMap] = useState(settings.colorMap); // TODO: Slice the array
 
     const handleSelectedColorChange = (index: number, newColor: Color) => {
         if (palette) {
@@ -22,19 +22,19 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     };
 
     const handleSelectedLayerChange = (index: number) => {
-        setSelectedLayer(index);
+        setCurrentLayer(index);
     };
 
     return (
         <div className="flex flex-col justify-center items-center">
             <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
-            <LayerSelector defaultLayer={selectedLayer} layers={10} onChange={handleSelectedLayerChange} />
+            <LayerSelector defaultLayer={currentLayer} layers={10} onChange={handleSelectedLayerChange} />
             <LayoutDefy
-                layer={selectedLayer - 1}
+                layer={currentLayer - 1}
                 darkMode={true}
                 showUnderglow={device.hardware.keyboardUnderglow !== undefined}
                 isStandardView={false}
-                colormap={settings.colorMap} // TODO: Slice the array
+                colormap={colorMap}
                 palette={palette}
                 onKeySelect={e => console.log(e)}
             />
