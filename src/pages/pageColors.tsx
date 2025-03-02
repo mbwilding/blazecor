@@ -29,7 +29,7 @@ export default function PageColors({ settings }: PageColorsProps) {
             <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
             <LayerSelector defaultLayer={selectedLayer} layers={10} onChange={handleSelectedLayerChange} />
             <LayoutDefy
-                layer={selectedLayer}
+                layer={selectedLayer - 1}
                 darkMode={true}
                 showUnderglow={true}
                 isStandardView={false}
