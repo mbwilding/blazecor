@@ -18,7 +18,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Primary: Story = {
+export const Default: Story = {
     args: {
         colors: [
             { r: 255, g: 0, b: 0 }, // Red
