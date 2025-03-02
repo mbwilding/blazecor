@@ -220,7 +220,7 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
 
         const getStrokeWidth = (row: number, col?: number): number => (isSelected(row, col) ? 3.0 : 1.5);
 
-        const colormap = this.props.colorMap || Array(177).fill(0);
+        const colorMap = this.props.colorMap || Array(177).fill(0);
 
         const palette: Color[] =
             this.props.palette && this.props.palette.length > 0
@@ -229,7 +229,7 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
 
         const getColor = (row: number, col?: number) => {
             const ledIndex = col !== undefined ? led_map[row][col] : no_key_led_map[row - UNDERGLOW];
-            const colorIndex = colormap[ledIndex];
+            const colorIndex = colorMap[ledIndex];
 
             const color = palette[colorIndex];
             const hex = "#" + ((color.r << 16) | (color.g << 8) | color.b).toString(16).padStart(6, "0");

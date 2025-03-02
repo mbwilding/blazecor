@@ -38,7 +38,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
             <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
             <LayerSelector defaultLayer={currentLayer + 1} layers={10} onChange={handleSelectedLayerChange} />
             <LayoutDefy
-                layer={currentLayer + 1} // TODO: +1?
+                layer={currentLayer + 1} // TODO: Remove + 1?
                 darkMode={true}
                 showUnderglow={device.hardware.keyboardUnderglow !== undefined}
                 isStandardView={false}
