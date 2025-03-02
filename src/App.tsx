@@ -10,7 +10,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { RefreshCcw } from "lucide-react";
+import { Loader2, RefreshCcw } from "lucide-react";
 
 // TODO: Move
 document.documentElement.classList.add("dark");
@@ -95,7 +95,10 @@ function App() {
             ) : devices ? (
                 <DeviceConnection devices={devices} handleDeviceSelection={handleDeviceSelection} fetchDevices={fetchDevices} />
             ) : (
-                <div>Loading devices...</div>
+                <div className="flex items-center justify-center h-screen">
+                  <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                  <span>Loading devices...</span>
+                </div>
             )}
         </main>
     );
