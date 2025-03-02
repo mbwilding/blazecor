@@ -4,6 +4,8 @@ import { Device } from "./types/ffi/hardware";
 import { LayoutDefy } from "./components/dygma/layouts/defy";
 import { useConnect, useDevices, useSettings, useVersion } from "./Api";
 import { useState } from "react";
+import { ColorPalette } from "./components/ui/color-palette";
+import { Color } from "./types/ffi/settings";
 
 // TODO: Move
 document.documentElement.classList.add("dark");
@@ -16,6 +18,16 @@ function App() {
 
     const version = useVersion(device);
     const settings = useSettings(device);
+
+    // Colors
+    const [colors, setColors] = useState(settings?.paletteRgb || settings?.paletteRgbw)
+
+    const handleColorChange = (index: number, newColor: Color) => {
+        const newColors = [...(colors || [])];
+        newColors[index] = newColor;
+        setColors(newColors);
+        console.log(`Color at index ${index} changed to:`, newColor);
+    }
 
     return (
         <main className="container">
@@ -52,18 +64,23 @@ function App() {
                                     </span>
                                 ))}
                             </div>
+
+                            <div className="w-full max-w-3xl mx-auto p-6 bg-card rounded-lg shadow-sm border">
+                                <h1 className="text-2xl font-bold mb-6">Color Palette</h1>
+                                <ColorPalette colors={settings.paletteRgb || settings.paletteRgbw || []} onChange={handleColorChange} />
+                            </div>
+
+                            <LayoutDefy
+                                layer={0}
+                                darkMode={true}
+                                showUnderglow={true}
+                                isStandardView={false}
+                                colormap={settings?.colorMap}
+                                palette={settings?.paletteRgb || settings?.paletteRgbw}
+                                onKeySelect={(e) => console.log(e)}
+                            />
                         </>
                     )}
-
-                    <LayoutDefy
-                        layer={0}
-                        darkMode={true}
-                        showUnderglow={true}
-                        isStandardView={false}
-                        colormap={settings?.colorMap}
-                        palette={settings?.paletteRgb || settings?.paletteRgbw}
-                        onKeySelect={(e) => console.log(e)}
-                    />
                 </>
             ) : (
                 <>
