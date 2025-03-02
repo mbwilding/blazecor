@@ -10,7 +10,7 @@ export interface PageColorsProps {
     settings: Settings;
 }
 
- // NOTE: Defy
+// NOTE: Defy
 const layers = 10;
 const leds = 177;
 
@@ -19,7 +19,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     const [colorMap, setColorMap] = useState(() => settings.colorMap.slice(0, leds));
 
     useEffect(() => {
-        const colorMapIndex = currentLayer + currentLayer * leds;
+        const colorMapIndex = currentLayer * leds + currentLayer;
         setColorMap(settings.colorMap.slice(colorMapIndex, colorMapIndex + leds));
     }, [currentLayer]);
 
