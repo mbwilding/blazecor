@@ -54,23 +54,20 @@ function DeviceConnection({
     handleDeviceSelection,
     fetchDevices,
 }: DeviceConnectionProps) {
-    const [open, setOpen] = useState(false);
-
-    const handleOpenChange = (isOpen: boolean) => {
-        setOpen(isOpen);
-        if (isOpen) {
-            fetchDevices();
-        }
-    };
+    useEffect(() => {
+        fetchDevices();
+    }, [fetchDevices]);
 
     return (
-        <Dialog open={open} onOpenChange={handleOpenChange}>
-            <DialogTrigger asChild>
-                <Button>Devices</Button>
-            </DialogTrigger>
+        <Dialog open>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Select a Device</DialogTitle>
+                    <div className="flex items-center justify-between">
+                        <DialogTitle>Select a Device</DialogTitle>
+                        <Button variant="ghost" onClick={fetchDevices}>
+                            Refresh
+                        </Button>
+                    </div>
                 </DialogHeader>
                 <div className="flex flex-col space-y-2">
                     {devices?.map((device, index) => (
