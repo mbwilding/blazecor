@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useConnect, useDevices, useSettings, useVersion } from "./Api";
 import {
     Dialog,
-    DialogTrigger,
     DialogContent,
     DialogHeader,
     DialogTitle,
@@ -61,11 +60,11 @@ function DeviceConnection({
 
     return (
         <Dialog open>
-            <DialogContent>
+            <DialogContent className="w-[250px]">
                 <DialogHeader>
                     <div className="flex items-center justify-between">
                         <DialogTitle>Select a Device</DialogTitle>
-                        <Button variant="ghost" onClick={fetchDevices}>
+                        <Button variant="secondary" onClick={fetchDevices}>
                             <RefreshCcw />
                         </Button>
                     </div>
@@ -74,7 +73,7 @@ function DeviceConnection({
                     {devices?.map((device, index) => (
                         <Button
                             key={index}
-                            variant="ghost"
+                            variant="default"
                             onClick={() => handleDeviceSelection(device)}
                         >
                             {device.hardware.info.displayName}
