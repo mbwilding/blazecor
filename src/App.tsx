@@ -3,7 +3,6 @@ import { Button } from "./components/ui/button";
 import { Device } from "./types/ffi/hardware";
 import { useConnect, useDevices, useSettings, useVersion } from "./Api";
 import { useState } from "react";
-import { Color } from "./types/ffi/settings";
 import PageColors from "./components/pages/pageColors";
 
 // TODO: Move
