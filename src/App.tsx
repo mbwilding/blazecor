@@ -1,8 +1,10 @@
 import "./App.css";
 import { useState, useEffect, useCallback } from "react";
 import PageColors from "./pages/pageColors";
-import { Device } from "./types/ffi/hardware"; // Assuming Device is properly defined in this path
+import { Device } from "./types/ffi/hardware";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Loading from "@/components/custom/loading";
 import { useConnect, useDevices, useSettings, useVersion } from "./Api";
 import {
     Dialog,
@@ -10,8 +12,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { Loader2, RefreshCcw } from "lucide-react";
-import Loading from "./components/custom/loading";
+import { RefreshCcw } from "lucide-react";
 
 // TODO: Move
 document.documentElement.classList.add("dark");
@@ -86,19 +87,27 @@ function DeviceConnection({
     );
 }
 
+
 function App() {
     const { device, version, settings, devices, handleDeviceSelection, fetchDevices } = useDeviceConnection();
 
     return (
-        <main className="container">
-            {device && version && settings ? (
-                <PageColors settings={settings} />
-            ) : devices ? (
-                <DeviceConnection devices={devices} handleDeviceSelection={handleDeviceSelection} fetchDevices={fetchDevices} />
-            ) : (
-                <Loading message="devices" />
+        <>
+            <main className="container">
+                {device && settings ? (
+                    <PageColors settings={settings} />
+                ) : devices ? (
+                    <DeviceConnection devices={devices} handleDeviceSelection={handleDeviceSelection} fetchDevices={fetchDevices} />
+                ) : (
+                    <Loading message="devices" />
+                )}
+            </main>
+            {version && (
+                <div className="fixed bottom-4 right-4 z-50">
+                    <Badge>{`Firmware: ${version}`}</Badge>
+                </div>
             )}
-        </main>
+        </>
     );
 }
 
