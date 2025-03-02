@@ -10,7 +10,7 @@ interface ColorPaletteProps {
 
 const ColorSwatch = memo(({ color, index, onClick }: { color: Color; index: number; onClick: (index: number) => void }) => (
     <button
-        className="w-10 h-10 rounded-md border border-border shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+        className="w-12 h-12 rounded-md border border-border shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
         style={{ backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})` }}
         onClick={() => onClick(index)}
     />
