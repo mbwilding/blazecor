@@ -1,7 +1,6 @@
 import { LayoutDefy } from "@/components/dygma/layouts/defy";
 import { ColorPalette } from "@/components/custom/ColorPalette";
 import { Color, Settings } from "@/types/ffi/settings";
-import { useState } from "react";
 
 export interface PageColorsProps {
     settings: Settings;
@@ -9,15 +8,10 @@ export interface PageColorsProps {
 
 export default function PageColors({ settings }: PageColorsProps) {
     const handleSelectedColorChange = (index: number, newColor: Color) => {
-        if (settings.paletteRgbw) {
-            settings.paletteRgbw[index] = newColor;
+        let palette = settings.paletteRgb || settings.paletteRgbw;
+        if (palette) {
+            palette[index] = newColor;
         }
-
-        if (settings.paletteRgb) {
-            settings.paletteRgb[index] = newColor;
-        }
-
-        console.log(`Color at index ${index} changed to: ${newColor.r}, ${newColor.g}, ${newColor.b}`);
     };
 
     return (
