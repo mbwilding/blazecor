@@ -1,7 +1,7 @@
+import { LayoutDefy } from "@/components/dygma/layouts/defy";
+import { ColorPalette } from "@/components/ui/color-palette";
 import { Color, Settings } from "@/types/ffi/settings";
 import { useState } from "react";
-import { ColorPalette } from "../ui/color-palette";
-import { LayoutDefy } from "../dygma/layouts/defy";
 
 export interface PageColorsProps {
     settings: Settings;
