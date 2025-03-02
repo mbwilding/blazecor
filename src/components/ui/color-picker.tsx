@@ -24,7 +24,7 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
     const [rgb, setRgb] = useState<Color>(defaultColor)
     const [hex, setHex] = useState(rgbToHex(defaultColor.r, defaultColor.g, defaultColor.b))
     const [copied, setCopied] = useState(false)
-    const colorPlaneRef = useRef<HTMLDivElement>(null)
+    const colorPlaneRef = useRef<HTMLDivElement>(undefined)
     const isDraggingRef = useRef(false)
 
     // Initialize color values from default color
