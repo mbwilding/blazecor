@@ -11,6 +11,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { RefreshCcw } from "lucide-react";
 
 // TODO: Move
 document.documentElement.classList.add("dark");
@@ -65,7 +66,7 @@ function DeviceConnection({
                     <div className="flex items-center justify-between">
                         <DialogTitle>Select a Device</DialogTitle>
                         <Button variant="ghost" onClick={fetchDevices}>
-                            Refresh
+                            <RefreshCcw />
                         </Button>
                     </div>
                 </DialogHeader>
