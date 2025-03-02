@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, ClipboardPaste, X } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,8 @@ interface HSL {
     l: number;
 }
 
+const actionTimeout: number = 500;
+
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
 export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
@@ -25,6 +27,7 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
     const [rgb, setRgb] = useState(defaultColor);
     const [hex, setHex] = useState(rgbToHex(rgb.r, rgb.g, rgb.b));
     const [copied, setCopied] = useState(false);
+    const [pasted, setPasted] = useState<boolean | undefined>(false);
     const colorPlaneRef = useRef<HTMLDivElement>(null);
     const isDraggingRef = useRef(false);
 
@@ -102,7 +105,33 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
     const copyToClipboard = useCallback((text: string) => {
         navigator.clipboard.writeText(text).then(() => {
             setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
+            setTimeout(() => setCopied(false), actionTimeout);
+        });
+    }, []);
+
+    const pasteFromClipboard = useCallback(() => {
+        navigator.clipboard.readText().then((text) => {
+            text = text.trim().toLowerCase();
+            let valid = false;
+
+            if (text.startsWith('#')) {
+                setHex(text);
+                valid = true;
+            } else if (text.startsWith('rgb')) {
+                // setRgb(text);
+                valid = true;
+            } else if (text.startsWith('hsl')) {
+                // setHsl(text);
+                valid = true;
+            }
+
+            if (valid) {
+                setPasted(true);
+                setTimeout(() => setPasted(false), actionTimeout);
+            } else {
+                setPasted(undefined);
+                setTimeout(() => setPasted(false), actionTimeout);
+            }
         });
     }, []);
 
@@ -166,6 +195,14 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
                         <Input value={hex} onChange={e => handleHexChange(e.target.value)} className="font-mono" />
                         <Button size="icon" variant="outline" onClick={() => copyToClipboard(hex)} className="shrink-0">
                             {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant={pasted === undefined ? "destructive" : pasted ? "success" : "outline"}
+                          onClick={() => pasteFromClipboard()}
+                          className="shrink-0"
+                        >
+                            {pasted === undefined ? <X className="w-4 h-4" /> : pasted ? <Check className="w-4 h-4" /> : <ClipboardPaste className="w-4 h-4" />}
                         </Button>
                     </div>
                 </TabsContent>
