@@ -24,12 +24,10 @@ export default function PageColors({ settings }: PageColorsProps) {
         setSelectedLayer(index);
     };
 
-    console.error(`DEFAULT LAYER: ${settings.settingsDefaultlayer}`)
-
     return (
         <div className="flex flex-col justify-center items-center">
             <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
-            <LayerSelector defaultLayer={settings.settingsDefaultlayer + 1} layers={10} onChange={handleSelectedLayerChange} />
+            <LayerSelector defaultLayer={settings.settingsDefaultLayer + 1} layers={10} onChange={handleSelectedLayerChange} />
             <LayoutDefy
                 layer={selectedLayer}
                 darkMode={true}
