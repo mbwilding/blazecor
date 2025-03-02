@@ -74,7 +74,7 @@ export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
                             />
                         </div>
                     </DialogTrigger>
-                    <DialogContent className="w-[425px]">
+                    <DialogContent className="w-fit">
                         <DialogHeader>
                             <DialogTitle>Edit Color</DialogTitle>
                         </DialogHeader>

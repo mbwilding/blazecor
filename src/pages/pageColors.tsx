@@ -4,7 +4,7 @@ import { Color, Settings } from "@/types/ffi/settings";
 import { LayerSelector } from "@/components/custom/layer-selector";
 import { useEffect, useState } from "react";
 import { Device } from "@/types/ffi/hardware";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Container } from "@/components/custom/container";
 
 export interface PageColorsProps {
     device: Device;
@@ -39,22 +39,12 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     return (
         <div className="flex flex-col justify-center items-center">
             <div className="flex flex-row gap-4">
-              <Card className="w-fit flex flex-row items-center">
-                <CardHeader>
-                  <CardTitle>Palette</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
-                </CardContent>
-              </Card>
-              <Card className="w-fit flex flex-row items-center">
-                <CardHeader>
-                  <CardTitle>Layers</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <LayerSelector defaultLayer={currentLayer + 1} layers={layers} onChange={handleSelectedLayerChange} />
-                </CardContent>
-              </Card>
+                <Container title="Palette">
+                    <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
+                </Container>
+                <Container title="Layers">
+                    <LayerSelector defaultLayer={currentLayer + 1} layers={layers} onChange={handleSelectedLayerChange} />
+                </Container>
             </div>
             <LayoutDefy
                 layer={currentLayer + 1} // TODO: Remove + 1?
