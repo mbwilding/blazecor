@@ -16,10 +16,8 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     const [colorMap, setColorMap] = useState(() => settings.colorMap.slice(0, leds));
 
     useEffect(() => {
-      const colorMapIndex = currentLayer * leds;
-      console.debug(`colorMapIndex: ${colorMapIndex}`);
-      // console.debug(`colorMap: ${settings.colorMap.join(",")}`);
-      setColorMap(settings.colorMap.slice(colorMapIndex + currentLayer, colorMapIndex + leds));
+        const colorMapIndex = currentLayer + currentLayer * leds;
+        setColorMap(settings.colorMap.slice(colorMapIndex, colorMapIndex + leds));
     }, [currentLayer]);
 
     const palette = device.hardware.rgbwMode ? settings.paletteRgbw : settings.paletteRgb;
