@@ -230,11 +230,8 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
         const getColor = (row: number, col?: number) => {
             const ledIndex = col !== undefined ? led_map[row][col] : no_key_led_map[row - UNDERGLOW];
             const colorIndex = colorMap[ledIndex];
-
             const color = palette[colorIndex];
-            const hex = "#" + ((color.r << 16) | (color.g << 8) | color.b).toString(16).padStart(6, "0");
-
-            return hex;
+            return `rgb(${color.r}, ${color.g}, ${color.b})`;
         };
 
         const getLEDIndex = (row: number, col?: number) =>
