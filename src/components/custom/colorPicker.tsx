@@ -102,37 +102,34 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
         setHex(value);
     };
 
-    const copyToClipboard = useCallback((text: string) => {
-        navigator.clipboard.writeText(text).then(() => {
-            setCopied(true);
-            setTimeout(() => setCopied(false), actionTimeout);
-        });
+    const copyToClipboard = useCallback(async (text: string) => {
+        await navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), actionTimeout);
     }, []);
 
-    const pasteFromClipboard = useCallback(() => {
-        navigator.clipboard.readText().then((text) => {
-            text = text.trim().toLowerCase();
-            let valid = false;
+    const pasteFromClipboard = useCallback(async () => {
+        let text = (await navigator.clipboard.readText()).trim().toLowerCase();
+        let valid = false;
 
-            if (text.startsWith('#')) {
-                setHex(text);
-                valid = true;
-            } else if (text.startsWith('rgb')) {
-                // setRgb(text);
-                valid = true;
-            } else if (text.startsWith('hsl')) {
-                // setHsl(text);
-                valid = true;
-            }
+        if (text.startsWith('#')) {
+            setHex(text);
+            valid = true;
+        } else if (text.startsWith('rgb')) {
+            // setRgb(text);
+            valid = true;
+        } else if (text.startsWith('hsl')) {
+            // setHsl(text);
+            valid = true;
+        }
 
-            if (valid) {
-                setPasted(true);
-                setTimeout(() => setPasted(false), actionTimeout);
-            } else {
-                setPasted(undefined);
-                setTimeout(() => setPasted(false), actionTimeout);
-            }
-        });
+        if (valid) {
+            setPasted(true);
+            setTimeout(() => setPasted(false), actionTimeout);
+        } else {
+            setPasted(undefined);
+            setTimeout(() => setPasted(false), actionTimeout);
+        }
     }, []);
 
     const cursorPosition = {
@@ -197,10 +194,10 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
                             {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                         </Button>
                         <Button
-                          size="icon"
-                          variant={pasted === undefined ? "destructive" : pasted ? "success" : "outline"}
-                          onClick={() => pasteFromClipboard()}
-                          className="shrink-0"
+                            size="icon"
+                            variant={pasted === undefined ? "destructive" : pasted ? "success" : "outline"}
+                            onClick={() => pasteFromClipboard()}
+                            className="shrink-0"
                         >
                             {pasted === undefined ? <X className="w-4 h-4" /> : pasted ? <Check className="w-4 h-4" /> : <ClipboardPaste className="w-4 h-4" />}
                         </Button>
