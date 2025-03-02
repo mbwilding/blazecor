@@ -4,7 +4,7 @@ import PageColors from "./pages/pageColors";
 import { Device } from "./types/ffi/hardware";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import Loading from "@/components/custom/Loading";
+import Loading from "@/components/custom/loading";
 import { useConnect, useDevices, useSettings, useVersion } from "./Api";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { RefreshCcw } from "lucide-react";

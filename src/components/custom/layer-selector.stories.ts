@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { ColorPicker } from "./ColorPicker";
+import { LayerSelector } from "./layer-selector";
 
 const meta = {
-    title: "Custom/ColorPicker",
-    component: ColorPicker,
+    title: "Custom/LayerSelector",
+    component: LayerSelector,
     parameters: {
         layout: "centered",
     },
@@ -13,13 +13,14 @@ const meta = {
     args: {
         onChange: undefined,
     },
-} satisfies Meta<typeof ColorPicker>;
+} satisfies Meta<typeof LayerSelector>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Red: Story = {
+export const Default: Story = {
     args: {
-        defaultColor: { r: 255, g: 0, b: 0 },
+        defaultLayer: 0,
+        layers: 5,
     },
 };

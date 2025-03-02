@@ -8,7 +8,7 @@ interface LayerSelectorProps {
     onChange?: (layer: number) => void;
 }
 
-export function LayerSelector({ defaultLayer = 1, layers, onChange }: LayerSelectorProps) {
+export function LayerSelector({ defaultLayer, layers, onChange }: LayerSelectorProps) {
     const [selectedLayer, setSelectedLayer] = useState(defaultLayer);
 
     const handleLayerChange = (layer: number) => {

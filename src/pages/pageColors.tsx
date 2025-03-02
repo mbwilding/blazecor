@@ -1,7 +1,7 @@
 import { LayoutDefy } from "@/components/dygma/layouts/defy";
-import { ColorPalette } from "@/components/custom/ColorPalette";
+import { ColorPalette } from "@/components/custom/color-palette";
 import { Color, Settings } from "@/types/ffi/settings";
-import { LayerSelector } from "@/components/custom/LayerSelector";
+import { LayerSelector } from "@/components/custom/layer-selector";
 
 export interface PageColorsProps {
     settings: Settings;
