@@ -7,9 +7,9 @@ import { OperationSystemIcons } from "../../types/layout";
 type OperationSystemKey = "shift" | "control" | "os" | "alt" | "altGr";
 
 interface OSKeyProps {
-    renderKey?: OperationSystemKey;
-    direction?: "Left" | "Right";
-    size?: "xs" | "sm" | "md";
+  renderKey?: OperationSystemKey;
+  direction?: "Left" | "Right";
+  size?: "xs" | "sm" | "md";
 }
 
 // const GuiLabels: { [key: string]: string } = {
@@ -42,105 +42,105 @@ interface OSKeyProps {
 // const AltVerbose = AltVerboses[process.platform] || "Alt";
 
 const OSKey = ({ renderKey, direction, size = "md" }: OSKeyProps) => {
-    const operationSystem = process.platform;
-    const operationSystemIcons = useMemo<OperationSystemIcons>(() => {
-        if (operationSystem === "darwin") {
-            return {
-                shift: {
-                    xs: "s",
-                    sm: "Shift",
-                    md: "Shift",
-                },
-                control: {
-                    xs: "c",
-                    sm: "CTRL ˆ",
-                    md: "Control ˆ",
-                },
-                os: {
-                    xs: "⌘",
-                    sm: <IconCommandMacOs />,
-                    md: <IconCommandMacOs />,
-                },
-                alt: {
-                    xs: "⌥",
-                    sm: "⌥",
-                    md: "⌥",
-                },
-                altGr: {
-                    xs: "r.⌥",
-                    sm: "R. ⌥",
-                    md: "Right ⌥",
-                },
-            };
-        }
-        if (operationSystem === "win32") {
-            return {
-                shift: {
-                    xs: "s",
-                    sm: "Shift",
-                    md: "Shift",
-                },
-                control: {
-                    xs: "c",
-                    sm: "CTRL",
-                    md: "Control",
-                },
-                os: {
-                    xs: <AiFillWindows size={10} />,
-                    sm: <AiFillWindows />,
-                    md: <AiFillWindows />,
-                },
-                alt: {
-                    xs: "a",
-                    sm: "Alt",
-                    md: "Alt",
-                },
-                altGr: {
-                    xs: "aGr",
-                    sm: "Alt Gr.",
-                    md: "Alt Gr.",
-                },
-            };
-        }
-        return {
-            shift: {
-                xs: "s",
-                sm: "Shift",
-                md: "Shift",
-            },
-            control: {
-                xs: "c",
-                sm: "CTRL",
-                md: "Control",
-            },
-            os: {
-                xs: <FaLinux size={10} />,
-                sm: <FaLinux />,
-                md: <FaLinux />,
-            },
-            alt: {
-                xs: "a",
-                sm: "Alt",
-                md: "Alt",
-            },
-            altGr: {
-                xs: "aGr",
-                sm: "Alt Gr.",
-                md: "Alt Gr.",
-            },
-        };
-    }, [operationSystem]);
+  const operationSystem = process.platform;
+  const operationSystemIcons = useMemo<OperationSystemIcons>(() => {
+    if (operationSystem === "darwin") {
+      return {
+        shift: {
+          xs: "s",
+          sm: "Shift",
+          md: "Shift",
+        },
+        control: {
+          xs: "c",
+          sm: "CTRL ˆ",
+          md: "Control ˆ",
+        },
+        os: {
+          xs: "⌘",
+          sm: <IconCommandMacOs />,
+          md: <IconCommandMacOs />,
+        },
+        alt: {
+          xs: "⌥",
+          sm: "⌥",
+          md: "⌥",
+        },
+        altGr: {
+          xs: "r.⌥",
+          sm: "R. ⌥",
+          md: "Right ⌥",
+        },
+      };
+    }
+    if (operationSystem === "win32") {
+      return {
+        shift: {
+          xs: "s",
+          sm: "Shift",
+          md: "Shift",
+        },
+        control: {
+          xs: "c",
+          sm: "CTRL",
+          md: "Control",
+        },
+        os: {
+          xs: <AiFillWindows size={10} />,
+          sm: <AiFillWindows />,
+          md: <AiFillWindows />,
+        },
+        alt: {
+          xs: "a",
+          sm: "Alt",
+          md: "Alt",
+        },
+        altGr: {
+          xs: "aGr",
+          sm: "Alt Gr.",
+          md: "Alt Gr.",
+        },
+      };
+    }
+    return {
+      shift: {
+        xs: "s",
+        sm: "Shift",
+        md: "Shift",
+      },
+      control: {
+        xs: "c",
+        sm: "CTRL",
+        md: "Control",
+      },
+      os: {
+        xs: <FaLinux size={10} />,
+        sm: <FaLinux />,
+        md: <FaLinux />,
+      },
+      alt: {
+        xs: "a",
+        sm: "Alt",
+        md: "Alt",
+      },
+      altGr: {
+        xs: "aGr",
+        sm: "Alt Gr.",
+        md: "Alt Gr.",
+      },
+    };
+  }, [operationSystem]);
 
-    // win32, darwin, linux
-    // console.log(platform);
-    return (
-        <div className="whitespace-nowrap flex gap-0.5 items-center">
-            {renderKey !== "altGr" && direction && size === "md" ? `${direction} ` : null}
-            {renderKey !== "altGr" && direction === "Left" && size === "sm" ? "L. " : null}
-            {renderKey !== "altGr" && direction === "Right" && size === "sm" ? "R. " : null}
-            {operationSystemIcons[renderKey as OperationSystemKey][size]}
-        </div>
-    );
+  // win32, darwin, linux
+  // console.log(platform);
+  return (
+    <div className="whitespace-nowrap flex gap-0.5 items-center">
+      {renderKey !== "altGr" && direction && size === "md" ? `${direction} ` : null}
+      {renderKey !== "altGr" && direction === "Left" && size === "sm" ? "L. " : null}
+      {renderKey !== "altGr" && direction === "Right" && size === "sm" ? "R. " : null}
+      {operationSystemIcons[renderKey as OperationSystemKey][size]}
+    </div>
+  );
 };
 
 export default OSKey;

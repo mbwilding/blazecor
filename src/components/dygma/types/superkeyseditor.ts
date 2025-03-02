@@ -19,41 +19,41 @@ import { Neuron } from "./neurons";
 import { SuperkeysType } from "./superkeys";
 
 export interface SuperkeysEditorProps {
-    onDisconnect: () => void;
-    startContext: () => void;
-    cancelContext: () => void;
-    setLoading: (lding: boolean) => void;
-    saveButtonRef?: React.RefObject<HTMLButtonElement>;
-    discardChangesButtonRef?: React.RefObject<HTMLButtonElement>;
+  onDisconnect: () => void;
+  startContext: () => void;
+  cancelContext: () => void;
+  setLoading: (lding: boolean) => void;
+  saveButtonRef?: React.RefObject<HTMLButtonElement>;
+  discardChangesButtonRef?: React.RefObject<HTMLButtonElement>;
 }
 
 export interface SuperkeysEditorInitialStateType {
-    keymap: KeymapType;
-    macros: MacrosType[];
-    superkeys: SuperkeysType[];
-    storedMacros: MacrosType[];
-    storedSuper: SuperkeysType[];
-    neurons: Neuron[];
-    neuronID: string;
-    kbtype: string;
-    maxSuperKeys: number;
-    modified: boolean;
-    modifiedKeymap: boolean;
-    selectedSuper: number;
-    selectedAction: number;
-    showDeleteModal: boolean;
-    listToDelete: ListToDeleteSKType[];
-    futureSK: SuperkeysType[];
-    futureSSK: number;
-    currentLanguageLayout: string;
+  keymap: KeymapType;
+  macros: MacrosType[];
+  superkeys: SuperkeysType[];
+  storedMacros: MacrosType[];
+  storedSuper: SuperkeysType[];
+  neurons: Neuron[];
+  neuronID: string;
+  kbtype: string;
+  maxSuperKeys: number;
+  modified: boolean;
+  modifiedKeymap: boolean;
+  selectedSuper: number;
+  selectedAction: number;
+  showDeleteModal: boolean;
+  listToDelete: ListToDeleteSKType[];
+  futureSK: SuperkeysType[];
+  futureSSK: number;
+  currentLanguageLayout: string;
 
-    showStandardView: boolean;
-    loading: boolean;
+  showStandardView: boolean;
+  loading: boolean;
 }
 
 export interface ListToDeleteSKType {
-    superIdx: number;
-    newKey: number;
-    layer: number;
-    pos: number;
+  superIdx: number;
+  newKey: number;
+  layer: number;
+  pos: number;
 }

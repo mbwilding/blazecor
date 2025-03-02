@@ -15,11 +15,11 @@
  */
 
 export interface PickerProps {
-    onKeySelect: (keyCode: number) => void;
-    selectedlanguage: string;
-    baseCode: number;
-    modCode: number;
-    disable: boolean;
-    disableMods: boolean;
-    disableMove: boolean;
+  onKeySelect: (keyCode: number) => void;
+  selectedlanguage: string;
+  baseCode: number;
+  modCode: number;
+  disable: boolean;
+  disableMods: boolean;
+  disableMove: boolean;
 }

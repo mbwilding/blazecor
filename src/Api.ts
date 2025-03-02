@@ -6,90 +6,90 @@ import { useCallback, useEffect, useState } from "react";
 // Helpers
 
 function useInvoke(device?: Device) {
-    return async function <T>(call: string, args?: InvokeArgs): Promise<T> {
-        if (device) {
-            const port = device.serialPort;
-            return await invoke<T>(call, { port, args });
-        } else {
-            throw new Error("Cannot contact device");
-        }
-    };
+  return async function <T>(call: string, args?: InvokeArgs): Promise<T> {
+    if (device) {
+      const port = device.serialPort;
+      return await invoke<T>(call, { port, args });
+    } else {
+      throw new Error("Cannot contact device");
+    }
+  };
 }
 
 function useFocus(command: string, device?: Device, onExecute?: () => void) {
-    const invoke = useInvoke(device);
+  const invoke = useInvoke(device);
 
-    useEffect(() => {
-        const executeCommand = async () => {
-            try {
-                await invoke(command);
-                if (onExecute) onExecute();
-            } catch (error) {
-                console.error(error);
-            }
-        };
+  useEffect(() => {
+    const executeCommand = async () => {
+      try {
+        await invoke(command);
+        if (onExecute) onExecute();
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-        if (device) {
-            executeCommand();
-        }
-    }, [device, command]);
+    if (device) {
+      executeCommand();
+    }
+  }, [device, command]);
 }
 
 function useFocusData<T>(command: string, device?: Device): T | undefined {
-    const [data, setData] = useState<T>();
-    const invoke = useInvoke(device);
+  const [data, setData] = useState<T>();
+  const invoke = useInvoke(device);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const result = await invoke<T>(command);
-                setData(result);
-            } catch (error: any) {
-                console.error(error);
-                setData(undefined);
-            }
-        };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await invoke<T>(command);
+        setData(result);
+      } catch (error: any) {
+        console.error(error);
+        setData(undefined);
+      }
+    };
 
-        if (device) {
-            fetchData();
-        } else {
-            setData(undefined);
-        }
-    }, [device, command]);
+    if (device) {
+      fetchData();
+    } else {
+      setData(undefined);
+    }
+  }, [device, command]);
 
-    return data;
+  return data;
 }
 
 // API Exports
 
 export function useDevices() {
-    const [devices, setDevices] = useState<Device[]>();
+  const [devices, setDevices] = useState<Device[]>();
 
-    const fetchDevices = useCallback(async () => {
-        try {
-            const devices = await invoke<Device[]>("find_all_devices");
-            setDevices(devices);
-        } catch (error: any) {
-            console.error(error);
-            setDevices(undefined);
-        }
-    }, []);
+  const fetchDevices = useCallback(async () => {
+    try {
+      const devices = await invoke<Device[]>("find_all_devices");
+      setDevices(devices);
+    } catch (error: any) {
+      console.error(error);
+      setDevices(undefined);
+    }
+  }, []);
 
-    return { devices, fetchDevices };
+  return { devices, fetchDevices };
 }
 
 export function useConnect(device?: Device) {
-    useFocus("connect", device, () => {
-        if (device) {
-            console.debug(`Connecting: ${device.hardware.info.displayName} (${device.serialPort})`);
-        }
-    });
+  useFocus("connect", device, () => {
+    if (device) {
+      console.debug(`Connecting: ${device.hardware.info.displayName} (${device.serialPort})`);
+    }
+  });
 }
 
 export function useVersion(device?: Device) {
-    return useFocusData<string>("version", device);
+  return useFocusData<string>("version", device);
 }
 
 export function useSettings(device?: Device) {
-    return useFocusData<Settings>("settings_get", device);
+  return useFocusData<Settings>("settings_get", device);
 }

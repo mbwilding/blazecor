@@ -15,12 +15,12 @@
  */
 
 export default interface Pages {
-    keymap: boolean;
-    colormap: boolean;
+  keymap: boolean;
+  colormap: boolean;
 }
 export interface TabLayoutEditorProps {
-    keyCode: number | { base: number; modified: number } | undefined;
-    onKeySelect: (key: number) => void;
+  keyCode: number | { base: number; modified: number } | undefined;
+  onKeySelect: (key: number) => void;
 
-    disabled?: boolean;
+  disabled?: boolean;
 }

@@ -18,29 +18,29 @@ import { CSSProperties } from "react";
 import { PaletteType } from "./layout";
 
 export interface ColorEditorProps {
-    colors: PaletteType[];
-    disabled: boolean;
-    selected: number;
-    deviceName: string;
-    colorButtonIsSelected: boolean;
-    isColorButtonSelected: boolean;
-    onColorSelect: (colorIndex: number) => void;
-    onColorPick: (colorIndex: number, r: number, g: number, b: number) => void;
-    onColorButtonSelect: (action: string, colorIndex: number) => void;
-    toChangeAllKeysColor: (colorIndex: number, start: number, end: number) => void;
-    clearLayer?: (fillKeyCode?: number, chooseYourKeyboardSide?: string) => void;
-    changeUnderglowColor?: (colorIndex?: number, chooseYourKeyboardSide?: string) => void;
-    changeKeyColor?: (colorIndex?: number, chooseYourKeyboardSide?: string) => void;
-    applyColorMapChangeBL?: (chooseYourKeyboardSide: string, colorIndex: number) => void;
-    applyColorMapChangeUG?: (chooseYourKeyboardSide: string, colorIndex: number) => void;
+  colors: PaletteType[];
+  disabled: boolean;
+  selected: number;
+  deviceName: string;
+  colorButtonIsSelected: boolean;
+  isColorButtonSelected: boolean;
+  onColorSelect: (colorIndex: number) => void;
+  onColorPick: (colorIndex: number, r: number, g: number, b: number) => void;
+  onColorButtonSelect: (action: string, colorIndex: number) => void;
+  toChangeAllKeysColor: (colorIndex: number, start: number, end: number) => void;
+  clearLayer?: (fillKeyCode?: number, chooseYourKeyboardSide?: string) => void;
+  changeUnderglowColor?: (colorIndex?: number, chooseYourKeyboardSide?: string) => void;
+  changeKeyColor?: (colorIndex?: number, chooseYourKeyboardSide?: string) => void;
+  applyColorMapChangeBL?: (chooseYourKeyboardSide: string, colorIndex: number) => void;
+  applyColorMapChangeUG?: (chooseYourKeyboardSide: string, colorIndex: number) => void;
 }
 
 export interface ColorPickerProps {
-    menuKey: string;
-    id: number;
-    onClick: (e: unknown) => void;
-    dataID: string;
-    selected: number;
-    buttonStyle: CSSProperties;
-    className: string;
+  menuKey: string;
+  id: number;
+  onClick: (e: unknown) => void;
+  dataID: string;
+  selected: number;
+  buttonStyle: CSSProperties;
+  className: string;
 }

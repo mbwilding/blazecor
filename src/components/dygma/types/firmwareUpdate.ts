@@ -15,7 +15,7 @@
  */
 
 export interface StepProps {
-    step: number;
-    title: string;
-    description: string;
+  step: number;
+  title: string;
+  description: string;
 }

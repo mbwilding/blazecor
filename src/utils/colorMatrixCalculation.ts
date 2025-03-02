@@ -8,11 +8,11 @@ import { parseColor, RgbColor } from "./parseColor";
  * @returns {string} A matric version of the supplied color
  */
 export default function colorMatrixCalc(color: string, opacity: number, fallback: RgbColor = { r: 0, g: 0, b: 0 }): string {
-    const parsedColor = parseColor(color, fallback);
-    return (
-        `0 0 0 0 ${(parsedColor.r / 255).toFixed(2)} ` +
-        `0 0 0 0 ${(parsedColor.g / 255).toFixed(2)} ` +
-        `0 0 0 0 ${(parsedColor.b / 255).toFixed(2)} ` +
-        `0 0 0 ${opacity} 0`
-    );
+  const parsedColor = parseColor(color, fallback);
+  return (
+    `0 0 0 0 ${(parsedColor.r / 255).toFixed(2)} ` +
+    `0 0 0 0 ${(parsedColor.g / 255).toFixed(2)} ` +
+    `0 0 0 0 ${(parsedColor.b / 255).toFixed(2)} ` +
+    `0 0 0 ${opacity} 0`
+  );
 }

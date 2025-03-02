@@ -14,12 +14,12 @@ type Tail<T extends unknown[] | readonly unknown[]> = TailArgs<AsFunctionWithArg
 
 /** Used internally for `IndicesOf`; probably useless outside of that. */
 type AsDescendingLengths<T extends unknown[] | readonly unknown[]> = [] extends T
-    ? [0]
-    : [ElementOf<ElementOf<AsDescendingLengths<Tail<T>>[]>>, T["length"]];
+  ? [0]
+  : [ElementOf<ElementOf<AsDescendingLengths<Tail<T>>[]>>, T["length"]];
 
 /** Union of numerical literals corresponding to a tuple's possible indices */
 type IndicesOf<T extends unknown[] | readonly unknown[]> = number extends T["length"]
-    ? number
-    : [] extends T
+  ? number
+  : [] extends T
     ? never
     : ElementOf<AsDescendingLengths<Tail<T>>>;

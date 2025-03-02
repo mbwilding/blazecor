@@ -9,43 +9,39 @@ import PageColors from "./components/pages/pageColors";
 document.documentElement.classList.add("dark");
 
 function App() {
-    const [device, setDevice] = useState<Device>();
-    const { devices, fetchDevices } = useDevices();
+  const [device, setDevice] = useState<Device>();
+  const { devices, fetchDevices } = useDevices();
 
-    useConnect(device);
+  useConnect(device);
 
-    const version = useVersion(device);
-    const settings = useSettings(device);
+  const version = useVersion(device);
+  const settings = useSettings(device);
 
-    return (
-        <main className="container">
-            {device && settings ? (
-                <PageColors settings={settings} />
-            ) : (
-                <>
-                    <form
-                        className="row"
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            fetchDevices();
-                        }}
-                    >
-                        <Button type="submit">Devices</Button>
-                    </form>
+  return (
+    <main className="container">
+      {device && settings ? (
+        <PageColors settings={settings} />
+      ) : (
+        <>
+          <form
+            className="row"
+            onSubmit={e => {
+              e.preventDefault();
+              fetchDevices();
+            }}
+          >
+            <Button type="submit">Devices</Button>
+          </form>
 
-                    {devices?.map((device, index) => (
-                        <Button
-                            key={index}
-                            type="button"
-                            onClick={() => setDevice(device)}
-                        >
-                            {device.hardware.info.displayName}
-                        </Button>
-                    ))}
-                </>
-            )}
-        </main>
-    );
+          {devices?.map((device, index) => (
+            <Button key={index} type="button" onClick={() => setDevice(device)}>
+              {device.hardware.info.displayName}
+            </Button>
+          ))}
+        </>
+      )}
+    </main>
+  );
 }
 
 export default App;
