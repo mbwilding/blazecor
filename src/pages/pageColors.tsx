@@ -9,7 +9,7 @@ export interface PageColorsProps {
 }
 
 export default function PageColors({ settings }: PageColorsProps) {
-    const [selectedLayer, setSelectedLayer] = useState(settings.settingsDefaultlayer);
+    const [selectedLayer, setSelectedLayer] = useState(settings.settingsDefaultLayer + 1);
 
     let palette = settings.paletteRgb || settings.paletteRgbw;
     let colorMap = settings.colorMap;
@@ -27,7 +27,7 @@ export default function PageColors({ settings }: PageColorsProps) {
     return (
         <div className="flex flex-col justify-center items-center">
             <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
-            <LayerSelector defaultLayer={settings.settingsDefaultLayer + 1} layers={10} onChange={handleSelectedLayerChange} />
+            <LayerSelector defaultLayer={selectedLayer} layers={10} onChange={handleSelectedLayerChange} />
             <LayoutDefy
                 layer={selectedLayer}
                 darkMode={true}
