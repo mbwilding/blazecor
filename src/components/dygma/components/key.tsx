@@ -68,7 +68,7 @@ function Key(props: KeyShapeProps) {
     const widthShape2 = width - 8;
     const heightShape2 = height - 8;
 
-    const [color, setColor] = useState("rgb(255,255,255)");
+    const [color, setColor] = useState("rgb(255, 255, 255)");
 
     useEffect(() => {
         setColor(fill);
