@@ -1,7 +1,6 @@
 import { useState, useCallback, memo } from "react"
 import { ColorPicker } from "./color-picker"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Color } from "@/types/ffi/settings"
 
 interface ColorPaletteProps {
@@ -12,7 +11,7 @@ interface ColorPaletteProps {
 const ColorSwatch = memo(
     ({ color, index, onClick }: { color: Color; index: number; onClick: (index: number) => void }) => (
         <button
-            className="w-12 h-12 rounded-md border border-border shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 mr-2 last:mr-0 flex-shrink-0"
+            className="flex-1 aspect-square rounded-md border border-border shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
             style={{ backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})` }}
             onClick={() => onClick(index)}
         />
@@ -36,7 +35,7 @@ export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
     const handleColorChange = useCallback(
         (color: Color) => {
             setSelectedColor(color)
-            if (selectedIndex && onChange) {
+            if (selectedIndex !== undefined && onChange) {
                 onChange(selectedIndex, color)
             }
         },
@@ -44,8 +43,8 @@ export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
     )
 
     return (
-        <ScrollArea className="w-full whitespace-nowrap rounded-md border">
-            <div className="flex p-4">
+        <div className="w-full rounded-md border">
+            <div className="p-2 flex flex-nowrap space-x-2">
                 {colors.map((color, index) => (
                     <Dialog key={index}>
                         <DialogTrigger asChild>
@@ -60,7 +59,6 @@ export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
                     </Dialog>
                 ))}
             </div>
-            <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        </div>
     )
 }
