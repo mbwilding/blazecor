@@ -10,7 +10,9 @@ const meta = {
     },
     tags: ["autodocs"],
     argTypes: {},
-    args: { onChange: undefined },
+    args: {
+        onChange: undefined,
+    },
 } satisfies Meta<typeof ColorPicker>;
 
 export default meta;
