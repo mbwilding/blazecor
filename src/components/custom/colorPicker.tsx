@@ -213,7 +213,7 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
                                 type="number"
                                 min={0}
                                 max={360}
-                                value={hsl.h}
+                                value={Math.round(hsl.h)}
                                 onChange={e => handleHslChange("h", e.target.value)}
                                 className="font-mono"
                             />
@@ -276,29 +276,17 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
 }
 
 function hexToRgb(hex: string): Color {
-    // Remove '#' if present
-    hex = hex.replace(/^#/, '');
+    hex = hex.slice(1);
 
-    // Expand shorthand form ('#03F') to full form ('#0033FF')
-    if (hex.length === 3) {
-        hex = hex.split('').map((char) => char + char).join('');
-    }
-
-    const bigint = parseInt(hex, 16);
-
-    const r = (bigint >> 16) & 255;
-    const g = (bigint >> 8) & 255;
-    const b = bigint & 255;
+    const r = Number.parseInt(hex.slice(0, 2), 16);
+    const g = Number.parseInt(hex.slice(2, 4), 16);
+    const b = Number.parseInt(hex.slice(4, 6), 16);
 
     return { r, g, b };
 }
 
 function rgbToHex(r: number, g: number, b: number): string {
-    const hr = r.toString(16).padStart(2, '0');
-    const hg = g.toString(16).padStart(2, '0');
-    const hb = b.toString(16).padStart(2, '0');
-
-    return `#${hr}${hg}${hb}`;
+    return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
 }
 
 function rgbToHsl(r: number, g: number, b: number): HSL {
@@ -308,75 +296,62 @@ function rgbToHsl(r: number, g: number, b: number): HSL {
 
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
-    const delta = max - min;
-
     let h = 0;
     let s = 0;
     const l = (max + min) / 2;
 
-    if (delta !== 0) {
-        s = delta / (1 - Math.abs(2 * l - 1));
+    if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
 
         switch (max) {
             case r:
-                h = ((g - b) / delta + (g < b ? 6 : 0)) % 6;
+                h = (g - b) / d + (g < b ? 6 : 0);
                 break;
             case g:
-                h = (b - r) / delta + 2;
+                h = (b - r) / d + 2;
                 break;
             case b:
-                h = (r - g) / delta + 4;
+                h = (r - g) / d + 4;
                 break;
         }
 
-        h *= 60;
+        h /= 6;
     }
 
-    return { h, s: s * 100, l: l * 100 };
+    return { h: Math.round(h * 360), s: s * 100, l: l * 100 };
 }
 
 function hslToRgb(h: number, s: number, l: number): Color {
+    h /= 360;
     s /= 100;
     l /= 100;
 
-    const c = (1 - Math.abs(2 * l - 1)) * s;
-    const hPrime = h / 60;
-    const x = c * (1 - Math.abs((hPrime % 2) - 1));
-    let r1 = 0,
-        g1 = 0,
-        b1 = 0;
+    let r, g, b;
 
-    if (0 <= hPrime && hPrime < 1) {
-        r1 = c;
-        g1 = x;
-        b1 = 0;
-    } else if (1 <= hPrime && hPrime < 2) {
-        r1 = x;
-        g1 = c;
-        b1 = 0;
-    } else if (2 <= hPrime && hPrime < 3) {
-        r1 = 0;
-        g1 = c;
-        b1 = x;
-    } else if (3 <= hPrime && hPrime < 4) {
-        r1 = 0;
-        g1 = x;
-        b1 = c;
-    } else if (4 <= hPrime && hPrime < 5) {
-        r1 = x;
-        g1 = 0;
-        b1 = c;
-    } else if (5 <= hPrime && hPrime < 6) {
-        r1 = c;
-        g1 = 0;
-        b1 = x;
+    if (s === 0) {
+        r = g = b = l;
+    } else {
+        const hue2rgb = (p: number, q: number, t: number) => {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1 / 6) return p + (q - p) * 6 * t;
+            if (t < 1 / 2) return q;
+            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+            return p;
+        };
+
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+
+        r = hue2rgb(p, q, h + 1 / 3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1 / 3);
     }
 
-    const m = l - c / 2;
-
-    const r = Math.round((r1 + m) * 255);
-    const g = Math.round((g1 + m) * 255);
-    const b = Math.round((b1 + m) * 255);
-
-    return { r, g, b };
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255),
+    };
 }
