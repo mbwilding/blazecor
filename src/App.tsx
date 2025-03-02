@@ -79,7 +79,7 @@ function App() {
 
     return (
         <>
-            <main className="container">
+            <main className="w-screen h-screen">
                 {device && settings ? (
                     <PageColors device={device} settings={settings} />
                 ) : devices ? (
