@@ -6,12 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/custom/loading";
 import { useConnect, useDevices, useSettings, useVersion } from "./Api";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { RefreshCcw } from "lucide-react";
 
 // TODO: Move
@@ -51,11 +46,7 @@ interface DeviceConnectionProps {
     fetchDevices: () => void;
 }
 
-function DeviceConnection({
-    devices,
-    handleDeviceSelection,
-    fetchDevices,
-}: DeviceConnectionProps) {
+function DeviceConnection({ devices, handleDeviceSelection, fetchDevices }: DeviceConnectionProps) {
     useEffect(() => {
         fetchDevices();
     }, [fetchDevices]);
@@ -73,11 +64,7 @@ function DeviceConnection({
                 </DialogHeader>
                 <div className="flex flex-col space-y-2">
                     {devices?.map((device, index) => (
-                        <Button
-                            key={index}
-                            variant="default"
-                            onClick={() => handleDeviceSelection(device)}
-                        >
+                        <Button key={index} variant="default" onClick={() => handleDeviceSelection(device)}>
                             {device.hardware.info.displayName}
                         </Button>
                     ))}
@@ -86,7 +73,6 @@ function DeviceConnection({
         </Dialog>
     );
 }
-
 
 function App() {
     const { device, version, settings, devices, handleDeviceSelection, fetchDevices } = useDeviceConnection();
@@ -97,7 +83,11 @@ function App() {
                 {device && settings ? (
                     <PageColors settings={settings} />
                 ) : devices ? (
-                    <DeviceConnection devices={devices} handleDeviceSelection={handleDeviceSelection} fetchDevices={fetchDevices} />
+                    <DeviceConnection
+                        devices={devices}
+                        handleDeviceSelection={handleDeviceSelection}
+                        fetchDevices={fetchDevices}
+                    />
                 ) : (
                     <Loading message="devices" />
                 )}
