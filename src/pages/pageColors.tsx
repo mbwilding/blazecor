@@ -2,7 +2,7 @@ import { LayoutDefy } from "@/components/dygma/layouts/defy";
 import { ColorPalette } from "@/components/custom/color-palette";
 import { Color, Settings } from "@/types/ffi/settings";
 import { LayerSelector } from "@/components/custom/layer-selector";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Device } from "@/types/ffi/hardware";
 
 export interface PageColorsProps {
@@ -11,9 +11,18 @@ export interface PageColorsProps {
 }
 
 export default function PageColors({ device, settings }: PageColorsProps) {
-    const [currentLayer, setCurrentLayer] = useState(settings.settingsDefaultLayer + 1);
-    const [palette, setPalette] = useState(device.hardware.rgbwMode ? settings.paletteRgbw : settings.paletteRgb);
-    const [colorMap, setColorMap] = useState(settings.colorMap); // TODO: Slice the array
+    const [currentLayer, setCurrentLayer] = useState(settings.settingsDefaultLayer);
+    const leds = 177;
+    const [colorMap, setColorMap] = useState(() => settings.colorMap.slice(0, leds));
+
+    useEffect(() => {
+      const colorMapIndex = currentLayer * leds;
+      console.debug(`colorMapIndex: ${colorMapIndex}`);
+      // console.debug(`colorMap: ${settings.colorMap.join(",")}`);
+      setColorMap(settings.colorMap.slice(colorMapIndex + currentLayer, colorMapIndex + leds));
+    }, [currentLayer]);
+
+    const palette = device.hardware.rgbwMode ? settings.paletteRgbw : settings.paletteRgb;
 
     const handleSelectedColorChange = (index: number, newColor: Color) => {
         if (palette) {
@@ -22,15 +31,15 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     };
 
     const handleSelectedLayerChange = (index: number) => {
-        setCurrentLayer(index);
+        setCurrentLayer(index - 1);
     };
 
     return (
         <div className="flex flex-col justify-center items-center">
             <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
-            <LayerSelector defaultLayer={currentLayer} layers={10} onChange={handleSelectedLayerChange} />
+            <LayerSelector defaultLayer={currentLayer + 1} layers={10} onChange={handleSelectedLayerChange} />
             <LayoutDefy
-                layer={currentLayer - 1}
+                layer={currentLayer + 1} // TODO: +1?
                 darkMode={true}
                 showUnderglow={device.hardware.keyboardUnderglow !== undefined}
                 isStandardView={false}
