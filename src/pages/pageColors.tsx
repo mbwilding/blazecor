@@ -46,6 +46,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
                     <LayerSelector defaultLayer={currentLayer + 1} layers={layers} onChange={handleSelectedLayerChange} />
                 </Container>
             </div>
+
             <LayoutDefy
                 layer={currentLayer + 1} // TODO: Remove + 1?
                 darkMode={true}
