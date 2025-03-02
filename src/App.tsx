@@ -15,7 +15,7 @@ import { RefreshCcw } from "lucide-react";
 // TODO: Move
 document.documentElement.classList.add("dark");
 
-function useDeviceConnection(quickConnect: boolean) {
+function useDeviceConnection() {
     const [device, setDevice] = useState<Device>();
     const { devices, fetchDevices } = useDevices();
 
@@ -29,16 +29,16 @@ function useDeviceConnection(quickConnect: boolean) {
     }, []);
 
     useEffect(() => {
-        if (quickConnect && !devices) {
+        if (!devices) {
             fetchDevices();
         }
-    }, [quickConnect, devices, fetchDevices]);
+    }, [devices, fetchDevices]);
 
     useEffect(() => {
-        if (quickConnect && devices?.length && !device) {
+        if (devices?.length === 1 && !device) {
             setDevice(devices[0]);
         }
-    }, [quickConnect, devices, device]);
+    }, [devices, device]);
 
     return { device, version, settings, devices, handleDeviceSelection, fetchDevices };
 }
@@ -86,14 +86,16 @@ function DeviceConnection({
 }
 
 function App() {
-    const { device, version, settings, devices, handleDeviceSelection, fetchDevices } = useDeviceConnection(false);
+    const { device, version, settings, devices, handleDeviceSelection, fetchDevices } = useDeviceConnection();
 
     return (
         <main className="container">
             {device && version && settings ? (
                 <PageColors settings={settings} />
-            ) : (
+            ) : devices ? (
                 <DeviceConnection devices={devices} handleDeviceSelection={handleDeviceSelection} fetchDevices={fetchDevices} />
+            ) : (
+                <div>Loading devices...</div>
             )}
         </main>
     );
