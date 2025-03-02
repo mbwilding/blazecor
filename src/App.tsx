@@ -81,7 +81,7 @@ function App() {
         <>
             <main className="container">
                 {device && settings ? (
-                    <PageColors settings={settings} />
+                    <PageColors device={device} settings={settings} />
                 ) : devices ? (
                     <DeviceConnection
                         devices={devices}

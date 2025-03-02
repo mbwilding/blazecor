@@ -3,16 +3,17 @@ import { ColorPalette } from "@/components/custom/color-palette";
 import { Color, Settings } from "@/types/ffi/settings";
 import { LayerSelector } from "@/components/custom/layer-selector";
 import { useState } from "react";
+import { Device } from "@/types/ffi/hardware";
 
 export interface PageColorsProps {
+    device: Device;
     settings: Settings;
 }
 
-export default function PageColors({ settings }: PageColorsProps) {
+export default function PageColors({ device, settings }: PageColorsProps) {
     const [selectedLayer, setSelectedLayer] = useState(settings.settingsDefaultLayer + 1);
 
     let palette = settings.paletteRgb || settings.paletteRgbw;
-    let colorMap = settings.colorMap;
 
     const handleSelectedColorChange = (index: number, newColor: Color) => {
         if (palette) {
@@ -31,9 +32,9 @@ export default function PageColors({ settings }: PageColorsProps) {
             <LayoutDefy
                 layer={selectedLayer - 1}
                 darkMode={true}
-                showUnderglow={true}
+                showUnderglow={device.hardware.keyboardUnderglow !== undefined}
                 isStandardView={false}
-                colormap={colorMap}
+                colormap={settings.colorMap}
                 palette={palette}
                 onKeySelect={e => console.log(e)}
             />
