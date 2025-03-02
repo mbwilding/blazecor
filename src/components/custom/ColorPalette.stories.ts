@@ -10,7 +10,9 @@ const meta = {
     },
     tags: ["autodocs"],
     argTypes: {},
-    args: {},
+    args: {
+        onChange: undefined,
+    },
 } satisfies Meta<typeof ColorPalette>;
 
 export default meta;
