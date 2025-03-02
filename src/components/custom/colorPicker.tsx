@@ -112,15 +112,16 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
         let text = (await navigator.clipboard.readText()).trim().toLowerCase();
         let valid = false;
 
-        if (text.startsWith('#')) {
-            setHex(text);
+        if (text.startsWith("#")) {
+            handleHexChange(text);
+            // TODO: Switch tab
             valid = true;
-        } else if (text.startsWith('rgb')) {
-            // setRgb(text);
-            valid = true;
-        } else if (text.startsWith('hsl')) {
-            // setHsl(text);
-            valid = true;
+        } else if (text.startsWith("rgb")) {
+            // TODO: Switch tab, handle
+            valid = false;
+        } else if (text.startsWith("hsl")) {
+            // TODO: Switch tab, handle
+            valid = false;
         }
 
         if (valid) {
@@ -190,7 +191,12 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
                 <TabsContent value="hex" className="space-y-2">
                     <div className="flex items-center space-x-2">
                         <Input value={hex} onChange={e => handleHexChange(e.target.value)} className="font-mono" />
-                        <Button size="icon" variant="outline" onClick={() => copyToClipboard(hex)} className="shrink-0">
+                        <Button
+                            size="icon"
+                            variant={copied ? "success" : "outline"}
+                            onClick={() => copyToClipboard(hex)}
+                            className="shrink-0"
+                        >
                             {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                         </Button>
                         <Button
@@ -199,7 +205,13 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
                             onClick={() => pasteFromClipboard()}
                             className="shrink-0"
                         >
-                            {pasted === undefined ? <X className="w-4 h-4" /> : pasted ? <Check className="w-4 h-4" /> : <ClipboardPaste className="w-4 h-4" />}
+                            {pasted === undefined ? (
+                                <X className="w-4 h-4" />
+                            ) : pasted ? (
+                                <Check className="w-4 h-4" />
+                            ) : (
+                                <ClipboardPaste className="w-4 h-4" />
+                            )}
                         </Button>
                     </div>
                 </TabsContent>
@@ -227,7 +239,7 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
                         <Input value={`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`} readOnly className="font-mono" />
                         <Button
                             size="icon"
-                            variant="outline"
+                            variant={copied ? "success" : "outline"}
                             onClick={() => copyToClipboard(`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`)}
                             className="shrink-0"
                         >
@@ -289,7 +301,7 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
                         />
                         <Button
                             size="icon"
-                            variant="outline"
+                            variant={copied ? "success" : "outline"}
                             onClick={() =>
                                 copyToClipboard(`hsl(${Math.round(hsl.h)}, ${Math.round(hsl.s)}%, ${Math.round(hsl.l)}%)`)
                             }
