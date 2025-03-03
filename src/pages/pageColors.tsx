@@ -40,8 +40,6 @@ export default function PageColors({ device, settings }: PageColorsProps) {
         alt: false,
     }));
 
-    console.error(`Keymap: ${keymap.length} | ${keymap[1].label}`)
-
     useEffect(() => {
         const colorMapIndex = currentLayer * leds + currentLayer;
         setColorMap(settings.colorMap.slice(colorMapIndex, colorMapIndex + leds));
