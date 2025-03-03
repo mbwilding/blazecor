@@ -5,15 +5,15 @@ import { RGB, RGBW } from "@/types/ffi/settings";
 import ColorPicker from "./color-picker";
 
 interface ColorPaletteProps {
-    colors: RGB[] | RGBW[];
-    onChange?: (index: number, color: RGB | RGBW) => void;
+    colors: RGBW[];
+    onChange?: (index: number, color: RGBW) => void;
 }
 
 export function ColorPalette({ colors: initialColors, onChange }: ColorPaletteProps) {
-    const [colors, setColors] = useState<RGB[] | RGBW[]>(initialColors);
+    const [colors, setColors] = useState<RGBW[]>(initialColors);
 
     const handleColorChange = useCallback(
-        (index: number, color: RGB) => {
+        (index: number, color: RGBW) => {
             const newColors = [...colors];
             newColors[index] = color;
             setColors(newColors);
@@ -29,7 +29,7 @@ export function ColorPalette({ colors: initialColors, onChange }: ColorPalettePr
                     <Button
                         variant="outline"
                         className={cn("h-9 w-9 p-0 rounded-md", "border border-border shadow-sm hover:border-accent")}
-                        style={{ backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})` }}
+                        style={{ backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b}, ${color.w})` }}
                     />
                 </ColorPicker>
             ))}
