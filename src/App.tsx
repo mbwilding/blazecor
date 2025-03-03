@@ -83,11 +83,15 @@ function App() {
                 {device && settings ? (
                     <PageColors device={device} settings={settings} />
                 ) : devices ? (
-                    <DeviceConnection
-                        devices={devices}
-                        handleDeviceSelection={handleDeviceSelection}
-                        fetchDevices={fetchDevices}
-                    />
+                    devices.length > 1 ? (
+                        <DeviceConnection
+                            devices={devices}
+                            handleDeviceSelection={handleDeviceSelection}
+                            fetchDevices={fetchDevices}
+                        />
+                    ) : (
+                        <Loading message="settings" />
+                    )
                 ) : (
                     <Loading message="devices" />
                 )}
