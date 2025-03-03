@@ -23,6 +23,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Red: Story = {
     args: {
-        defaultColor: { r: 255, g: 0, b: 0, w: 100 },
+        color: { r: 255, g: 0, b: 0, w: 100 },
     },
 };

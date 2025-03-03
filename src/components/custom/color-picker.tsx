@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useRef, useCallback, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
@@ -12,14 +11,13 @@ import { hsvToRgb, rgbToRgbw, rgbwToHex, rgbwToHsv } from "@/utils/colorConverte
 
 interface ColorPickerProps {
     index: number;
-    defaultColor: RGBW;
+    color: RGBW;
     onChange?: (index: number, color: RGBW) => void;
     children: React.ReactNode;
 }
 
-const ColorPicker: React.FC<ColorPickerProps> = ({ index, defaultColor, onChange, children }) => {
-    const [color, setColor] = useState<RGBW>(defaultColor);
-    const [hsv, setHsv] = useState<HSV>({ h: 0, s: 100, v: 100 });
+const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, children }) => {
+    const [hsv, setHsv] = useState<HSV>(rgbwToHsv(color));
     const [copied, setCopied] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const colorPickerRef = useRef<HTMLDivElement>(null);
@@ -52,9 +50,9 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, defaultColor, onChange
     const updateColor = useCallback(
         (newColor: Partial<RGBW>) => {
             const updatedColor = { ...color, ...newColor };
-            setColor(updatedColor);
+            color = updatedColor;
         },
-        [color],
+        [color, index, onChange],
     );
 
     const updateHsv = useCallback(
@@ -63,9 +61,9 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, defaultColor, onChange
             setHsv(updatedHsv);
             const rgb = hsvToRgbCached(updatedHsv);
             const rgbw = rgbToRgbwCached(rgb);
-            setColor(rgbw);
+            onChange && onChange(index, rgbw);
         },
-        [hsv, hsvToRgbCached, rgbToRgbwCached],
+        [hsv, hsvToRgbCached, rgbToRgbwCached, onChange, index],
     );
 
     const handleColorPickerChange = useCallback(
