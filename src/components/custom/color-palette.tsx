@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { RGB } from "@/types/ffi/settings";
@@ -9,10 +9,14 @@ interface ColorPaletteProps {
     onChange?: (index: number, color: RGB) => void;
 }
 
-export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
+export function ColorPalette({ colors: initialColors, onChange }: ColorPaletteProps) {
+    const [colors, setColors] = useState<RGB[]>(initialColors);
+
     const handleColorChange = useCallback(
         (index: number, color: RGB) => {
-            colors[index] = color;
+            const newColors = [...colors];
+            newColors[index] = color;
+            setColors(newColors);
             onChange?.(index, color);
         },
         [colors, onChange],
@@ -21,7 +25,7 @@ export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
     return (
         <div className="flex flex-wrap gap-2">
             {colors.map((color, index) => (
-                <ColorPicker index={index} defaultColor={color} onChange={handleColorChange}>
+                <ColorPicker key={index} index={index} defaultColor={color} onChange={handleColorChange}>
                     <Button
                         variant="outline"
                         className={cn("h-10 w-10 p-0 rounded-md", "border border-border shadow-sm hover:border-accent")}
