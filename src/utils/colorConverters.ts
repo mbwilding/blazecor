@@ -135,6 +135,51 @@ export function rgbwToHsv({ r, g, b, w }: RGBW): HSV {
     return { h: h * 360, s: s * 100, v: v * 100 };
 }
 
+export function rgbwToHsl({ r, g, b, w }: RGBW): HSL {
+    let R = r + w;
+    let G = g + w;
+    let B = b + w;
+
+    R = Math.min(255, R);
+    G = Math.min(255, G);
+    B = Math.min(255, B);
+
+    R /= 255;
+    G /= 255;
+    B /= 255;
+
+    const max = Math.max(R, G, B);
+    const min = Math.min(R, G, B);
+    let h = 0;
+    let s = 0;
+    const l = (max + min) / 2;
+
+    if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+        switch (max) {
+            case R:
+                h = (G - B) / d + (G < B ? 6 : 0);
+                break;
+            case G:
+                h = (B - R) / d + 2;
+                break;
+            case B:
+                h = (R - G) / d + 4;
+                break;
+        }
+
+        h /= 6;
+    }
+
+    h *= 360;
+    s *= 100;
+    const lPercent = l * 100;
+
+    return { h, s, l: lPercent };
+}
+
 export function rgbToHsl({ r, g, b }: RGB): HSL {
     r /= 255;
     g /= 255;

@@ -6,8 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Copy, Check } from "lucide-react";
-import { HSV, RGB, RGBW } from "@/types/colors";
-import { hsvToRgb, rgbToRgbw, rgbwToHex, rgbwToHsv } from "@/utils/colorConverters";
+import { HSL, HSV, RGB, RGBW } from "@/types/colors";
+import { hslToRgb, hsvToRgb, rgbToHsl, rgbToRgbw, rgbwToHex, rgbwToHsl, rgbwToHsv } from "@/utils/colorConverters";
 
 interface ColorPickerProps {
     index: number;
@@ -18,6 +18,7 @@ interface ColorPickerProps {
 
 const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, children }) => {
     const [hsv, setHsv] = useState<HSV>(rgbwToHsv(color));
+    const [hsl, setHsl] = useState<HSL>(rgbwToHsl(color));
     const [copied, setCopied] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const colorPickerRef = useRef<HTMLDivElement>(null);
@@ -44,13 +45,15 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
     }, [color, rgbwToHsvCached]);
 
     useEffect(() => {
-        onChange && onChange(index, color);
-    }, [color, index]);
+        const rgb = hsvToRgbCached(hsv);
+        const hsl = rgbToHsl(rgb);
+        setHsl(hsl);
+    }, [hsv]);
 
     const updateColor = useCallback(
         (newColor: Partial<RGBW>) => {
-            const updatedColor = { ...color, ...newColor };
-            color = updatedColor;
+            const updatedColor: RGBW = { ...color, ...newColor };
+            onChange && onChange(index, updatedColor);
         },
         [color, index, onChange],
     );
@@ -60,10 +63,19 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
             const updatedHsv = { ...hsv, ...newHsv };
             setHsv(updatedHsv);
             const rgb = hsvToRgbCached(updatedHsv);
-            const rgbw = rgbToRgbwCached(rgb);
-            onChange && onChange(index, rgbw);
+            updateColor(rgbToRgbwCached(rgb));
         },
-        [hsv, hsvToRgbCached, rgbToRgbwCached, onChange, index],
+        [hsv, updateColor, hsvToRgbCached, rgbToRgbwCached],
+    );
+
+    const updateHsl = useCallback(
+        (newHsl: Partial<{ h: number; s: number; l: number }>) => {
+            const updatedHsl = { ...hsl, ...newHsl };
+            setHsl(updatedHsl);
+            const rgb = hslToRgb(updatedHsl);
+            updateColor(rgbToRgbwCached(rgb));
+        },
+        [hsl, updateColor],
     );
 
     const handleColorPickerChange = useCallback(
@@ -127,6 +139,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
             window.addEventListener("mouseup", handleMouseUp);
             window.addEventListener("touchend", handleMouseUp);
         }
+
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("touchmove", handleMouseMove);
@@ -152,9 +165,9 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
                         style={{
                             backgroundColor: `hsl(${hsv.h}, 100%, 50%)`,
                             backgroundImage: `
-                  linear-gradient(to right, #fff, transparent),
-                  linear-gradient(to top, #000, transparent)
-                `,
+                                linear-gradient(to right, #fff, transparent),
+                                linear-gradient(to top, #000, transparent)
+                            `,
                         }}
                         onMouseDown={handleMouseDown}
                         onTouchStart={handleMouseDown}
@@ -191,8 +204,9 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
                     </div>
 
                     <Tabs defaultValue="rgbw">
-                        <TabsList className="grid w-full grid-cols-2">
+                        <TabsList className="grid w-full grid-cols-3">
                             <TabsTrigger value="rgbw">RGBW</TabsTrigger>
+                            <TabsTrigger value="hsl">HSL</TabsTrigger>
                             <TabsTrigger value="hsv">HSV</TabsTrigger>
                         </TabsList>
                         <TabsContent value="rgbw" className="space-y-2">
@@ -217,6 +231,37 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
                                         max={255}
                                         value={color[channel as keyof RGBW]}
                                         onChange={e => updateColor({ [channel]: Number(e.target.value) })}
+                                        className="h-8"
+                                    />
+                                </div>
+                            ))}
+                        </TabsContent>
+                        <TabsContent value="hsl" className="space-y-2">
+                            {[
+                                { channel: "h", max: 360, label: "Hue" },
+                                { channel: "s", max: 100, label: "Saturation" },
+                                { channel: "l", max: 100, label: "Lightness" },
+                            ].map(({ channel, max, label }) => (
+                                <div key={channel} className="grid grid-cols-[1fr_60px] items-center gap-2">
+                                    <div>
+                                        <Label htmlFor={`${channel}-slider`} className="text-xs font-bold">
+                                            {label}
+                                        </Label>
+                                        <Slider
+                                            id={`${channel}-slider`}
+                                            min={0}
+                                            max={max}
+                                            step={1}
+                                            value={[hsl[channel as keyof HSL]]}
+                                            onValueChange={([value]) => updateHsl({ [channel]: value })}
+                                        />
+                                    </div>
+                                    <Input
+                                        type="number"
+                                        min={0}
+                                        max={max}
+                                        value={Math.round(hsl[channel as keyof HSL])}
+                                        onChange={e => updateHsl({ [channel]: Number(e.target.value) })}
                                         className="h-8"
                                     />
                                 </div>
