@@ -5,6 +5,7 @@ import { LayerSelector } from "@/components/custom/layer-selector";
 import { useEffect, useState } from "react";
 import { Device } from "@/types/ffi/hardware";
 import { Container } from "@/components/custom/container";
+import { KeyType } from "@/components/dygma/types/layout";
 
 export interface PageColorsProps {
     device: Device;
@@ -14,28 +15,32 @@ export interface PageColorsProps {
 // NOTE: Defy
 const layers = 10;
 const leds = 177;
-const keymap = Array(80).fill({ keyCode: "0" }); // TODO: Implement from Bazecor
+const keymap: KeyType[] = Array(90).fill(
+    {
+        keyCode: 50,
+        label: "x",
+        extraLabel: "",
+        verbose: "",
+        alt: false,
+    }
+);
 
 export default function PageColors({ device, settings }: PageColorsProps) {
     const [currentLayer, setCurrentLayer] = useState(settings.settingsDefaultLayer);
     const [colorMap, setColorMap] = useState(() => settings.colorMap.slice(0, leds));
-    const [palette, setPalette] = useState(device.hardware.rgbwMode ? settings.paletteRgbw : settings.paletteRgb);
 
     useEffect(() => {
         const colorMapIndex = currentLayer * leds + currentLayer;
         setColorMap(settings.colorMap.slice(colorMapIndex, colorMapIndex + leds));
     }, [currentLayer]);
 
+    const palette = device.hardware.rgbwMode ? settings.paletteRgbw : settings.paletteRgb;
+
     const handleSelectedColorChange = (index: number, newColor: Color) => {
-        // const newPalette = [...palette || []];
-        // newPalette[index] = newColor;
-        // setPalette(newPalette);
-
-        // HACK: Top code not working, even then, this isn't re-rendering
-        let hackPalette = device.hardware.rgbwMode ? settings.paletteRgbw : settings.paletteRgb
-        hackPalette![index] = newColor;
-
-        setPalette(palette);
+        // TODO: useState, but it falt when setting
+        if (palette) {
+            palette[index] = newColor;
+        }
     };
 
     const handleSelectedLayerChange = (index: number) => {

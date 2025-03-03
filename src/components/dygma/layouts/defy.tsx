@@ -21,10 +21,11 @@ import React, { MouseEvent, useState } from "react";
 import Key from "../components/key";
 import UnderGlowStrip from "../components/underGlowStrip";
 import { Color } from "@/types/ffi/settings";
+import { KeyType } from "../types/layout";
 
 interface DefyProps {
     layer: number;
-    keymap: any; // TODO: Check bazecor
+    keymap: KeyType[];
     colorMap: number[];
     selectedKey?: number;
     selectedLED?: number;
@@ -211,7 +212,7 @@ export default function LayoutDefy({
 
     const keyIndex = (row: number, col?: number) => (col !== undefined ? row * 16 + col : row + 11);
 
-    const getLabel = (row: number, col: number): any => keymap[keyIndex(row, col)];
+    const getLabel = (row: number, col: number) => keymap[keyIndex(row, col)];
 
     const isSelected = (row: number, col?: number) => {
         const selectIndex = keyIndex(row, col);
@@ -354,31 +355,25 @@ export default function LayoutDefy({
     const topsArr = ["LEDEFF.", "SCadet", "Steno", "M.Btn", "Leader", "Numpad", "Media", "OSL", "Mouse", "M.Wheel", "M.Warp"];
     const topsArrTransfer = ["SHIFTTO", "LockTo"];
 
-    const getCenterExtra = (row: number, col: number, _xCord: number, _yCord: number, _smallKey = false) => false;
+    const getCenterExtra = (row: number, col: number, _xCord: number, _yCord: number, _smallKey = false) =>
+        React.isValidElement(getLabel(row, col).extraLabel)
+            ? getLabel(row, col).extraLabel
+            : getLabel(row, col).extraLabel?.includes("+")
+                ? ""
+                : getLabel(row, col).extraLabel;
 
-    const getCenterPrimary = (row: number, col: number, xCord: number, yCord: number, smallKey = false) => false;
-
-    // TODO: Implement
-
-    // const getCenterExtra = (row: number, col: number, _xCord: number, _yCord: number, _smallKey = false) =>
-    //     React.isValidElement(getLabel(row, col).extraLabel)
-    //         ? getLabel(row, col).extraLabel
-    //         : getLabel(row, col).extraLabel?.includes("+")
-    //             ? ""
-    //             : getLabel(row, col).extraLabel;
-
-    // const getCenterPrimary = (row: number, col: number, xCord: number, yCord: number, smallKey = false) =>
-    //     getLabel(row, col).extraLabel !== ""
-    //         ? topsArr.includes(getLabel(row, col).extraLabel)
-    //             ? getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 5, smallKey)
-    //             : topsArrTransfer.includes(getLabel(row, col).extraLabel)
-    //                 ? getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, +xCord + 10, yCord + 5, smallKey)
-    //                 : getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 7, smallKey)
-    //         : topsArrTransfer.includes(getLabel(row, col).extraLabel)
-    //             ? getLabel(row, col).label &&
-    //             getDivideKeys(getLabel(row, col).label, xCord, yCord + 5, smallKey) &&
-    //             getDivideKeys(getLabel(row, col).label, +xCord + 10, yCord + 5, smallKey)
-    //             : getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 7, smallKey);
+    const getCenterPrimary = (row: number, col: number, xCord: number, yCord: number, smallKey = false) =>
+        getLabel(row, col).extraLabel !== ""
+            ? topsArr.includes(getLabel(row, col).extraLabel)
+                ? getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 5, smallKey)
+                : topsArrTransfer.includes(getLabel(row, col).extraLabel)
+                    ? getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, +xCord + 10, yCord + 5, smallKey)
+                    : getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 7, smallKey)
+            : topsArrTransfer.includes(getLabel(row, col).extraLabel)
+                ? getLabel(row, col).label &&
+                getDivideKeys(getLabel(row, col).label, xCord, yCord + 5, smallKey) &&
+                getDivideKeys(getLabel(row, col).label, +xCord + 10, yCord + 5, smallKey)
+                : getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 7, smallKey);
 
     // console.log("Selected Key: ", selectedKey);
     // console.log("Selected LED: ", selectedLED);
