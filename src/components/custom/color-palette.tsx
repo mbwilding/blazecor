@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { RGBW } from "@/types/ffi/settings";
 import ColorPicker from "./color-picker";
-import { rgbwToRgb } from "@/utils/rgbwToRgb";
+import { rgbwToRgb } from "@/utils/colorConverters";
 
 interface ColorPaletteProps {
     colors: RGBW[];
