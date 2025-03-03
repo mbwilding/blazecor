@@ -55,11 +55,12 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     };
 
     const handleApply = async () => {
+        settings.paletteRgbw = palette;
         await paletteSet(true, palette);
     };
 
     const handleReset = () => {
-        // TODO: Hook
+        setPalette(settings.paletteRgbw)
     };
 
     return (
@@ -85,7 +86,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
             />
 
             <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
-                <Container className="gap-4">
+                <Container className="gap-6">
                     <Button variant="success" onClick={handleApply}>
                         Apply
                     </Button>
