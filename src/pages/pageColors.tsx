@@ -29,16 +29,16 @@ const keymap: KeyType[] = Array.from({ length: keys }, (_, index) => ({
 export default function PageColors({ device, settings }: PageColorsProps) {
     const [currentLayer, setCurrentLayer] = useState(settings.settingsDefaultLayer);
     const [colorMap, setColorMap] = useState(settings.colorMap.slice(currentLayer, leds));
-    // const [keyMap, setKeyMap] = useState(settings.keymapCustom.slice(currentLayer, keys));
+    const [keyMap, setKeyMap] = useState(settings.keymapCustom.slice(currentLayer, keys));
 
-    // TODO: Figure out what is what, svg does math to calculate, array is large
-    // const keymap: KeyType[] = keyMap.map((x, index) => ({
-    //     keyCode: index, // TODO: 255 is max
-    //     label: x.toString(),
-    //     extraLabel: "",
-    //     verbose: undefined,
-    //     alt: false,
-    // }));
+    // TODO: Figure out what is what, svg does math to calculate indexes into keymap array
+    const keymap: KeyType[] = keyMap.map((x, index) => ({
+        keyCode: index, // TODO: 255 is max
+        label: index.toString(),
+        extraLabel: x.toString(),
+        verbose: undefined,
+        alt: false,
+    }));
 
     console.error(`Keymap: ${keymap.length} | ${keymap[1].label}`)
 
