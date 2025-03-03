@@ -13,3 +13,9 @@ export interface HSV {
     s: number;
     v: number;
 }
+
+export interface HSL {
+    h: number;
+    s: number;
+    l: number;
+}
