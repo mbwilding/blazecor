@@ -58,8 +58,8 @@ export default function PageColors({ device, settings }: PageColorsProps) {
 
     const handleApply = async () => {
         console.log("HELLO");
-        await invoke("palette_rgbw_set", { data: palette as RGBW[] });
-        // applyPalette(palette);
+        // await invoke("palette_rgbw_set", { data: palette as RGBW[] });
+        applyPalette(palette);
     };
 
     const handleReset = () => {

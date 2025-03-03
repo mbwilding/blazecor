@@ -135,6 +135,6 @@ export function usePaletteSet(rgbw: boolean, device?: Device) {
     if (rgbw) {
         return useFocusSet<RGBW[]>("palette_rgbw_set", device);
     } else {
-        return useFocusSet<RGB>("palette_rgb_set", device);
+        return useFocusSet<RGB[]>("palette_rgb_set", device);
     }
 }
