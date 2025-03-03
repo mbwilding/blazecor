@@ -9,9 +9,6 @@ import { useConnect, useDevices, useSettingsGet, useVersion } from "./Api";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { RefreshCcw } from "lucide-react";
 
-// TODO: Move
-document.documentElement.classList.add("dark");
-
 function useDeviceConnection() {
     const [device, setDevice] = useState<Device>();
     const { devices, fetchDevices } = useDevices();
