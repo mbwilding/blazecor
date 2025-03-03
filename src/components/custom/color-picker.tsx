@@ -23,7 +23,6 @@ const clamp = (value: number, min: number, max: number) => Math.max(min, Math.mi
 const actionTimeout = 500;
 
 export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
-    // Use HSL as the main source of truth
     const [hsl, setHsl] = useState(() => rgbToHsl(defaultColor.r, defaultColor.g, defaultColor.b));
 
     const handleColorChange = useCallback(() => {
