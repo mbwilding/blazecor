@@ -7,8 +7,7 @@ import { Device } from "@/types/ffi/hardware";
 import { Container } from "@/components/custom/container";
 import { KeyType } from "@/components/dygma/types/layout";
 import { Button } from "@/components/ui/button";
-import { usePaletteSet } from "@/Api";
-import { invoke } from "@tauri-apps/api/core";
+import { paletteSet } from "@/Api";
 
 export interface PageColorsProps {
     device: Device;
@@ -27,7 +26,6 @@ export default function PageColors({ device, settings }: PageColorsProps) {
 
     // NOTE: Change pallete if Raise
     const [palette, setPalette] = useState(settings.paletteRgbw);
-    const applyPalette = usePaletteSet(device.hardware.rgbwMode, device);
 
     // TODO: Figure out what is what, svg does math to calculate indexes into keymap array
     const keymap: KeyType[] = keyMap.map((_, index) => ({
@@ -57,12 +55,11 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     };
 
     const handleApply = async () => {
-        console.log("HELLO");
-        await invoke("palette_rgbw_set", { data: palette });
-        // applyPalette(palette);
+        await paletteSet(true, palette);
     };
 
     const handleReset = () => {
+        // TODO: Hook
     };
 
     return (

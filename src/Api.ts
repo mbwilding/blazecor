@@ -71,25 +71,6 @@ function useFocusGet<T>(command: string, device?: Device): T | undefined {
     return data;
 }
 
-function useFocusSet<T>(command: string, device?: Device) {
-    const invoke = useInvokeSet(device);
-
-    const setData = useCallback(async (data?: T): Promise<void> => {
-        if (!data) {
-            console.error("Data empty");
-        }
-        if (device) {
-            try {
-                await invoke(command, { data });
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }, [device, command]);
-
-    return setData;
-}
-
 // API Exports
 
 export function useDevices() {
@@ -134,10 +115,7 @@ export function useSettingsGet(device?: Device) {
     return useFocusGet<Settings>("settings_get", device);
 }
 
-export function usePaletteSet(rgbw: boolean, device?: Device) {
-    if (rgbw) {
-        return useFocusSet<RGBW[]>("palette_rgbw_set", device);
-    } else {
-        return useFocusSet<RGB[]>("palette_rgb_set", device);
-    }
+export async function paletteSet(rgbw: boolean, data?: RGB[] | RGBW[]) {
+    const command = rgbw ? "palette_rgbw_set" : "palette_rgb_set";
+    await invoke(command, { data });
 }
