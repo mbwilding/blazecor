@@ -87,8 +87,6 @@ export interface RGB {
     g: number;
     /** Blue component of the color. */
     b: number;
-    /** Optional white component of the color. */
-    w?: number;
 }
 
 /** The LED color. */
