@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { RGBW } from "@/types/ffi/settings";
 import ColorPicker from "./color-picker";
+import { rgbwToRgb } from "@/utils/rgbwToRgb";
 
 interface ColorPaletteProps {
     colors: RGBW[];
@@ -14,9 +15,10 @@ export function ColorPalette({ colors: initialColors, onChange }: ColorPalettePr
 
     const handleColorChange = useCallback(
         (index: number, color: RGBW) => {
-            const newColors = [...colors];
-            newColors[index] = color;
-            setColors(newColors);
+            // TODO: ENABLE
+            // const newColors = [...colors];
+            // newColors[index] = color;
+            // setColors(newColors);
             onChange?.(index, color);
         },
         [colors, onChange],
@@ -24,15 +26,19 @@ export function ColorPalette({ colors: initialColors, onChange }: ColorPalettePr
 
     return (
         <div className="flex flex-wrap gap-2">
-            {colors.map((color, index) => (
-                <ColorPicker key={index} index={index} defaultColor={color} onChange={handleColorChange}>
-                    <Button
-                        variant="outline"
-                        className={cn("h-9 w-9 p-0 rounded-md", "border border-border shadow-sm hover:border-accent")}
-                        style={{ backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b}, ${color.w})` }}
-                    />
-                </ColorPicker>
-            ))}
+            {colors.map((color, index) => {
+                const rgb = rgbwToRgb(color);
+
+                return (
+                    <ColorPicker key={index} index={index} defaultColor={color} onChange={handleColorChange}>
+                        <Button
+                            variant="outline"
+                            className={cn("h-9 w-9 p-0 rounded-md", "border border-border shadow-sm hover:border-accent")}
+                            style={{ backgroundColor: `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})` }}
+                        />
+                    </ColorPicker>
+                );
+            })}
         </div>
     );
 }
