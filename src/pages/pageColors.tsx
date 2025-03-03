@@ -52,12 +52,10 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     };
 
     return (
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col justify-center items-center m-4">
             <div className="flex flex-row gap-4">
                 <Container title="Palette">
                     <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
-                    <Button variant="outline">Apply</Button>
-                    <Button variant="outline">Reset</Button>
                 </Container>
                 <Container title="Layers">
                     <LayerSelector defaultLayer={currentLayer + 1} layers={layers} onChange={handleSelectedLayerChange} />
@@ -74,6 +72,13 @@ export default function PageColors({ device, settings }: PageColorsProps) {
                 keymap={keymap}
                 onKeySelect={e => console.log(e)}
             />
+
+            <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+                <Container className="gap-4">
+                    <Button variant="success">Apply</Button>
+                    <Button variant="destructive">Reset</Button>
+                </Container>
+            </div>
         </div>
     );
 }

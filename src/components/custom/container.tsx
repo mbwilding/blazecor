@@ -9,13 +9,13 @@ interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function Container({ title, children, top = false, className }: ContainerProps) {
     return (
-        <Card className={`w-fit h-fit py-3 px-0 bg-secondary ${className ?? ''}`}>
+        <Card className="w-fit h-fit py-3 px-0 bg-secondary">
             {top && title && (
                 <CardHeader>
                     <CardTitle>{title}</CardTitle>
                 </CardHeader>
             )}
-            <CardContent className={`${top ? "" : "flex items-center"}`}>
+            <CardContent className={`${top ? "" : "flex items-center"} gap-2 ${className ?? ''}`}>
                 {!top && title && <CardTitle className="mr-6">{title}</CardTitle>}
                 {children}
             </CardContent>
