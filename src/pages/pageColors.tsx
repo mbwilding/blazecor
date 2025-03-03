@@ -75,6 +75,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
             </div>
 
             <LayoutDefy
+                className="w-full"
                 layer={currentLayer}
                 darkMode={true}
                 showUnderglow={device.hardware.keyboardUnderglow !== undefined}
