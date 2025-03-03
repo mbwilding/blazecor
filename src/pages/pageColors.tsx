@@ -17,15 +17,6 @@ const layers = 10;
 const keys = 80;
 const leds = 177;
 
-// HACK: Remove
-const keymap: KeyType[] = Array.from({ length: keys }, (_, index) => ({
-    keyCode: index,
-    label: index.toString(),
-    extraLabel: "",
-    verbose: undefined,
-    alt: false,
-}));
-
 export default function PageColors({ device, settings }: PageColorsProps) {
     const [currentLayer, setCurrentLayer] = useState(settings.settingsDefaultLayer);
     const [colorMap, setColorMap] = useState(settings.colorMap.slice(currentLayer, leds));
