@@ -17,10 +17,10 @@ const layers = 10;
 const leds = 177;
 const keymap: KeyType[] = Array(90).fill(
     {
-        keyCode: 50,
-        label: "x",
-        extraLabel: "",
-        verbose: "",
+        keyCode: 80,
+        label: "label",
+        extraLabel: "extra",
+        verbose: undefined,
         alt: false,
     }
 );
