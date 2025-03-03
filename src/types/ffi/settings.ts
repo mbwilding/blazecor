@@ -17,7 +17,7 @@ export interface Settings {
     ledFade?: number; // Option<u16>
     ledTheme: RGB[];
     paletteRgb?: RGB[];
-    paletteRgbw?: RGB[];
+    paletteRgbw?: RGBW[];
     colorMap: number[]; // Vec<u8>
     ledIdleTrueSleep?: boolean; // Option<bool>
     ledIdleTrueSleepTime?: number; // Option<Duration>

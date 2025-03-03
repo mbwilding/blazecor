@@ -20,7 +20,7 @@
 import React, { MouseEvent, useState } from "react";
 import Key from "../components/key";
 import UnderGlowStrip from "../components/underGlowStrip";
-import { Color } from "@/types/ffi/settings";
+import { RGB, RGBW } from "@/types/ffi/settings";
 import { KeyType } from "../types/layout";
 
 interface DefyProps {
@@ -30,7 +30,7 @@ interface DefyProps {
     selectedKey?: number;
     selectedLED?: number;
     darkMode: boolean;
-    palette: Color[];
+    palette: RGB[] | RGBW[];
     className?: string;
     showUnderglow: boolean;
     isStandardView: boolean;

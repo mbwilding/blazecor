@@ -57,7 +57,7 @@ fn settings_get(storage: State<Storage>) -> Result<Settings> {
 }
 
 #[tauri::command]
-fn settings_set(input: Settings, storage: State<Storage>) -> Result<()> {
+fn settings_set(data: Settings, storage: State<Storage>) -> Result<()> {
     with_focus(storage, |focus| Ok(focus.settings_set(&input)?))
 }
 
@@ -67,7 +67,7 @@ fn palette_rgb_get(storage: State<Storage>) -> Result<Vec<RGB>> {
 }
 
 #[tauri::command]
-fn palette_rgb_set(input: Vec<RGB>, storage: State<Storage>) -> Result<()> {
+fn palette_rgb_set(data: Vec<RGB>, storage: State<Storage>) -> Result<()> {
     with_focus(storage, |focus| Ok(focus.palette_rgb_set(&input)?))
 }
 
@@ -77,7 +77,7 @@ fn palette_rgbw_get(storage: State<Storage>) -> Result<Vec<RGBW>> {
 }
 
 #[tauri::command]
-fn palette_rgbw_set(input: Vec<RGBW>, storage: State<Storage>) -> Result<()> {
+fn palette_rgbw_set(data: Vec<RGBW>, storage: State<Storage>) -> Result<()> {
     with_focus(storage, |focus| Ok(focus.palette_rgbw_set(&input)?))
 }
 
@@ -87,7 +87,7 @@ fn color_map_get(storage: State<Storage>) -> Result<Vec<u8>> {
 }
 
 #[tauri::command]
-fn color_map_set(input: Vec<u8>, storage: State<Storage>) -> Result<()> {
+fn color_map_set(data: Vec<u8>, storage: State<Storage>) -> Result<()> {
     with_focus(storage, |focus| Ok(focus.color_map_set(&input)?))
 }
 

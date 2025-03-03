@@ -5,7 +5,7 @@ import { Device } from "./types/ffi/hardware";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/custom/loading";
-import { useConnect, useDevices, useSettings, useVersion } from "./Api";
+import { useConnect, useDevices, useSettingsGet, useVersion } from "./Api";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { RefreshCcw } from "lucide-react";
 
@@ -19,7 +19,7 @@ function useDeviceConnection() {
     useConnect(device);
 
     const version = useVersion(device);
-    const settings = useSettings(device);
+    const settings = useSettingsGet(device);
 
     const handleDeviceSelection = useCallback((device: Device) => {
         setDevice(device);

@@ -77,7 +77,7 @@ function useFocusSet<T>(command: string, device?: Device) {
     const setData = useCallback(async (data: T): Promise<void> => {
         if (device) {
             try {
-                await invoke(command, { invokeMessage: data });
+                await invoke(command, { data: data });
             } catch (e) {
                 console.error(e);
             }
