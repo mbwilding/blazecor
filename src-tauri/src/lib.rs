@@ -78,10 +78,7 @@ fn palette_rgbw_get(storage: State<Storage>) -> Result<Vec<RGBW>> {
 
 #[tauri::command]
 fn palette_rgbw_set(data: Vec<RGBW>, storage: State<Storage>) -> Result<()> {
-    // TODO: Remove
-    println!("HIT: {:?}", &data);
-    // with_focus(storage, |focus| Ok(focus.palette_rgbw_set(&data)?))
-    Ok(())
+    with_focus(storage, |focus| Ok(focus.palette_rgbw_set(&data)?))
 }
 
 #[tauri::command]
