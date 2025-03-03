@@ -8,6 +8,7 @@ import { Container } from "@/components/custom/container";
 import { KeyType } from "@/components/dygma/types/layout";
 import { Button } from "@/components/ui/button";
 import { usePaletteSet } from "@/Api";
+import { invoke } from "@tauri-apps/api/core";
 
 export interface PageColorsProps {
     device: Device;
@@ -55,8 +56,10 @@ export default function PageColors({ device, settings }: PageColorsProps) {
         setCurrentLayer(index - 1);
     };
 
-    const handleApply = () => {
-        applyPalette(palette);
+    const handleApply = async () => {
+        console.log("HELLO");
+        await invoke("palette_rgbw_set", { data: palette as RGBW[] });
+        // applyPalette(palette);
     };
 
     const handleReset = () => {

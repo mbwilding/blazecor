@@ -1,5 +1,5 @@
 import { Device } from "./types/ffi/hardware";
-import { Settings } from "./types/ffi/settings";
+import { RGB, RGBW, Settings } from "./types/ffi/settings";
 import { invoke, InvokeArgs } from "@tauri-apps/api/core";
 import { useCallback, useEffect, useState } from "react";
 
@@ -77,7 +77,7 @@ function useFocusSet<T>(command: string, device?: Device) {
     const setData = useCallback(async (data: T): Promise<void> => {
         if (device) {
             try {
-                await invoke(command, { data: data });
+                await invoke(command, { data });
             } catch (e) {
                 console.error(e);
             }
@@ -132,5 +132,9 @@ export function useSettingsGet(device?: Device) {
 }
 
 export function usePaletteSet(rgbw: boolean, device?: Device) {
-    return useFocusSet(rgbw ? "palette_rgbw_set" : "palette_rgb_set", device);
+    if (rgbw) {
+        return useFocusSet<RGBW[]>("palette_rgbw_set", device);
+    } else {
+        return useFocusSet<RGB>("palette_rgb_set", device);
+    }
 }
