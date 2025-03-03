@@ -8,12 +8,12 @@ import { Product } from "@/types/ffi/hardware";
 
 interface ColorPaletteProps {
     product: Product;
-    colors: RGBW[];
+    colors?: RGBW[];
     onChange?: (index: number, color: RGBW) => void;
 }
 
 export function ColorPalette({ product, colors: initialColors, onChange }: ColorPaletteProps) {
-    const [colors, setColors] = useState<RGBW[]>(initialColors);
+    const [colors, setColors] = useState<RGBW[]>(initialColors || []);
 
     const handleColorChange = useCallback(
         (index: number, color: RGBW) => {

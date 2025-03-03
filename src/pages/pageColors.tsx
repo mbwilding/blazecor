@@ -67,7 +67,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
         <div className="flex flex-col justify-center items-center m-4">
             <div className="flex flex-row gap-4">
                 <Container title="Palette">
-                    <ColorPalette product={Product.Defy} colors={palette || []} onChange={handleSelectedColorChange} />
+                    <ColorPalette product={Product.Defy} colors={palette} onChange={handleSelectedColorChange} />
                 </Container>
                 <Container title="Layers">
                     <LayerSelector defaultLayer={currentLayer + 1} layers={layers} onChange={handleSelectedLayerChange} />
