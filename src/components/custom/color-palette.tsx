@@ -30,7 +30,7 @@ export function ColorPalette({ product, colors: initialColors, onChange }: Color
             {colors.map((color, index) => {
                 if (product !== Product.Defy) {
                     const error = `Product not implemented:  ${product}`;
-                    console.error(error)
+                    console.error(error);
                     throw new Error(error);
                 }
 

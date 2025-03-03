@@ -19,7 +19,7 @@ export function rgbwToRgb({ r, g, b, w }: RGBW, whiteScalar: number = 1): RGB {
     const gNormalized = g / 255;
     const bNormalized = b / 255;
 
-    const wNormalized = whiteScalar === 1 ? w / 255 : w / 255 * whiteScalar;
+    const wNormalized = whiteScalar === 1 ? w / 255 : (w / 255) * whiteScalar;
 
     const rNew = rNormalized * (1 - wNormalized) + wNormalized;
     const gNew = gNormalized * (1 - wNormalized) + wNormalized;
@@ -37,63 +37,63 @@ export function rgbwToHex({ r, g, b, w }: RGBW): string {
 }
 
 export function hsvToRgb({ h, s, v }: HSV): RGB {
-    const normalizedSaturation = s / 100
-    const normalizedValue = v / 100
+    const normalizedSaturation = s / 100;
+    const normalizedValue = v / 100;
 
-    const hueSextile = Math.floor((h / 60) % 6)
-    const f = (h / 60) - hueSextile
-    const p = normalizedValue * (1 - normalizedSaturation)
-    const q = normalizedValue * (1 - f * normalizedSaturation)
-    const t = normalizedValue * (1 - (1 - f) * normalizedSaturation)
+    const hueSextile = Math.floor((h / 60) % 6);
+    const f = h / 60 - hueSextile;
+    const p = normalizedValue * (1 - normalizedSaturation);
+    const q = normalizedValue * (1 - f * normalizedSaturation);
+    const t = normalizedValue * (1 - (1 - f) * normalizedSaturation);
 
-    let blue
-    let green
-    let red
+    let blue;
+    let green;
+    let red;
 
     switch (hueSextile) {
         case 0:
-            red = normalizedValue
-            green = t
-            blue = p
+            red = normalizedValue;
+            green = t;
+            blue = p;
 
-            break
+            break;
         case 1:
-            red = q
-            green = normalizedValue
-            blue = p
+            red = q;
+            green = normalizedValue;
+            blue = p;
 
-            break
+            break;
         case 2:
-            red = p
-            green = normalizedValue
-            blue = t
+            red = p;
+            green = normalizedValue;
+            blue = t;
 
-            break
+            break;
         case 3:
-            red = p
-            green = q
-            blue = normalizedValue
+            red = p;
+            green = q;
+            blue = normalizedValue;
 
-            break
+            break;
         case 4:
-            red = t
-            green = p
-            blue = normalizedValue
+            red = t;
+            green = p;
+            blue = normalizedValue;
 
-            break
+            break;
         default:
-            red = normalizedValue
-            green = p
-            blue = q
+            red = normalizedValue;
+            green = p;
+            blue = q;
 
-            break
+            break;
     }
 
     return {
         r: Math.min(255, Math.round(red * 256)),
         g: Math.min(255, Math.round(green * 256)),
         b: Math.min(255, Math.round(blue * 256)),
-    }
+    };
 }
 
 export function rgbwToHsv({ r, g, b, w }: RGBW): HSV {

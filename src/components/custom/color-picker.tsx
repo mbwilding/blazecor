@@ -26,7 +26,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, defaultColor, onChange
     const hueSliderRef = useRef<HTMLDivElement>(null);
 
     const rgbToRgbwCached = useCallback((rgb: RGB): RGBW => {
-        return rgbToRgbw(rgb)
+        return rgbToRgbw(rgb);
     }, []);
 
     const hsvToRgbCached = useCallback((hsv: HSV): RGB => {
