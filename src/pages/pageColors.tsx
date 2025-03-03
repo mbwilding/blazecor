@@ -14,8 +14,10 @@ export interface PageColorsProps {
 
 // NOTE: Defy
 const layers = 10;
+const keys = 80;
 const leds = 177;
-const keymap: KeyType[] = Array.from({ length: 90 }, (_, index) => ({
+
+const keymap: KeyType[] = Array.from({ length: keys }, (_, index) => ({
     keyCode: index,
     label: index.toString(),
     extraLabel: "",
@@ -25,7 +27,16 @@ const keymap: KeyType[] = Array.from({ length: 90 }, (_, index) => ({
 
 export default function PageColors({ device, settings }: PageColorsProps) {
     const [currentLayer, setCurrentLayer] = useState(settings.settingsDefaultLayer);
-    const [colorMap, setColorMap] = useState(() => settings.colorMap.slice(0, leds));
+    const [colorMap, setColorMap] = useState(settings.colorMap.slice(currentLayer, leds));
+    const [keyMap, setKeyMap] = useState(settings.keymapCustom.slice(currentLayer, keys));
+
+    // const keymap: KeyType[] = keyMap.map((x, index) => ({
+    //     keyCode: x,
+    //     label: index.toString(),
+    //     extraLabel: "",
+    //     verbose: undefined,
+    //     alt: false,
+    // }));
 
     useEffect(() => {
         const colorMapIndex = currentLayer * leds + currentLayer;
