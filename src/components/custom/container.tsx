@@ -15,11 +15,10 @@ export function Container({ title, children, top = false, className }: Container
                     <CardTitle>{title}</CardTitle>
                 </CardHeader>
             )}
-            <CardContent className={`${top ? "" : "flex items-center"} gap-2 ${className ?? ''}`}>
+            <CardContent className={`${top ? "" : "flex items-center"} gap-2 ${className ?? ""}`}>
                 {!top && title && <CardTitle className="mr-6">{title}</CardTitle>}
                 {children}
             </CardContent>
         </Card>
     );
 }
-

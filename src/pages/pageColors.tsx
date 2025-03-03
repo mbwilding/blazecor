@@ -86,8 +86,12 @@ export default function PageColors({ device, settings }: PageColorsProps) {
 
             <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
                 <Container className="gap-4">
-                    <Button variant="success" onClick={handleApply}>Apply</Button>
-                    <Button variant="destructive" onClick={handleReset}>Reset</Button>
+                    <Button variant="success" onClick={handleApply}>
+                        Apply
+                    </Button>
+                    <Button variant="destructive" onClick={handleReset}>
+                        Reset
+                    </Button>
                 </Container>
             </div>
         </div>
