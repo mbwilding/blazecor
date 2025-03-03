@@ -2,12 +2,12 @@ import { useState, useCallback, memo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Color } from "@/types/ffi/settings";
+import { RGB, RGBW } from "@/types/ffi/settings";
 import { ColorPicker } from "./color-picker";
 
 interface ColorPaletteProps {
-    colors: Color[];
-    onChange?: (index: number, color: Color) => void;
+    colors: RGB[] | RGBW[];
+    onChange?: (index: number, color: RGB | RGBW) => void;
 }
 
 const ColorSwatch = memo(
@@ -17,7 +17,7 @@ const ColorSwatch = memo(
         selected,
         onClick,
     }: {
-        color: Color;
+        color: RGB | RGBW;
         index: number;
         selected: boolean;
         onClick: (index: number) => void;
@@ -36,7 +36,7 @@ const ColorSwatch = memo(
 );
 
 export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
-    const [selectedColor, setSelectedColor] = useState<Color>();
+    const [selectedColor, setSelectedColor] = useState<RGB>();
     const [selectedIndex, setSelectedIndex] = useState<number>();
 
     const handleSwatchClick = useCallback(
@@ -48,7 +48,7 @@ export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
     );
 
     const handleColorChange = useCallback(
-        (color: Color) => {
+        (color: RGB | RGBW) => {
             setSelectedColor(color);
             if (selectedIndex !== undefined) {
                 colors[selectedIndex] = color;

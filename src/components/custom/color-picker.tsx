@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Copy, Check, ClipboardPaste, X } from "lucide-react";
+
+import React, { useState, useCallback, useMemo } from "react";
+import { Copy, Check, ClipboardPaste } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Color } from "@/types/ffi/settings";
+import { RGB, RGBW } from "@/types/ffi/settings";
 
 interface ColorPickerProps {
-    defaultColor: Color;
-    onChange?: (color: Color) => void;
+    defaultColor: RGB | RGBW;
+    onChange?: (color: RGB | RGBW) => void;
 }
 
 interface HSL {
@@ -18,89 +19,32 @@ interface HSL {
     l: number;
 }
 
-const actionTimeout: number = 500;
-
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+
+const actionTimeout = 500;
 
 export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
     const [hsl, setHsl] = useState(() => rgbToHsl(defaultColor.r, defaultColor.g, defaultColor.b));
-    const [rgb, setRgb] = useState(defaultColor);
-    const [hex, setHex] = useState(rgbToHex(rgb.r, rgb.g, rgb.b));
+
+    const handleColorChange = useCallback(() => {
+        const { r, g, b } = hslToRgb(hsl.h, hsl.s, hsl.l);
+        const newRgb = { r, g, b };
+        onChange && onChange(newRgb);
+        return { newRgb, hex: rgbToHex(r, g, b) };
+    }, [hsl, onChange]);
+
+    const { hex } = useMemo(handleColorChange, [handleColorChange]);
+
     const [copied, setCopied] = useState(false);
-    const [pasted, setPasted] = useState<boolean | undefined>(false);
-    const colorPlaneRef = useRef<HTMLDivElement>(null);
-    const isDraggingRef = useRef(false);
 
-    // To prevent dependencies that might cause recursion
-    const updateColorFromHsl = useCallback(
-        (hsl: HSL) => {
-            const { r, g, b } = hslToRgb(hsl.h, hsl.s, hsl.l);
-            const newRgb = { r, g, b };
-            setRgb(newRgb);
-            setHex(rgbToHex(r, g, b));
-            onChange && onChange(newRgb);
-        },
-        [onChange],
-    );
-
-    useEffect(() => {
-        updateColorFromHsl(hsl);
-    }, [hsl, updateColorFromHsl]);
-
-    const updateColorFromPlane = useCallback((e: MouseEvent | React.MouseEvent) => {
-        if (!colorPlaneRef.current) return;
-
-        const rect = colorPlaneRef.current.getBoundingClientRect();
-        const x = clamp((e.clientX - rect.left) / rect.width, 0, 1);
-        const y = clamp((e.clientY - rect.top) / rect.height, 0, 1);
-
-        setHsl(prev => ({
-            h: prev.h,
-            s: x * 100,
-            l: 100 - y * 100,
-        }));
+    const handleHueChange = useCallback((value: number[]) => {
+        setHsl((prev) => ({ ...prev, h: value[0] }));
     }, []);
 
-    const handleColorPlaneMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-        isDraggingRef.current = true;
-        updateColorFromPlane(e);
-
-        const handleMouseMove = (e: MouseEvent) => {
-            if (isDraggingRef.current) updateColorFromPlane(e);
-        };
-
-        const handleMouseUp = () => {
-            isDraggingRef.current = false;
-            document.removeEventListener("mousemove", handleMouseMove);
-            document.removeEventListener("mouseup", handleMouseUp);
-        };
-
-        document.addEventListener("mousemove", handleMouseMove);
-        document.addEventListener("mouseup", handleMouseUp);
-    };
-
-    const handleHueChange = (value: number[]) => {
-        setHsl(prev => ({ ...prev, h: value[0] }));
-    };
-
-    const handleRgbChange = (channel: keyof Color, value: string) => {
-        const numValue = clamp(Number.parseInt(value) || 0, 0, 255);
-        const newRgb = { ...rgb, [channel]: numValue };
-        setRgb(newRgb);
-        setHsl(rgbToHsl(newRgb.r, newRgb.g, newRgb.b));
-    };
-
-    const handleHslChange = (channel: keyof HSL, value: string) => {
+    const handleHslChange = useCallback((channel: keyof HSL, value: string) => {
         const numValue = clamp(Number.parseInt(value) || 0, 0, channel === "h" ? 360 : 100);
-        setHsl(prev => ({ ...prev, [channel]: numValue }));
-    };
-
-    const handleHexChange = (value: string) => {
-        const color = hexToRgb(value);
-        setRgb(color);
-        setHsl(rgbToHsl(color.r, color.g, color.b));
-        setHex(value);
-    };
+        setHsl((prev) => ({ ...prev, [channel]: numValue }));
+    }, []);
 
     const copyToClipboard = useCallback(async (text: string) => {
         await navigator.clipboard.writeText(text);
@@ -108,145 +52,31 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
         setTimeout(() => setCopied(false), actionTimeout);
     }, []);
 
-    const pasteFromClipboard = useCallback(async () => {
-        let text = (await navigator.clipboard.readText()).trim().toLowerCase();
-        let valid = false;
-
-        if (text.startsWith("#")) {
-            handleHexChange(text);
-            // TODO: Switch tab
-            valid = true;
-        } else if (text.startsWith("rgb")) {
-            // TODO: Switch tab, handle
-            valid = false;
-        } else if (text.startsWith("hsl")) {
-            // TODO: Switch tab, handle
-            valid = false;
-        }
-
-        if (valid) {
-            setPasted(true);
-            setTimeout(() => setPasted(false), actionTimeout);
-        } else {
-            setPasted(undefined);
-            setTimeout(() => setPasted(false), actionTimeout);
-        }
-    }, []);
-
-    const cursorPosition = {
-        left: `${hsl.s}%`,
-        top: `${100 - hsl.l}%`,
-    };
-
     return (
         <div className="w-full max-w-sm space-y-4">
             <div className="relative">
-                <div
-                    ref={colorPlaneRef}
-                    className="relative w-full h-48 rounded-md cursor-crosshair"
+                <Slider
+                    value={[hsl.h]}
+                    max={360}
+                    step={1}
+                    onValueChange={handleHueChange}
+                    className="[&_.bg-primary]:bg-transparent [&_.bg-secondary]:bg-transparent"
                     style={{
-                        background: `linear-gradient(to right, #fff, hsl(${hsl.h}, 100%, 50%))`,
-                        backgroundImage: `
-              linear-gradient(to top, #000, transparent),
-              linear-gradient(to right, #fff, hsl(${hsl.h}, 100%, 50%))
-            `,
+                        background: `linear-gradient(to right,
+                        hsl(0, 100%, 50%), hsl(60, 100%, 50%),
+                        hsl(120, 100%, 50%), hsl(180, 100%, 50%),
+                        hsl(240, 100%, 50%), hsl(300, 100%, 50%),
+                        hsl(360, 100%, 50%))`,
                     }}
-                    onMouseDown={handleColorPlaneMouseDown}
-                >
-                    <div
-                        className="absolute w-4 h-4 -translate-x-1/2 -translate-y-1/2 border-2 border-white rounded-full shadow-md pointer-events-none"
-                        style={{
-                            left: cursorPosition.left,
-                            top: cursorPosition.top,
-                            backgroundColor: hex,
-                        }}
-                    />
-                </div>
-
-                <div className="mt-4 mb-6">
-                    <Slider
-                        value={[hsl.h]}
-                        max={360}
-                        step={1}
-                        onValueChange={handleHueChange}
-                        className="[&_.bg-primary]:bg-transparent [&_.bg-secondary]:bg-transparent"
-                        style={{
-                            background: `linear-gradient(to right,
-                hsl(0, 100%, 50%), hsl(60, 100%, 50%),
-                hsl(120, 100%, 50%), hsl(180, 100%, 50%),
-                hsl(240, 100%, 50%), hsl(300, 100%, 50%),
-                hsl(360, 100%, 50%))`,
-                        }}
-                    />
-                </div>
+                />
             </div>
 
-            <Tabs defaultValue="hex" className="w-full">
+            <Tabs defaultValue="hsl" className="w-full">
                 <TabsList className="w-full grid grid-cols-3">
-                    <TabsTrigger value="hex">HEX</TabsTrigger>
-                    <TabsTrigger value="rgb">RGB</TabsTrigger>
+                    <TabsTrigger value="hex" disabled>HEX</TabsTrigger>
+                    <TabsTrigger value="rgb" disabled>RGB</TabsTrigger>
                     <TabsTrigger value="hsl">HSL</TabsTrigger>
                 </TabsList>
-
-                <TabsContent value="hex" className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                        <Input value={hex} onChange={e => handleHexChange(e.target.value)} className="font-mono" />
-                        <Button
-                            size="icon"
-                            variant={copied ? "success" : "outline"}
-                            onClick={() => copyToClipboard(hex)}
-                            className="shrink-0"
-                        >
-                            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                        </Button>
-                        <Button
-                            size="icon"
-                            variant={pasted === undefined ? "destructive" : pasted ? "success" : "outline"}
-                            onClick={() => pasteFromClipboard()}
-                            className="shrink-0"
-                        >
-                            {pasted === undefined ? (
-                                <X className="w-4 h-4" />
-                            ) : pasted ? (
-                                <Check className="w-4 h-4" />
-                            ) : (
-                                <ClipboardPaste className="w-4 h-4" />
-                            )}
-                        </Button>
-                    </div>
-                </TabsContent>
-
-                <TabsContent value="rgb" className="space-y-2">
-                    <div className="grid grid-cols-3 gap-2">
-                        {["r", "g", "b"].map(channel => (
-                            <div key={channel} className="space-y-1">
-                                <Label htmlFor={`${channel}-value`} className="text-xs">
-                                    {channel.toUpperCase()}
-                                </Label>
-                                <Input
-                                    id={`${channel}-value`}
-                                    type="number"
-                                    min={0}
-                                    max={255}
-                                    value={rgb[channel as keyof Color]}
-                                    onChange={e => handleRgbChange(channel as keyof Color, e.target.value)}
-                                    className="font-mono"
-                                />
-                            </div>
-                        ))}
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <Input value={`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`} readOnly className="font-mono" />
-                        <Button
-                            size="icon"
-                            variant={copied ? "success" : "outline"}
-                            onClick={() => copyToClipboard(`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`)}
-                            className="shrink-0"
-                        >
-                            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                        </Button>
-                    </div>
-                </TabsContent>
 
                 <TabsContent value="hsl" className="space-y-2">
                     <div className="grid grid-cols-3 gap-2">
@@ -260,7 +90,7 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
                                 min={0}
                                 max={360}
                                 value={Math.round(hsl.h)}
-                                onChange={e => handleHslChange("h", e.target.value)}
+                                onChange={(e) => handleHslChange("h", e.target.value)}
                                 className="font-mono"
                             />
                         </div>
@@ -274,7 +104,7 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
                                 min={0}
                                 max={100}
                                 value={Math.round(hsl.s)}
-                                onChange={e => handleHslChange("s", e.target.value)}
+                                onChange={(e) => handleHslChange("s", e.target.value)}
                                 className="font-mono"
                             />
                         </div>
@@ -288,7 +118,7 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
                                 min={0}
                                 max={100}
                                 value={Math.round(hsl.l)}
-                                onChange={e => handleHslChange("l", e.target.value)}
+                                onChange={(e) => handleHslChange("l", e.target.value)}
                                 className="font-mono"
                             />
                         </div>
@@ -303,7 +133,9 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
                             size="icon"
                             variant={copied ? "success" : "outline"}
                             onClick={() =>
-                                copyToClipboard(`hsl(${Math.round(hsl.h)}, ${Math.round(hsl.s)}%, ${Math.round(hsl.l)}%)`)
+                                copyToClipboard(
+                                    `hsl(${Math.round(hsl.h)}, ${Math.round(hsl.s)}%, ${Math.round(hsl.l)}%)`
+                                )
                             }
                             className="shrink-0"
                         >
@@ -321,21 +153,11 @@ export function ColorPicker({ defaultColor, onChange }: ColorPickerProps) {
     );
 }
 
-function hexToRgb(hex: string): Color {
-    hex = hex.slice(1);
-
-    const r = Number.parseInt(hex.slice(0, 2), 16);
-    const g = Number.parseInt(hex.slice(2, 4), 16);
-    const b = Number.parseInt(hex.slice(4, 6), 16);
-
-    return { r, g, b };
-}
-
-function rgbToHex(r: number, g: number, b: number): string {
+const rgbToHex = (r: number, g: number, b: number): string => {
     return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
-}
+};
 
-function rgbToHsl(r: number, g: number, b: number): HSL {
+const rgbToHsl = (r: number, g: number, b: number): HSL => {
     r /= 255;
     g /= 255;
     b /= 255;
@@ -366,9 +188,9 @@ function rgbToHsl(r: number, g: number, b: number): HSL {
     }
 
     return { h: Math.round(h * 360), s: s * 100, l: l * 100 };
-}
+};
 
-function hslToRgb(h: number, s: number, l: number): Color {
+const hslToRgb = (h: number, s: number, l: number): RGB => {
     h /= 360;
     s /= 100;
     l /= 100;
@@ -400,4 +222,4 @@ function hslToRgb(h: number, s: number, l: number): Color {
         g: Math.round(g * 255),
         b: Math.round(b * 255),
     };
-}
+};

@@ -1,6 +1,6 @@
 import LayoutDefy from "@/components/dygma/layouts/defy";
 import { ColorPalette } from "@/components/custom/color-palette";
-import { Color, Settings } from "@/types/ffi/settings";
+import { RGB, RGBW, Settings } from "@/types/ffi/settings";
 import { LayerSelector } from "@/components/custom/layer-selector";
 import { useEffect, useState } from "react";
 import { Device } from "@/types/ffi/hardware";
@@ -46,7 +46,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
         setColorMap(settings.colorMap.slice(colorMapIndex, colorMapIndex + leds));
     }, [currentLayer]);
 
-    const handleSelectedColorChange = (index: number, color: Color) => {
+    const handleSelectedColorChange = (index: number, color: RGB | RGBW) => {
         console.error(`index: ${index} | color: ${color.r}, ${color.g}, ${color.b}`)
 
         if (palette) {
