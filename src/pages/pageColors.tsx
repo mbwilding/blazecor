@@ -17,26 +17,19 @@ const layers = 10;
 const keys = 80;
 const leds = 177;
 
-const keymap: KeyType[] = Array.from({ length: keys }, (_, index) => ({
-    keyCode: index,
-    label: index.toString(),
-    extraLabel: "",
-    verbose: undefined,
-    alt: false,
-}));
-
 export default function PageColors({ device, settings }: PageColorsProps) {
     const [currentLayer, setCurrentLayer] = useState(settings.settingsDefaultLayer);
     const [colorMap, setColorMap] = useState(settings.colorMap.slice(currentLayer, leds));
     const [keyMap, setKeyMap] = useState(settings.keymapCustom.slice(currentLayer, keys));
 
-    // const keymap: KeyType[] = keyMap.map((x, index) => ({
-    //     keyCode: x,
-    //     label: index.toString(),
-    //     extraLabel: "",
-    //     verbose: undefined,
-    //     alt: false,
-    // }));
+    // TODO: Figure out what is what
+    const keymap: KeyType[] = keyMap.map((x, index) => ({
+        keyCode: index, // TODO: 255 is max
+        label: x.toString(),
+        extraLabel: "",
+        verbose: undefined,
+        alt: false,
+    }));
 
     useEffect(() => {
         const colorMapIndex = currentLayer * leds + currentLayer;
