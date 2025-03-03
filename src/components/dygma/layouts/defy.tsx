@@ -17,28 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, useState } from "react";
 import Key from "../components/key";
 import UnderGlowStrip from "../components/underGlowStrip";
 import { Color } from "@/types/ffi/settings";
 
-export interface DefyProps {
+interface DefyProps {
     layer: number;
-    keymap?: number[];
-    colorMap?: number[];
+    keymap: any; // TODO: Check bazecor
+    colorMap: number[];
     selectedKey?: number;
     selectedLED?: number;
     darkMode: boolean;
-    palette?: Color[];
+    palette: Color[];
     className?: string;
     showUnderglow: boolean;
     isStandardView: boolean;
     onKeySelect: (e: MouseEvent) => void;
 }
 
-export interface DefyState {
-    underglowIndex?: number;
-}
+// export interface DefyState {
+//     underglowIndex?: number;
+// }
 
 const XX = 255;
 const LEDS_LEFT_KEYS = 35;
@@ -182,206 +182,210 @@ const keysColumnsPosition = {
     x13: 1107,
 };
 
-export class LayoutDefy extends React.Component<DefyProps, DefyState> {
-    constructor(props: DefyProps) {
-        super(props);
-        this.state = {
-            underglowIndex: undefined,
-        };
+export default function LayoutDefy({
+    layer,
+    keymap,
+    colorMap,
+    selectedKey,
+    selectedLED,
+    darkMode,
+    palette,
+    className,
+    showUnderglow,
+    isStandardView,
+    onKeySelect
+}: DefyProps) {
+    const [underglowIndex, setUnderglowIndex] = useState<number>();
+    // const [colorMapState, setColorMapState] = useState(colorMap);
+    // const [paletteState, setPaletteState] = useState(palette);
+
+    const getContrastText = (color: any) => {
+        const colors = color.match(/\d+/g);
+        if (colors == null || colors.length == 0) return "#000";
+        let aux;
+        if (colors[0] < 131 && colors[1] < 131) {
+            aux = "#FFF";
+        } else {
+            aux = "#000";
+        }
+        return aux;
+    };
+
+    const keyIndex = (row: number, col?: number) => (col !== undefined ? row * 16 + col : row + 11);
+
+    const getLabel = (row: number, col: number): any => keymap[keyIndex(row, col)];
+
+    const isSelected = (row: number, col?: number) => {
+        const selectIndex = keyIndex(row, col);
+        return underglowIndex ? underglowIndex == selectIndex : selectedKey == selectIndex;
+    };
+
+    const stroke = (row: number, col?: number) =>
+        isSelected(row, col) ? (darkMode ? "#fff" : "#000") : "#b3b3b3";
+
+    const getStrokeWidth = (row: number, col?: number): number => (isSelected(row, col) ? 3.0 : 1.5);
+
+    const getColor = (row: number, col?: number) => {
+        const ledIndex = col !== undefined ? led_map[row][col] : no_key_led_map[row - UNDERGLOW];
+        const colorIndex = colorMap[ledIndex];
+        const color = palette[colorIndex];
+        return `rgb(${color.r}, ${color.g}, ${color.b})`;
+    };
+
+    const getLEDIndex = (row: number, col?: number) =>
+        col !== undefined ? led_map[row][col] : no_key_led_map[row - UNDERGLOW];
+
+    const onClick = (e: MouseEvent) => {
+        setUnderglowIndex(undefined);
+        onKeySelect(e);
+    };
+
+    const setUndeglowIndex = (index: number, e: MouseEvent) => {
+        setUnderglowIndex(keyIndex(index));
+        onKeySelect(e);
+    };
+
+    interface GetCurrentKeyElementProps {
+        /** Horizontal coordinates of the button */
+        x: number;
+        /** Vertical coordinates of the button */
+        y: number;
+        /** Row spacing */
+        dy?: number | string;
+        /** Button text */
+        word: string;
+        /** ClassName of the button */
+        class?: string;
+        /** Length of the text if the button is small and additional text is longer then button */
+        textLength?: number;
     }
 
-    render() {
-        const { underglowIndex } = this.state;
-        const keymap = this.props.keymap || Array(80).fill(0);
+    /** GetCurrentKeyElement - on keyboard */
+    function GetCurrentKeyElement(props: GetCurrentKeyElementProps) {
+        return (
+            // NOTE: Was span
+            <text
+                className={props.class}
+                textAnchor="middle"
+                x={props.x}
+                y={props.y}
+                dy={props.dy}
+                textLength={props.textLength}
+            >
+                {props.word}{" "}
+            </text>
+        );
+    }
 
-        const getContrastText = (color: any) => {
-            const colors = color.match(/\d+/g);
-            if (colors == null || colors.length == 0) return "#000";
-            let aux;
-            if (colors[0] < 131 && colors[1] < 131) {
-                aux = "#FFF";
-            } else {
-                aux = "#000";
-            }
-            return aux;
-        };
+    /**
+     * getDivideKeys - divides words on keyboard keys
+     * @param {string} str - Name of key
+     * @param {number} xCord - Cord of the center position horizontal of each key
+     * @param {number} yCord - Cord of the center position vertical of each key
+     * @param {boolean} smallKey - If the word longer than key switch to true
+     */
+    const getDivideKeys = (str: string, xCord: number, yCord: number, smallKey: boolean = false) => {
+        if (React.isValidElement(str)) return str;
 
-        const keyIndex = (row: number, col?: number) => (col !== undefined ? row * 16 + col : row + 11);
+        const code = str.charCodeAt(0);
+        const numbers = (code >= 48 && code <= 57) || (code >= 96 && code <= 105) || code === 10; // linefeed
 
-        const getLabel = (row: number, col: number) => keymap[keyIndex(row, col)];
+        const interval = "1.1em";
+        const longWords = str.split(" ");
+        const shortWords = str.split("");
 
-        const isSelected = (row: number, col?: number) => {
-            const selectIndex = keyIndex(row, col);
-            return underglowIndex ? underglowIndex == selectIndex : this.props.selectedKey == selectIndex;
-        };
+        const randomKey = new Date().getTime() + Math.random();
 
-        const stroke = (row: number, col?: number) =>
-            isSelected(row, col) ? (this.props.darkMode ? "#fff" : "#000") : "#b3b3b3";
-
-        const getStrokeWidth = (row: number, col?: number): number => (isSelected(row, col) ? 3.0 : 1.5);
-
-        const colorMap = this.props.colorMap || Array(177).fill(0);
-
-        const palette: Color[] =
-            this.props.palette && this.props.palette.length > 0
-                ? this.props.palette
-                : Array(16).fill({ r: 255, g: 255, b: 255, w: undefined });
-
-        const getColor = (row: number, col?: number) => {
-            const ledIndex = col !== undefined ? led_map[row][col] : no_key_led_map[row - UNDERGLOW];
-            const colorIndex = colorMap[ledIndex];
-            const color = palette[colorIndex];
-            return `rgb(${color.r}, ${color.g}, ${color.b})`;
-        };
-
-        const getLEDIndex = (row: number, col?: number) =>
-            col !== undefined ? led_map[row][col] : no_key_led_map[row - UNDERGLOW];
-
-        const onClick = (e: MouseEvent) => {
-            this.setState({ underglowIndex: undefined });
-            this.props.onKeySelect(e);
-        };
-
-        const setUndeglowIndex = (index: number, e: MouseEvent) => {
-            this.setState({ underglowIndex: keyIndex(index) });
-            this.props.onKeySelect(e);
-        };
-
-        interface GetCurrentKeyElementProps {
-            /** Horizontal coordinates of the button */
-            x: number;
-            /** Vertical coordinates of the button */
-            y: number;
-            /** Row spacing */
-            dy?: number | string;
-            /** Button text */
-            word: string;
-            /** ClassName of the button */
-            class?: string;
-            /** Length of the text if the button is small and additional text is longer then button */
-            textLength?: number;
+        if (numbers) {
+            return <GetCurrentKeyElement key={randomKey} x={xCord} y={+yCord - 5} word={str} class="key-config" />;
         }
 
-        /** GetCurrentKeyElement - on keyboard */
-        function GetCurrentKeyElement(props: GetCurrentKeyElementProps) {
-            return (
-                // NOTE: Was span
-                <text
-                    className={props.class}
-                    textAnchor="middle"
-                    x={props.x}
-                    y={props.y}
-                    dy={props.dy}
-                    textLength={props.textLength}
-                >
-                    {props.word}{" "}
-                </text>
-            );
+        if (str.length === 1) {
+            return shortWords.map((word, index) => (
+                <GetCurrentKeyElement key={index} x={xCord} y={+yCord - 5} word={word} class="letter-config" />
+            ));
         }
 
-        /**
-         * getDivideKeys - divides words on keyboard keys
-         * @param {string} str - Name of key
-         * @param {number} xCord - Cord of the center position horizontal of each key
-         * @param {number} yCord - Cord of the center position vertical of each key
-         * @param {boolean} smallKey - If the word longer than key switch to true
-         */
-        const getDivideKeys = (str: string, xCord: number, yCord: number, smallKey: boolean = false) => {
-            if (React.isValidElement(str)) return str;
+        if (str.toLowerCase().endsWith("to")) {
+            return longWords.map((word, index) => (
+                <span key={index}>
+                    <GetCurrentKeyElement x={xCord} y={+yCord + 9} dy={0} word={word.slice(0, word.indexOf("to") - 1)} />
+                    <GetCurrentKeyElement x={+xCord - 5} y={+yCord + 9} dy={interval} word={word.slice(-2)} />
+                </span>
+            ));
+        }
 
-            const code = str.charCodeAt(0);
-            const numbers = (code >= 48 && code <= 57) || (code >= 96 && code <= 105) || code === 10; // linefeed
+        if (str.length > 8 && smallKey === true && (str.startsWith("C+") || str.startsWith("A+") || str.startsWith("AGr+"))) {
+            return <GetCurrentKeyElement key={randomKey} x={xCord} y={yCord} word={str} textLength={50} />;
+        }
 
-            const interval = "1.1em";
-            const longWords = str.split(" ");
-            const shortWords = str.split("");
+        if (
+            longWords.length === 1 &&
+            shortWords.length > 7 &&
+            !str.startsWith("C+") &&
+            !str.startsWith("A+") &&
+            !str.startsWith("AGr+") &&
+            smallKey
+        ) {
+            return longWords.map((word, index) => (
+                <span key={index}>
+                    <GetCurrentKeyElement x={xCord} y={+yCord - 10} word={word.slice(0, 4)} dy={0} />
+                    {` `}
+                    <GetCurrentKeyElement x={xCord} y={+yCord - 10} word={word.slice(4)} dy={interval} />
+                </span>
+            ));
+        }
 
-            const randomKey = new Date().getTime() + Math.random();
+        if (longWords.length === 1) {
+            return longWords.map((word, index) => <GetCurrentKeyElement key={index} x={xCord} y={yCord} word={word} />);
+        }
 
-            if (numbers) {
-                return <GetCurrentKeyElement key={randomKey} x={xCord} y={+yCord - 5} word={str} class="key-config" />;
-            }
+        if (longWords.length > 1 && smallKey === true) {
+            return longWords.map((word, index) => (
+                <GetCurrentKeyElement key={index} x={xCord} y={+yCord - 10} word={word} dy={index ? interval : index} />
+            ));
+        }
 
-            if (str.length === 1) {
-                return shortWords.map((word, index) => (
-                    <GetCurrentKeyElement key={index} x={xCord} y={+yCord - 5} word={word} class="letter-config" />
-                ));
-            }
-
-            if (str.toLowerCase().endsWith("to")) {
-                return longWords.map((word, index) => (
-                    <span key={index}>
-                        <GetCurrentKeyElement x={xCord} y={+yCord + 9} dy={0} word={word.slice(0, word.indexOf("to") - 1)} />
-                        <GetCurrentKeyElement x={+xCord - 5} y={+yCord + 9} dy={interval} word={word.slice(-2)} />
-                    </span>
-                ));
-            }
-
-            if (str.length > 8 && smallKey === true && (str.startsWith("C+") || str.startsWith("A+") || str.startsWith("AGr+"))) {
-                return <GetCurrentKeyElement key={randomKey} x={xCord} y={yCord} word={str} textLength={50} />;
-            }
-
-            if (
-                longWords.length === 1 &&
-                shortWords.length > 7 &&
-                !str.startsWith("C+") &&
-                !str.startsWith("A+") &&
-                !str.startsWith("AGr+") &&
-                smallKey
-            ) {
-                return longWords.map((word, index) => (
-                    <span key={index}>
-                        <GetCurrentKeyElement x={xCord} y={+yCord - 10} word={word.slice(0, 4)} dy={0} />
-                        {` `}
-                        <GetCurrentKeyElement x={xCord} y={+yCord - 10} word={word.slice(4)} dy={interval} />
-                    </span>
-                ));
-            }
-
-            if (longWords.length === 1) {
-                return longWords.map((word, index) => <GetCurrentKeyElement key={index} x={xCord} y={yCord} word={word} />);
-            }
-
-            if (longWords.length > 1 && smallKey === true) {
-                return longWords.map((word, index) => (
-                    <GetCurrentKeyElement key={index} x={xCord} y={+yCord - 10} word={word} dy={index ? interval : index} />
-                ));
-            }
-
-            if (longWords.length > 1) {
-                return <GetCurrentKeyElement key={randomKey} x={xCord} y={yCord} word={str} />;
-            }
-
+        if (longWords.length > 1) {
             return <GetCurrentKeyElement key={randomKey} x={xCord} y={yCord} word={str} />;
-        };
+        }
 
-        const topsArr = ["LEDEFF.", "SCadet", "Steno", "M.Btn", "Leader", "Numpad", "Media", "OSL", "Mouse", "M.Wheel", "M.Warp"];
-        const topsArrTransfer = ["SHIFTTO", "LockTo"];
+        return <GetCurrentKeyElement key={randomKey} x={xCord} y={yCord} word={str} />;
+    };
 
-        const getCenterExtra = (row: number, col: number, _xCord: number, _yCord: number, _smallKey = false) =>
-            React.isValidElement(getLabel(row, col).extraLabel)
-                ? getLabel(row, col).extraLabel
-                : getLabel(row, col).extraLabel?.includes("+")
-                  ? ""
-                  : getLabel(row, col).extraLabel;
+    const topsArr = ["LEDEFF.", "SCadet", "Steno", "M.Btn", "Leader", "Numpad", "Media", "OSL", "Mouse", "M.Wheel", "M.Warp"];
+    const topsArrTransfer = ["SHIFTTO", "LockTo"];
 
-        const getCenterPrimary = (row: number, col: number, xCord: number, yCord: number, smallKey = false) =>
-            getLabel(row, col).extraLabel !== ""
-                ? topsArr.includes(getLabel(row, col).extraLabel)
-                    ? getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 5, smallKey)
-                    : topsArrTransfer.includes(getLabel(row, col).extraLabel)
-                      ? getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, +xCord + 10, yCord + 5, smallKey)
-                      : getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 7, smallKey)
-                : topsArrTransfer.includes(getLabel(row, col).extraLabel)
-                  ? getLabel(row, col).label &&
-                    getDivideKeys(getLabel(row, col).label, xCord, yCord + 5, smallKey) &&
-                    getDivideKeys(getLabel(row, col).label, +xCord + 10, yCord + 5, smallKey)
-                  : getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 7, smallKey);
+    const getCenterExtra = (row: number, col: number, _xCord: number, _yCord: number, _smallKey = false) => false;
 
-        // console.log("Selected Key: ", this.props.selectedKey);
-        // console.log("Selected LED: ", this.props.selectedLED);
+    const getCenterPrimary = (row: number, col: number, xCord: number, yCord: number, smallKey = false) => false;
 
-        const layer = this.props.layer;
+    // TODO: Implement
+
+    // const getCenterExtra = (row: number, col: number, _xCord: number, _yCord: number, _smallKey = false) =>
+    //     React.isValidElement(getLabel(row, col).extraLabel)
+    //         ? getLabel(row, col).extraLabel
+    //         : getLabel(row, col).extraLabel?.includes("+")
+    //             ? ""
+    //             : getLabel(row, col).extraLabel;
+
+    // const getCenterPrimary = (row: number, col: number, xCord: number, yCord: number, smallKey = false) =>
+    //     getLabel(row, col).extraLabel !== ""
+    //         ? topsArr.includes(getLabel(row, col).extraLabel)
+    //             ? getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 5, smallKey)
+    //             : topsArrTransfer.includes(getLabel(row, col).extraLabel)
+    //                 ? getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, +xCord + 10, yCord + 5, smallKey)
+    //                 : getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 7, smallKey)
+    //         : topsArrTransfer.includes(getLabel(row, col).extraLabel)
+    //             ? getLabel(row, col).label &&
+    //             getDivideKeys(getLabel(row, col).label, xCord, yCord + 5, smallKey) &&
+    //             getDivideKeys(getLabel(row, col).label, +xCord + 10, yCord + 5, smallKey)
+    //             : getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 7, smallKey);
+
+    // console.log("Selected Key: ", selectedKey);
+    // console.log("Selected LED: ", selectedLED);
+
+    try {
 
         return (
             <svg
@@ -391,9 +395,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                 strokeLinejoin="round"
                 strokeMiterlimit="1.5"
                 clipRule="evenodd"
-                viewBox={this.props.showUnderglow || this.props.isStandardView ? "0 0 1270 790" : "0 0 1270 560"}
-                className={this.props.className || "layer"}
-                height={this.props.showUnderglow || this.props.isStandardView ? 790 : 560}
+                viewBox={showUnderglow || isStandardView ? "0 0 1270 790" : "0 0 1270 560"}
+                className={className || "layer"}
+                height={showUnderglow || isStandardView ? 790 : 560}
                 width={1270}
             >
                 <g id="keyshapes">
@@ -1921,9 +1925,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(70, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(70)}
                         stroke={stroke(70)}
                         strokeWidth={getStrokeWidth(70)}
@@ -1939,9 +1943,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(71, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(71)}
                         stroke={stroke(71)}
                         strokeWidth={getStrokeWidth(71)}
@@ -1957,9 +1961,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(72, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(72)}
                         stroke={stroke(72)}
                         strokeWidth={getStrokeWidth(72)}
@@ -1975,9 +1979,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(73, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(73)}
                         stroke={stroke(73)}
                         strokeWidth={getStrokeWidth(73)}
@@ -1993,9 +1997,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(74, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(74)}
                         stroke={stroke(74)}
                         strokeWidth={getStrokeWidth(74)}
@@ -2011,9 +2015,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(75, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(75)}
                         stroke={stroke(75)}
                         strokeWidth={getStrokeWidth(75)}
@@ -2029,9 +2033,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(76, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(76)}
                         stroke={stroke(76)}
                         strokeWidth={getStrokeWidth(76)}
@@ -2047,9 +2051,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(77, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(77)}
                         stroke={stroke(77)}
                         strokeWidth={getStrokeWidth(77)}
@@ -2065,9 +2069,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(78, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(78)}
                         stroke={stroke(78)}
                         strokeWidth={getStrokeWidth(78)}
@@ -2083,9 +2087,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(79, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(79)}
                         stroke={stroke(79)}
                         strokeWidth={getStrokeWidth(79)}
@@ -2101,9 +2105,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(80, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(80)}
                         stroke={stroke(80)}
                         strokeWidth={getStrokeWidth(80)}
@@ -2119,9 +2123,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(81, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(81)}
                         stroke={stroke(81)}
                         strokeWidth={getStrokeWidth(81)}
@@ -2137,9 +2141,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(82, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(82)}
                         stroke={stroke(82)}
                         strokeWidth={getStrokeWidth(82)}
@@ -2155,9 +2159,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(83, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(83)}
                         stroke={stroke(83)}
                         strokeWidth={getStrokeWidth(83)}
@@ -2173,9 +2177,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(84, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(84)}
                         stroke={stroke(84)}
                         strokeWidth={getStrokeWidth(84)}
@@ -2191,9 +2195,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(85, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(85)}
                         stroke={stroke(85)}
                         strokeWidth={getStrokeWidth(85)}
@@ -2209,9 +2213,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(86, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(86)}
                         stroke={stroke(86)}
                         strokeWidth={getStrokeWidth(86)}
@@ -2227,9 +2231,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(87, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(87)}
                         stroke={stroke(87)}
                         strokeWidth={getStrokeWidth(87)}
@@ -2245,9 +2249,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(88, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(88)}
                         stroke={stroke(88)}
                         strokeWidth={getStrokeWidth(88)}
@@ -2263,9 +2267,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(89, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(89)}
                         stroke={stroke(89)}
                         strokeWidth={getStrokeWidth(89)}
@@ -2281,9 +2285,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(90, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(90)}
                         stroke={stroke(90)}
                         strokeWidth={getStrokeWidth(90)}
@@ -2299,9 +2303,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(91, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(91)}
                         stroke={stroke(91)}
                         strokeWidth={getStrokeWidth(91)}
@@ -2317,9 +2321,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(92, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(92)}
                         stroke={stroke(92)}
                         strokeWidth={getStrokeWidth(92)}
@@ -2335,9 +2339,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(93, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(93)}
                         stroke={stroke(93)}
                         strokeWidth={getStrokeWidth(93)}
@@ -2353,9 +2357,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(94, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(94)}
                         stroke={stroke(94)}
                         strokeWidth={getStrokeWidth(94)}
@@ -2371,9 +2375,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(95, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(95)}
                         stroke={stroke(95)}
                         strokeWidth={getStrokeWidth(95)}
@@ -2389,9 +2393,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(96, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(96)}
                         stroke={stroke(96)}
                         strokeWidth={getStrokeWidth(96)}
@@ -2407,9 +2411,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(97, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(97)}
                         stroke={stroke(97)}
                         strokeWidth={getStrokeWidth(97)}
@@ -2425,9 +2429,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(98, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(98)}
                         stroke={stroke(98)}
                         strokeWidth={getStrokeWidth(98)}
@@ -2443,9 +2447,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(99, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(99)}
                         stroke={stroke(99)}
                         strokeWidth={getStrokeWidth(99)}
@@ -2461,9 +2465,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(100, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(100)}
                         stroke={stroke(100)}
                         strokeWidth={getStrokeWidth(100)}
@@ -2479,9 +2483,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(101, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(101)}
                         stroke={stroke(101)}
                         strokeWidth={getStrokeWidth(101)}
@@ -2497,9 +2501,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(102, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(102)}
                         stroke={stroke(102)}
                         strokeWidth={getStrokeWidth(102)}
@@ -2515,9 +2519,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(103, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(103)}
                         stroke={stroke(103)}
                         strokeWidth={getStrokeWidth(103)}
@@ -2533,9 +2537,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(104, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(104)}
                         stroke={stroke(104)}
                         strokeWidth={getStrokeWidth(104)}
@@ -2551,9 +2555,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(105, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(105)}
                         stroke={stroke(105)}
                         strokeWidth={getStrokeWidth(105)}
@@ -2569,9 +2573,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(106, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(106)}
                         stroke={stroke(106)}
                         strokeWidth={getStrokeWidth(106)}
@@ -2587,9 +2591,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(107, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(107)}
                         stroke={stroke(107)}
                         strokeWidth={getStrokeWidth(107)}
@@ -2605,9 +2609,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(108, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(108)}
                         stroke={stroke(108)}
                         strokeWidth={getStrokeWidth(108)}
@@ -2623,9 +2627,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(109, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(109)}
                         stroke={stroke(109)}
                         strokeWidth={getStrokeWidth(109)}
@@ -2641,9 +2645,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(110, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(110)}
                         stroke={stroke(110)}
                         strokeWidth={getStrokeWidth(110)}
@@ -2659,9 +2663,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(111, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(111)}
                         stroke={stroke(111)}
                         strokeWidth={getStrokeWidth(111)}
@@ -2677,9 +2681,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(112, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(112)}
                         stroke={stroke(112)}
                         strokeWidth={getStrokeWidth(112)}
@@ -2695,9 +2699,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(113, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(113)}
                         stroke={stroke(113)}
                         strokeWidth={getStrokeWidth(113)}
@@ -2713,9 +2717,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(114, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(114)}
                         stroke={stroke(114)}
                         strokeWidth={getStrokeWidth(114)}
@@ -2731,9 +2735,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(115, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(115)}
                         stroke={stroke(115)}
                         strokeWidth={getStrokeWidth(115)}
@@ -2749,9 +2753,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(116, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(116)}
                         stroke={stroke(116)}
                         strokeWidth={getStrokeWidth(116)}
@@ -2767,9 +2771,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(117, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(117)}
                         stroke={stroke(117)}
                         strokeWidth={getStrokeWidth(117)}
@@ -2785,9 +2789,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(118, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(118)}
                         stroke={stroke(118)}
                         strokeWidth={getStrokeWidth(118)}
@@ -2803,9 +2807,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(119, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(119)}
                         stroke={stroke(119)}
                         strokeWidth={getStrokeWidth(119)}
@@ -2821,9 +2825,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(120, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(120)}
                         stroke={stroke(120)}
                         strokeWidth={getStrokeWidth(120)}
@@ -2839,9 +2843,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(121, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(121)}
                         stroke={stroke(121)}
                         strokeWidth={getStrokeWidth(121)}
@@ -2857,9 +2861,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(122, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(122)}
                         stroke={stroke(122)}
                         strokeWidth={getStrokeWidth(122)}
@@ -2871,7 +2875,7 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                     {/* End Left side */}
 
                     {/*
-            Right side
+                Right side
             */}
                     <UnderGlowStrip
                         id="175_undeglow"
@@ -2880,9 +2884,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(175, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(175)}
                         stroke={stroke(175)}
                         strokeWidth={getStrokeWidth(175)}
@@ -2899,9 +2903,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(174, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(174)}
                         stroke={stroke(174)}
                         strokeWidth={getStrokeWidth(174)}
@@ -2917,9 +2921,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(173, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(173)}
                         stroke={stroke(173)}
                         strokeWidth={getStrokeWidth(173)}
@@ -2936,9 +2940,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(172, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(172)}
                         stroke={stroke(172)}
                         strokeWidth={getStrokeWidth(172)}
@@ -2954,9 +2958,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(171, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(171)}
                         stroke={stroke(171)}
                         strokeWidth={getStrokeWidth(171)}
@@ -2972,9 +2976,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(170, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(170)}
                         stroke={stroke(170)}
                         strokeWidth={getStrokeWidth(170)}
@@ -2990,9 +2994,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(169, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(169)}
                         stroke={stroke(169)}
                         strokeWidth={getStrokeWidth(169)}
@@ -3008,9 +3012,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(168, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(168)}
                         stroke={stroke(168)}
                         strokeWidth={getStrokeWidth(168)}
@@ -3027,9 +3031,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(167, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(167)}
                         stroke={stroke(167)}
                         strokeWidth={getStrokeWidth(167)}
@@ -3046,9 +3050,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(166, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(166)}
                         stroke={stroke(166)}
                         strokeWidth={getStrokeWidth(166)}
@@ -3064,9 +3068,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(165, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(165)}
                         stroke={stroke(165)}
                         strokeWidth={getStrokeWidth(165)}
@@ -3083,9 +3087,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(164, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(164)}
                         stroke={stroke(164)}
                         strokeWidth={getStrokeWidth(164)}
@@ -3102,9 +3106,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(163, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(163)}
                         stroke={stroke(163)}
                         strokeWidth={getStrokeWidth(163)}
@@ -3121,9 +3125,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(162, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(162)}
                         stroke={stroke(162)}
                         strokeWidth={getStrokeWidth(162)}
@@ -3139,9 +3143,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(161, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(161)}
                         stroke={stroke(161)}
                         strokeWidth={getStrokeWidth(161)}
@@ -3158,9 +3162,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(160, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(160)}
                         stroke={stroke(160)}
                         strokeWidth={getStrokeWidth(160)}
@@ -3177,9 +3181,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(159, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(159)}
                         stroke={stroke(159)}
                         strokeWidth={getStrokeWidth(159)}
@@ -3196,9 +3200,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(158, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(158)}
                         stroke={stroke(158)}
                         strokeWidth={getStrokeWidth(158)}
@@ -3215,9 +3219,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(157, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(157)}
                         stroke={stroke(157)}
                         strokeWidth={getStrokeWidth(157)}
@@ -3234,9 +3238,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(156, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(156)}
                         stroke={stroke(156)}
                         strokeWidth={getStrokeWidth(156)}
@@ -3253,9 +3257,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(155, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(155)}
                         stroke={stroke(155)}
                         strokeWidth={getStrokeWidth(155)}
@@ -3272,9 +3276,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(154, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(154)}
                         stroke={stroke(154)}
                         strokeWidth={getStrokeWidth(154)}
@@ -3291,9 +3295,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(153, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(153)}
                         stroke={stroke(153)}
                         strokeWidth={getStrokeWidth(153)}
@@ -3310,9 +3314,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(152, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(152)}
                         stroke={stroke(152)}
                         strokeWidth={getStrokeWidth(152)}
@@ -3329,9 +3333,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(151, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(151)}
                         stroke={stroke(151)}
                         strokeWidth={getStrokeWidth(151)}
@@ -3347,9 +3351,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(150, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(150)}
                         stroke={stroke(150)}
                         strokeWidth={getStrokeWidth(150)}
@@ -3366,9 +3370,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(149, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(149)}
                         stroke={stroke(149)}
                         strokeWidth={getStrokeWidth(149)}
@@ -3385,9 +3389,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(148, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(148)}
                         stroke={stroke(148)}
                         strokeWidth={getStrokeWidth(148)}
@@ -3403,9 +3407,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(147, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(147)}
                         stroke={stroke(147)}
                         strokeWidth={getStrokeWidth(147)}
@@ -3421,9 +3425,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(146, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(146)}
                         stroke={stroke(146)}
                         strokeWidth={getStrokeWidth(146)}
@@ -3440,9 +3444,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(145, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(145)}
                         stroke={stroke(145)}
                         strokeWidth={getStrokeWidth(145)}
@@ -3458,9 +3462,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(144, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(144)}
                         stroke={stroke(144)}
                         strokeWidth={getStrokeWidth(144)}
@@ -3477,9 +3481,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(143, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(143)}
                         stroke={stroke(143)}
                         strokeWidth={getStrokeWidth(143)}
@@ -3496,9 +3500,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(142, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(142)}
                         stroke={stroke(142)}
                         strokeWidth={getStrokeWidth(142)}
@@ -3515,9 +3519,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(141, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(141)}
                         stroke={stroke(141)}
                         strokeWidth={getStrokeWidth(141)}
@@ -3534,9 +3538,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(140, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(140)}
                         stroke={stroke(140)}
                         strokeWidth={getStrokeWidth(140)}
@@ -3553,9 +3557,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(139, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(139)}
                         stroke={stroke(139)}
                         strokeWidth={getStrokeWidth(139)}
@@ -3572,9 +3576,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(138, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(138)}
                         stroke={stroke(138)}
                         strokeWidth={getStrokeWidth(138)}
@@ -3591,9 +3595,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(137, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(137)}
                         stroke={stroke(137)}
                         strokeWidth={getStrokeWidth(137)}
@@ -3610,9 +3614,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(136, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(136)}
                         stroke={stroke(136)}
                         strokeWidth={getStrokeWidth(136)}
@@ -3628,9 +3632,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(135, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(135)}
                         stroke={stroke(135)}
                         strokeWidth={getStrokeWidth(135)}
@@ -3646,9 +3650,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(134, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(134)}
                         stroke={stroke(134)}
                         strokeWidth={getStrokeWidth(134)}
@@ -3664,9 +3668,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(133, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(133)}
                         stroke={stroke(133)}
                         strokeWidth={getStrokeWidth(133)}
@@ -3682,9 +3686,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(132, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(132)}
                         stroke={stroke(132)}
                         strokeWidth={getStrokeWidth(132)}
@@ -3700,9 +3704,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(131, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(131)}
                         stroke={stroke(131)}
                         strokeWidth={getStrokeWidth(131)}
@@ -3718,9 +3722,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(130, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(130)}
                         stroke={stroke(130)}
                         strokeWidth={getStrokeWidth(130)}
@@ -3736,9 +3740,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(129, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(129)}
                         stroke={stroke(129)}
                         strokeWidth={getStrokeWidth(129)}
@@ -3754,9 +3758,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(128, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(128)}
                         stroke={stroke(128)}
                         strokeWidth={getStrokeWidth(128)}
@@ -3772,9 +3776,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(127, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(127)}
                         stroke={stroke(127)}
                         strokeWidth={getStrokeWidth(127)}
@@ -3791,9 +3795,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(126, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(126)}
                         stroke={stroke(126)}
                         strokeWidth={getStrokeWidth(126)}
@@ -3810,9 +3814,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(125, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(125)}
                         stroke={stroke(125)}
                         strokeWidth={getStrokeWidth(125)}
@@ -3828,9 +3832,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(124, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(124)}
                         stroke={stroke(124)}
                         strokeWidth={getStrokeWidth(124)}
@@ -3847,9 +3851,9 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                         onClick={e => {
                             setUndeglowIndex(123, e);
                         }}
-                        selectedLED={this.props.selectedLED}
-                        visibility={!!(this.props.showUnderglow || this.props.isStandardView)}
-                        clickAble={!(this.props.isStandardView && !this.props.showUnderglow)}
+                        selectedLED={selectedLED}
+                        visibility={!!(showUnderglow || isStandardView)}
+                        clickAble={!(isStandardView && !showUnderglow)}
                         fill={getColor(123)}
                         stroke={stroke(123)}
                         strokeWidth={getStrokeWidth(123)}
@@ -3862,5 +3866,7 @@ export class LayoutDefy extends React.Component<DefyProps, DefyState> {
                 </g>
             </svg>
         );
+    } catch (e) {
+        console.error(`${e}`);
     }
 }

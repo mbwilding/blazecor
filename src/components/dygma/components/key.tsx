@@ -35,8 +35,8 @@ interface KeyShapeProps {
     dataLayer?: number;
     centerPrimary: boolean;
     centerExtra: boolean;
-    selectedKey: any;
-    keyCode: number;
+    selectedKey: number;
+    keyCode: any; // TODO: src/api/keymap/db.ts
 
     // TODO: not used
     className: string;

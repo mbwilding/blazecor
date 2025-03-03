@@ -1,4 +1,4 @@
-import { LayoutDefy } from "@/components/dygma/layouts/defy";
+import LayoutDefy from "@/components/dygma/layouts/defy";
 import { ColorPalette } from "@/components/custom/color-palette";
 import { Color, Settings } from "@/types/ffi/settings";
 import { LayerSelector } from "@/components/custom/layer-selector";
@@ -14,6 +14,7 @@ export interface PageColorsProps {
 // NOTE: Defy
 const layers = 10;
 const leds = 177;
+const keymap = Array(80).fill({ keyCode: "0"}); // TODO: Implement from Bazecor
 
 export default function PageColors({ device, settings }: PageColorsProps) {
     const [currentLayer, setCurrentLayer] = useState(settings.settingsDefaultLayer);
@@ -53,7 +54,8 @@ export default function PageColors({ device, settings }: PageColorsProps) {
                 showUnderglow={device.hardware.keyboardUnderglow !== undefined}
                 isStandardView={false}
                 colorMap={colorMap}
-                palette={palette}
+                palette={palette || []}
+                keymap={keymap}
                 onKeySelect={e => console.log(e)}
             />
         </div>
