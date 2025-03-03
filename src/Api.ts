@@ -74,7 +74,10 @@ function useFocusGet<T>(command: string, device?: Device): T | undefined {
 function useFocusSet<T>(command: string, device?: Device) {
     const invoke = useInvokeSet(device);
 
-    const setData = useCallback(async (data: T): Promise<void> => {
+    const setData = useCallback(async (data?: T): Promise<void> => {
+        if (!data) {
+            console.error("Data empty");
+        }
         if (device) {
             try {
                 await invoke(command, { data });
