@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Copy, Check } from "lucide-react";
 import { RGBW } from "@/types/ffi/settings";
+import { rgbwToHex } from "@/utils/colorConverters";
 
 interface HSV {
     h: number;
@@ -117,12 +118,6 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, defaultColor, onChange
 
         return { h: h * 360, s: s * 100, v: v * 100 };
     }, []);
-
-    const rgbwToHex = (rgbw: RGBW): string => {
-        return `#${rgbw.r.toString(16).padStart(2, "0")}${rgbw.g.toString(16).padStart(2, "0")}${rgbw.b
-            .toString(16)
-            .padStart(2, "0")}${rgbw.w.toString(16).padStart(2, "0")}`;
-    };
 
     useEffect(() => {
         setHsv(rgbwToHsv(color.r, color.g, color.b, color.w));
