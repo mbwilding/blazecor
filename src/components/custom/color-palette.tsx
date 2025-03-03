@@ -12,7 +12,7 @@ interface ColorPaletteProps {
 export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
     const handleColorChange = useCallback(
         (index: number, color: RGB) => {
-            // colors[index] = color;
+            colors[index] = color;
             onChange?.(index, color);
         },
         [colors, onChange],
@@ -21,17 +21,10 @@ export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
     return (
         <div className="flex flex-wrap gap-2">
             {colors.map((color, index) => (
-                <ColorPicker
-                    index={index}
-                    color={color}
-                    onChange={handleColorChange}
-                >
+                <ColorPicker index={index} defaultColor={color} onChange={handleColorChange}>
                     <Button
                         variant="outline"
-                        className={cn(
-                            "h-10 w-10 p-0 rounded-md",
-                            "border border-border shadow-sm hover:border-accent",
-                        )}
+                        className={cn("h-10 w-10 p-0 rounded-md", "border border-border shadow-sm hover:border-accent")}
                         style={{ backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})` }}
                     />
                 </ColorPicker>
@@ -39,4 +32,3 @@ export function ColorPalette({ colors, onChange }: ColorPaletteProps) {
         </div>
     );
 }
-

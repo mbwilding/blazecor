@@ -190,7 +190,7 @@ export default function LayoutDefy({
     className,
     showUnderglow,
     isStandardView,
-    onKeySelect
+    onKeySelect,
 }: DefyProps) {
     const [underglowIndex, setUnderglowIndex] = useState<number>();
 
@@ -215,20 +215,18 @@ export default function LayoutDefy({
         return underglowIndex ? underglowIndex == selectIndex : selectedKey == selectIndex;
     };
 
-    const stroke = (row: number, col?: number) =>
-        isSelected(row, col) ? (darkMode ? "#fff" : "#000") : "#b3b3b3";
+    const stroke = (row: number, col?: number) => (isSelected(row, col) ? (darkMode ? "#fff" : "#000") : "#b3b3b3");
 
     const getStrokeWidth = (row: number, col?: number): number => (isSelected(row, col) ? 3.0 : 1.5);
 
     const getColor = (row: number, col?: number) => {
         const ledIndex = col !== undefined ? led_map[row][col] : no_key_led_map[row - UNDERGLOW];
         const colorIndex = colorMap[ledIndex];
-            const color = palette[colorIndex];
-            return `rgb(${color.r}, ${color.g}, ${color.b})`;
+        const color = palette[colorIndex];
+        return `rgb(${color.r}, ${color.g}, ${color.b})`;
     };
 
-    const getLEDIndex = (row: number, col?: number) =>
-        col !== undefined ? led_map[row][col] : no_key_led_map[row - UNDERGLOW];
+    const getLEDIndex = (row: number, col?: number) => (col !== undefined ? led_map[row][col] : no_key_led_map[row - UNDERGLOW]);
 
     const onClick = (e: MouseEvent) => {
         setUnderglowIndex(undefined);
@@ -259,14 +257,7 @@ export default function LayoutDefy({
     function GetCurrentKeyElement(props: GetCurrentKeyElementProps) {
         return (
             // NOTE: Was span
-            <text
-                className={props.class}
-                textAnchor="middle"
-                x={props.x}
-                y={props.y}
-                dy={props.dy}
-                textLength={props.textLength}
-            >
+            <text className={props.class} textAnchor="middle" x={props.x} y={props.y} dy={props.dy} textLength={props.textLength}>
                 {props.word}{" "}
             </text>
         );
@@ -355,27 +346,26 @@ export default function LayoutDefy({
         React.isValidElement(getLabel(row, col).extraLabel)
             ? getLabel(row, col).extraLabel
             : getLabel(row, col).extraLabel?.includes("+")
-                ? ""
-                : getLabel(row, col).extraLabel;
+              ? ""
+              : getLabel(row, col).extraLabel;
 
     const getCenterPrimary = (row: number, col: number, xCord: number, yCord: number, smallKey = false) =>
         getLabel(row, col).extraLabel !== ""
             ? topsArr.includes(getLabel(row, col).extraLabel)
                 ? getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 5, smallKey)
                 : topsArrTransfer.includes(getLabel(row, col).extraLabel)
-                    ? getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, +xCord + 10, yCord + 5, smallKey)
-                    : getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 7, smallKey)
+                  ? getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, +xCord + 10, yCord + 5, smallKey)
+                  : getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 7, smallKey)
             : topsArrTransfer.includes(getLabel(row, col).extraLabel)
-                ? getLabel(row, col).label &&
+              ? getLabel(row, col).label &&
                 getDivideKeys(getLabel(row, col).label, xCord, yCord + 5, smallKey) &&
                 getDivideKeys(getLabel(row, col).label, +xCord + 10, yCord + 5, smallKey)
-                : getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 7, smallKey);
+              : getLabel(row, col).label && getDivideKeys(getLabel(row, col).label, xCord, yCord + 7, smallKey);
 
     // console.log("Selected Key: ", selectedKey);
     // console.log("Selected LED: ", selectedLED);
 
     try {
-
         return (
             <svg
                 xmlns="http://www.w3.org/2000/svg"
