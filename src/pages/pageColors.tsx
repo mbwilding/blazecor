@@ -70,7 +70,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
             </div>
 
             <LayoutDefy
-                layer={currentLayer + 1} // TODO: Remove + 1?
+                layer={currentLayer}
                 darkMode={true}
                 showUnderglow={device.hardware.keyboardUnderglow !== undefined}
                 isStandardView={false}
