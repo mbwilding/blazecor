@@ -6,7 +6,7 @@ import { Color } from "@/types/ffi/settings";
 import { ColorPicker } from "./color-picker";
 
 interface ColorPaletteProps {
-    colors?: Color[];
+    colors: Color[];
     onChange?: (index: number, color: Color) => void;
 }
 

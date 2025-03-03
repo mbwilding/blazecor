@@ -30,7 +30,7 @@ interface DefyProps {
     selectedKey?: number;
     selectedLED?: number;
     darkMode: boolean;
-    palette?: Color[];
+    palette: Color[];
     className?: string;
     showUnderglow: boolean;
     isStandardView: boolean;
@@ -223,12 +223,8 @@ export default function LayoutDefy({
     const getColor = (row: number, col?: number) => {
         const ledIndex = col !== undefined ? led_map[row][col] : no_key_led_map[row - UNDERGLOW];
         const colorIndex = colorMap[ledIndex];
-        if (palette) {
-            const color = palette[colorIndex];
-            return `rgb(${color.r}, ${color.g}, ${color.b})`;
-        } else {
-            return `rgb(255, 255, 255)`;
-        }
+        const color = palette[colorIndex];
+        return `rgb(${color.r}, ${color.g}, ${color.b})`;
     };
 
     const getLEDIndex = (row: number, col?: number) =>
