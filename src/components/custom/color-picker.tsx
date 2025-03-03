@@ -7,18 +7,18 @@ import { Input } from '@/components/ui/input';
 import { RGB } from "@/types/ffi/settings";
 
 interface ColorPickerProps {
-    key: number;
+    index: number;
     defaultColor: RGB;
     onChange?: (index: number, color: RGB) => void;
 }
 
-export default function ColorPicker({ key, defaultColor, onChange }: ColorPickerProps) {
+export default function ColorPicker({ index, defaultColor, onChange }: ColorPickerProps) {
     const [color, setColor] = useState<RGB>(defaultColor);
 
     const handleColorChange = (newColor: RGB) => {
         setColor(newColor);
         if (onChange) {
-            onChange(key, newColor);
+            onChange(index, newColor);
         }
     };
 
