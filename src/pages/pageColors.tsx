@@ -48,11 +48,16 @@ export default function PageColors({ device, settings }: PageColorsProps) {
 
     const handleSelectedColorChange = (index: number, color: Color) => {
         console.error(`index: ${index} | color: ${color.r}, ${color.g}, ${color.b}`)
+
         if (palette) {
-            const newPalette = [...palette];
-            newPalette[index] = color;
-            setPalette(newPalette);
+            palette[index] = color;
         }
+
+        // if (palette) {
+        //     const newPalette = [...palette];
+        //     newPalette[index] = color;
+        //     setPalette(newPalette);
+        // }
     };
 
     const handleSelectedLayerChange = (index: number) => {
