@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 
 // Helpers
 
-function useInvoke(device?: Device) {
+function useInvokeGet(device?: Device) {
     return async function <T>(call: string, args?: InvokeArgs): Promise<T> {
         if (device) {
             const port = device.serialPort;
@@ -16,8 +16,19 @@ function useInvoke(device?: Device) {
     };
 }
 
+function useInvokeSet(device?: Device) {
+    return async function (call: string, args: InvokeArgs): Promise<void> {
+        if (device) {
+            const port = device.serialPort;
+            await invoke(call, { port, args });
+        } else {
+            throw new Error("Cannot contact device");
+        }
+    };
+}
+
 function useFocus(command: string, device?: Device, onExecute?: () => void) {
-    const invoke = useInvoke(device);
+    const invoke = useInvokeGet(device);
 
     useEffect(() => {
         const executeCommand = async () => {
@@ -35,9 +46,9 @@ function useFocus(command: string, device?: Device, onExecute?: () => void) {
     }, [device, command]);
 }
 
-function useFocusData<T>(command: string, device?: Device): T | undefined {
+function useFocusGet<T>(command: string, device?: Device): T | undefined {
     const [data, setData] = useState<T>();
-    const invoke = useInvoke(device);
+    const invoke = useInvokeGet(device);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -60,6 +71,22 @@ function useFocusData<T>(command: string, device?: Device): T | undefined {
     return data;
 }
 
+function useFocusSet<T>(command: string, device?: Device) {
+    const invoke = useInvokeSet(device);
+
+    const setData = useCallback(async (data: T): Promise<void> => {
+        if (device) {
+            try {
+                await invoke(command, { invokeMessage: data });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }, [device, command]);
+
+    return setData;
+}
+
 // API Exports
 
 export function useDevices() {
@@ -69,8 +96,8 @@ export function useDevices() {
         try {
             const devices = await invoke<Device[]>("find_all_devices");
             setDevices(devices);
-        } catch (error: any) {
-            console.error(error);
+        } catch (e) {
+            console.error(e);
             setDevices(undefined);
         }
     }, []);
@@ -97,9 +124,13 @@ export function useDisconnect(device?: Device) {
 }
 
 export function useVersion(device?: Device) {
-    return useFocusData<string>("version", device);
+    return useFocusGet<string>("version", device);
 }
 
 export function useSettingsGet(device?: Device) {
-    return useFocusData<Settings>("settings_get", device);
+    return useFocusGet<Settings>("settings_get", device);
+}
+
+export function usePaletteSet(rgbw: boolean, device?: Device) {
+    return useFocusSet(rgbw ? "palette_rgbw_set" : "palette_rgb_set", device);
 }

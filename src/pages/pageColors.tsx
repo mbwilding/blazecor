@@ -7,6 +7,7 @@ import { Device } from "@/types/ffi/hardware";
 import { Container } from "@/components/custom/container";
 import { KeyType } from "@/components/dygma/types/layout";
 import { Button } from "@/components/ui/button";
+import { usePaletteSet } from "@/Api";
 
 export interface PageColorsProps {
     device: Device;
@@ -21,8 +22,10 @@ const leds = 177;
 export default function PageColors({ device, settings }: PageColorsProps) {
     const [currentLayer, setCurrentLayer] = useState(settings.settingsDefaultLayer);
     const [colorMap, setColorMap] = useState(settings.colorMap.slice(currentLayer, leds));
-    const [keyMap, _setKeyMap] = useState(settings.keymapCustom.slice(currentLayer, keys));
+    const [keyMap, setKeyMap] = useState(settings.keymapCustom.slice(currentLayer, keys));
+
     const [palette, setPalette] = useState(device.hardware.rgbwMode ? settings.paletteRgbw : settings.paletteRgb);
+    const applyPalette = usePaletteSet(device.hardware.rgbwMode, device);
 
     // TODO: Figure out what is what, svg does math to calculate indexes into keymap array
     const keymap: KeyType[] = keyMap.map((_, index) => ({
@@ -51,6 +54,13 @@ export default function PageColors({ device, settings }: PageColorsProps) {
         setCurrentLayer(index - 1);
     };
 
+    const handleApply = () => {
+        applyPalette(palette);
+    };
+
+    const handleReset = () => {
+    };
+
     return (
         <div className="flex flex-col justify-center items-center m-4">
             <div className="flex flex-row gap-4">
@@ -75,8 +85,8 @@ export default function PageColors({ device, settings }: PageColorsProps) {
 
             <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
                 <Container className="gap-4">
-                    <Button variant="success">Apply</Button>
-                    <Button variant="destructive">Reset</Button>
+                    <Button variant="success" onClick={handleApply}>Apply</Button>
+                    <Button variant="destructive" onClick={handleReset}>Reset</Button>
                 </Container>
             </div>
         </div>
