@@ -196,8 +196,6 @@ export default function LayoutDefy({
     onKeySelect
 }: DefyProps) {
     const [underglowIndex, setUnderglowIndex] = useState<number>();
-    // const [colorMapState, setColorMapState] = useState(colorMap);
-    // const [paletteState, setPaletteState] = useState(palette);
 
     const getContrastText = (color: any) => {
         const colors = color.match(/\d+/g);
