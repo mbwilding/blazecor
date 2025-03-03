@@ -1,13 +1,12 @@
-import React, { useEffect, useRef, useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Copy, Check } from "lucide-react";
-import { HSL, HSV, RGB, RGBW } from "@/types/colors";
-import { hslToRgb, hsvToRgb, rgbToHsl, rgbToRgbw, rgbwToHex, rgbwToHsl, rgbwToHsv } from "@/utils/colorConverters";
+import { RGBW, HSV } from "@/types/colors";
+import { hsvToRgb, rgbToRgbw, rgbwToHex, rgbwToHsv } from "@/utils/colorConverters";
 
 interface ColorPickerProps {
     index: number;
@@ -18,37 +17,18 @@ interface ColorPickerProps {
 
 const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, children }) => {
     const [hsv, setHsv] = useState<HSV>(rgbwToHsv(color));
-    const [hsl, setHsl] = useState<HSL>(rgbwToHsl(color));
     const [copied, setCopied] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const colorPickerRef = useRef<HTMLDivElement>(null);
     const hueSliderRef = useRef<HTMLDivElement>(null);
-
-    const rgbToRgbwCached = useCallback((rgb: RGB): RGBW => {
-        return rgbToRgbw(rgb);
-    }, []);
-
-    const hsvToRgbCached = useCallback((hsv: HSV): RGB => {
-        return hsvToRgb(hsv);
-    }, []);
-
-    const rgbwToHsvCached = useCallback((rgbw: RGBW): HSV => {
-        return rgbwToHsv(rgbw);
-    }, []);
 
     const rgbwToHexLocal = (rgbw: RGBW): string => {
         return rgbwToHex(rgbw);
     };
 
     useEffect(() => {
-        setHsv(rgbwToHsvCached(color));
-    }, [color, rgbwToHsvCached]);
-
-    useEffect(() => {
-        const rgb = hsvToRgbCached(hsv);
-        const hsl = rgbToHsl(rgb);
-        setHsl(hsl);
-    }, [hsv]);
+        setHsv(rgbwToHsv(color));
+    }, [color]);
 
     const updateColor = useCallback(
         (newColor: Partial<RGBW>) => {
@@ -62,20 +42,10 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
         (newHsv: Partial<HSV>) => {
             const updatedHsv = { ...hsv, ...newHsv };
             setHsv(updatedHsv);
-            const rgb = hsvToRgbCached(updatedHsv);
-            updateColor(rgbToRgbwCached(rgb));
+            const rgb = hsvToRgb(updatedHsv);
+            onChange && onChange(index, rgbToRgbw(rgb));
         },
-        [hsv, updateColor, hsvToRgbCached, rgbToRgbwCached],
-    );
-
-    const updateHsl = useCallback(
-        (newHsl: Partial<{ h: number; s: number; l: number }>) => {
-            const updatedHsl = { ...hsl, ...newHsl };
-            setHsl(updatedHsl);
-            const rgb = hslToRgb(updatedHsl);
-            updateColor(rgbToRgbwCached(rgb));
-        },
-        [hsl, updateColor],
+        [hsv, index, onChange],
     );
 
     const handleColorPickerChange = useCallback(
@@ -107,9 +77,9 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
         (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
             setIsDragging(true);
             if ("button" in event && event.button !== 0) return; // Only handle left mouse button
-            if ("currentTarget" in event && event.currentTarget === colorPickerRef.current) {
+            if (colorPickerRef.current && event.currentTarget === colorPickerRef.current) {
                 handleColorPickerChange(event);
-            } else if ("currentTarget" in event && event.currentTarget === hueSliderRef.current) {
+            } else if (hueSliderRef.current && event.currentTarget === hueSliderRef.current) {
                 handleHueChange(event);
             }
         },
@@ -203,102 +173,33 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
                         </div>
                     </div>
 
-                    <Tabs defaultValue="rgbw">
-                        <TabsList className="grid w-full grid-cols-3">
-                            <TabsTrigger value="rgbw">RGBW</TabsTrigger>
-                            <TabsTrigger value="hsl">HSL</TabsTrigger>
-                            <TabsTrigger value="hsv">HSV</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="rgbw" className="space-y-2">
-                            {["r", "g", "b", "w"].map(channel => (
-                                <div key={channel} className="grid grid-cols-[1fr_60px] items-center gap-2">
-                                    <div>
-                                        <Label htmlFor={`${channel}-slider`} className="text-xs font-bold uppercase">
-                                            {channel}
-                                        </Label>
-                                        <Slider
-                                            id={`${channel}-slider`}
-                                            min={0}
-                                            max={255}
-                                            step={1}
-                                            value={[color[channel as keyof RGBW]]}
-                                            onValueChange={([value]) => updateColor({ [channel]: value })}
-                                        />
-                                    </div>
-                                    <Input
-                                        type="number"
+                    <div className="space-y-2">
+                        {["R", "g", "b", "w"].map(channel => (
+                            <div key={channel} className="grid grid-cols-[1fr_72px] items-center gap-2">
+                                <div>
+                                    <Label htmlFor={`${channel}-slider`} className="text-xs font-bold uppercase mb-3">
+                                        {channel}
+                                    </Label>
+                                    <Slider
+                                        id={`${channel}-slider`}
                                         min={0}
                                         max={255}
-                                        value={color[channel as keyof RGBW]}
-                                        onChange={e => updateColor({ [channel]: Number(e.target.value) })}
-                                        className="h-8"
+                                        step={1}
+                                        value={[color[channel as keyof RGBW]]}
+                                        onValueChange={([value]) => updateColor({ [channel]: value })}
                                     />
                                 </div>
-                            ))}
-                        </TabsContent>
-                        <TabsContent value="hsl" className="space-y-2">
-                            {[
-                                { channel: "h", max: 360, label: "Hue" },
-                                { channel: "s", max: 100, label: "Saturation" },
-                                { channel: "l", max: 100, label: "Lightness" },
-                            ].map(({ channel, max, label }) => (
-                                <div key={channel} className="grid grid-cols-[1fr_60px] items-center gap-2">
-                                    <div>
-                                        <Label htmlFor={`${channel}-slider`} className="text-xs font-bold">
-                                            {label}
-                                        </Label>
-                                        <Slider
-                                            id={`${channel}-slider`}
-                                            min={0}
-                                            max={max}
-                                            step={1}
-                                            value={[hsl[channel as keyof HSL]]}
-                                            onValueChange={([value]) => updateHsl({ [channel]: value })}
-                                        />
-                                    </div>
-                                    <Input
-                                        type="number"
-                                        min={0}
-                                        max={max}
-                                        value={Math.round(hsl[channel as keyof HSL])}
-                                        onChange={e => updateHsl({ [channel]: Number(e.target.value) })}
-                                        className="h-8"
-                                    />
-                                </div>
-                            ))}
-                        </TabsContent>
-                        <TabsContent value="hsv" className="space-y-2">
-                            {[
-                                { channel: "h", max: 360, label: "Hue" },
-                                { channel: "s", max: 100, label: "Saturation" },
-                                { channel: "v", max: 100, label: "Value" },
-                            ].map(({ channel, max, label }) => (
-                                <div key={channel} className="grid grid-cols-[1fr_60px] items-center gap-2">
-                                    <div>
-                                        <Label htmlFor={`${channel}-slider`} className="text-xs font-bold">
-                                            {label}
-                                        </Label>
-                                        <Slider
-                                            id={`${channel}-slider`}
-                                            min={0}
-                                            max={max}
-                                            step={1}
-                                            value={[hsv[channel as keyof HSV]]}
-                                            onValueChange={([value]) => updateHsv({ [channel]: value })}
-                                        />
-                                    </div>
-                                    <Input
-                                        type="number"
-                                        min={0}
-                                        max={max}
-                                        value={Math.round(hsv[channel as keyof HSV])}
-                                        onChange={e => updateHsv({ [channel]: Number(e.target.value) })}
-                                        className="h-8"
-                                    />
-                                </div>
-                            ))}
-                        </TabsContent>
-                    </Tabs>
+                                <Input
+                                    type="number"
+                                    min={0}
+                                    max={3}
+                                    value={color[channel as keyof RGBW]}
+                                    onChange={e => updateColor({ [channel]: Number(e.target.value) })}
+                                    className="h-12 w-18"
+                                />
+                            </div>
+                        ))}
+                    </div>
 
                     <div className="flex items-center gap-2">
                         <Input value={rgbwToHexLocal(color)} readOnly className="h-8" />

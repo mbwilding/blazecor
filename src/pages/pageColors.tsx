@@ -81,7 +81,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
                 showUnderglow={device.hardware.keyboardUnderglow !== undefined}
                 isStandardView={false}
                 colorMap={colorMap}
-                palette={palette}
+                palette={palette || []}
                 keymap={keymap}
                 onKeySelect={e => console.log(e)}
             />
