@@ -15,15 +15,13 @@ export interface PageColorsProps {
 // NOTE: Defy
 const layers = 10;
 const leds = 177;
-const keymap: KeyType[] = Array(90).fill(
-    {
-        keyCode: 80,
-        label: "label",
-        extraLabel: "extra",
-        verbose: undefined,
-        alt: false,
-    }
-);
+const keymap: KeyType[] = Array.from({ length: 90 }, (_, index) => ({
+    keyCode: index,
+    label: index.toString(),
+    extraLabel: "",
+    verbose: undefined,
+    alt: false,
+}));
 
 export default function PageColors({ device, settings }: PageColorsProps) {
     const [currentLayer, setCurrentLayer] = useState(settings.settingsDefaultLayer);
