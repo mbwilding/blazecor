@@ -1,13 +1,14 @@
 import LayoutDefy from "@/components/dygma/layouts/defy";
 import { ColorPalette } from "@/components/custom/color-palette";
-import { RGBW, Settings } from "@/types/ffi/settings";
+import { Settings } from "@/types/ffi/settings";
 import { LayerSelector } from "@/components/custom/layer-selector";
 import { useEffect, useState } from "react";
-import { Device } from "@/types/ffi/hardware";
+import { Device, Product } from "@/types/ffi/hardware";
 import { Container } from "@/components/custom/container";
 import { KeyType } from "@/components/dygma/types/layout";
 import { Button } from "@/components/ui/button";
 import { paletteSet } from "@/Api";
+import { RGBW } from "@/types/colors";
 
 export interface PageColorsProps {
     device: Device;
@@ -24,13 +25,12 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     const [colorMap, setColorMap] = useState(settings.colorMap.slice(currentLayer, leds));
     const [keyMap, setKeyMap] = useState(settings.keymapCustom.slice(currentLayer, keys));
 
-    // NOTE: Change pallete if Raise
     const [palette, setPalette] = useState(settings.paletteRgbw);
 
     // TODO: Figure out what is what, svg does math to calculate indexes into keymap array
     const keymap: KeyType[] = keyMap.map((_, index) => ({
         keyCode: index, // TODO: 255 is max
-        label: index.toString(),
+        label: "", // index.toString(),
         extraLabel: "",
         // extraLabel: _.toString(),
         verbose: undefined,
@@ -66,7 +66,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
         <div className="flex flex-col justify-center items-center m-4">
             <div className="flex flex-row gap-4">
                 <Container title="Palette">
-                    <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
+                    <ColorPalette product={Product.Defy} colors={palette || []} onChange={handleSelectedColorChange} />
                 </Container>
                 <Container title="Layers">
                     <LayerSelector defaultLayer={currentLayer + 1} layers={layers} onChange={handleSelectedLayerChange} />

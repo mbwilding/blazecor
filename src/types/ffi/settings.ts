@@ -1,3 +1,5 @@
+import { RGB, RGBW } from "../colors";
+
 export interface Settings {
     keymapCustom: number[]; // Vec<u16>
     keymapDefault: number[]; // Vec<u16>
@@ -77,20 +79,4 @@ export enum WirelessPowerMode {
 export enum Side {
     Right = 0,
     Left = 1,
-}
-
-/** The LED color. */
-export interface RGB {
-    /** Red component of the color. */
-    r: number;
-    /** Green component of the color. */
-    g: number;
-    /** Blue component of the color. */
-    b: number;
-}
-
-/** The LED color. */
-export interface RGBW extends RGB {
-    /** White component of the color. */
-    w: number;
 }

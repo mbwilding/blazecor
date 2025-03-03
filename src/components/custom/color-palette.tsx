@@ -1,16 +1,18 @@
 import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { RGBW } from "@/types/ffi/settings";
 import ColorPicker from "./color-picker";
-import { rgbwToRgb } from "@/utils/colorConverters";
+import { rgbwToRgbDefyView } from "@/utils/colorConverters";
+import { RGBW } from "@/types/colors";
+import { Product } from "@/types/ffi/hardware";
 
 interface ColorPaletteProps {
+    product: Product;
     colors: RGBW[];
     onChange?: (index: number, color: RGBW) => void;
 }
 
-export function ColorPalette({ colors: initialColors, onChange }: ColorPaletteProps) {
+export function ColorPalette({ product, colors: initialColors, onChange }: ColorPaletteProps) {
     const [colors, setColors] = useState<RGBW[]>(initialColors);
 
     const handleColorChange = useCallback(
@@ -26,7 +28,13 @@ export function ColorPalette({ colors: initialColors, onChange }: ColorPalettePr
     return (
         <div className="flex flex-wrap gap-2">
             {colors.map((color, index) => {
-                const rgb = rgbwToRgb(color);
+                if (product !== Product.Defy) {
+                    const error = `Product not implemented:  ${product}`;
+                    console.error(error)
+                    throw new Error(error);
+                }
+
+                const rgb = rgbwToRgbDefyView(color);
 
                 return (
                     <ColorPicker key={index} index={index} defaultColor={color} onChange={handleColorChange}>

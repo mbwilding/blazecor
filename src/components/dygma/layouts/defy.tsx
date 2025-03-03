@@ -20,9 +20,9 @@
 import React, { MouseEvent, useState } from "react";
 import Key from "../components/key";
 import UnderGlowStrip from "../components/underGlowStrip";
-import { RGBW } from "@/types/ffi/settings";
 import { KeyType } from "../types/layout";
 import { rgbwToRgb } from "@/utils/colorConverters";
+import { RGBW } from "@/types/colors";
 
 interface DefyProps {
     layer: number;

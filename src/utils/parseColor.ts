@@ -1,4 +1,4 @@
-import { RGB } from "@/types/ffi/settings";
+import { RGB } from "@/types/colors";
 
 /**
  * Parse the supplied color to it's component R, G, B values.

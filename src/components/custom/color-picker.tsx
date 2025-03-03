@@ -7,14 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Copy, Check } from "lucide-react";
-import { RGBW } from "@/types/ffi/settings";
-import { rgbwToHex } from "@/utils/colorConverters";
-
-interface HSV {
-    h: number;
-    s: number;
-    v: number;
-}
+import { HSV, RGB, RGBW } from "@/types/colors";
+import { hsvToRgb, rgbToRgbw, rgbwToHex, rgbwToHsv } from "@/utils/colorConverters";
 
 interface ColorPickerProps {
     index: number;
@@ -31,97 +25,25 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, defaultColor, onChange
     const colorPickerRef = useRef<HTMLDivElement>(null);
     const hueSliderRef = useRef<HTMLDivElement>(null);
 
-    const extractWhite = useCallback((r: number, g: number, b: number): { r: number; g: number; b: number; w: number } => {
-        const w = Math.min(r, g, b);
-        return {
-            r: r - w,
-            g: g - w,
-            b: b - w,
-            w,
-        };
+    const rgbToRgbwCached = useCallback((rgb: RGB): RGBW => {
+        return rgbToRgbw(rgb)
     }, []);
 
-    const hsvToRgb = useCallback((h: number, s: number, v: number): { r: number; g: number; b: number } => {
-        s /= 100;
-        v /= 100;
-        h = h * 6;
-        const i = Math.floor(h);
-        const f = h - i;
-        const p = v * (1 - s);
-        const q = v * (1 - f * s);
-        const t = v * (1 - (1 - f) * s);
-        let r, g, b;
-        switch (i % 6) {
-            case 0:
-                (r = v), (g = t), (b = p);
-                break;
-            case 1:
-                (r = q), (g = v), (b = p);
-                break;
-            case 2:
-                (r = p), (g = v), (b = t);
-                break;
-            case 3:
-                (r = p), (g = q), (b = v);
-                break;
-            case 4:
-                (r = t), (g = p), (b = v);
-                break;
-            case 5:
-                (r = v), (g = p), (b = q);
-                break;
-            default:
-                (r = 0), (g = 0), (b = 0);
-        }
-        return {
-            r: Math.round(r * 255),
-            g: Math.round(g * 255),
-            b: Math.round(b * 255),
-        };
+    const hsvToRgbCached = useCallback((hsv: HSV): RGB => {
+        return hsvToRgb(hsv);
     }, []);
 
-    const rgbwToHsv = useCallback((r: number, g: number, b: number, w: number): HSV => {
-        r = r + w;
-        g = g + w;
-        b = b + w;
-
-        r /= 255;
-        g /= 255;
-        b /= 255;
-        const max = Math.max(r, g, b);
-        const min = Math.min(r, g, b);
-        let h,
-            s,
-            v = max;
-
-        const d = max - min;
-        s = max === 0 ? 0 : d / max;
-
-        if (max === min) {
-            h = 0;
-        } else {
-            switch (max) {
-                case r:
-                    h = (g - b) / d + (g < b ? 6 : 0);
-                    break;
-                case g:
-                    h = (b - r) / d + 2;
-                    break;
-                case b:
-                    h = (r - g) / d + 4;
-                    break;
-                default:
-                    h = 0;
-            }
-            h /= 6;
-        }
-
-        return { h: h * 360, s: s * 100, v: v * 100 };
+    const rgbwToHsvCached = useCallback((rgbw: RGBW): HSV => {
+        return rgbwToHsv(rgbw);
     }, []);
+
+    const rgbwToHexLocal = (rgbw: RGBW): string => {
+        return rgbwToHex(rgbw);
+    };
 
     useEffect(() => {
-        setHsv(rgbwToHsv(color.r, color.g, color.b, color.w));
-    }, [color, rgbwToHsv]);
+        setHsv(rgbwToHsvCached(color));
+    }, [color, rgbwToHsvCached]);
 
     useEffect(() => {
         onChange && onChange(index, color);
@@ -139,11 +61,11 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, defaultColor, onChange
         (newHsv: Partial<HSV>) => {
             const updatedHsv = { ...hsv, ...newHsv };
             setHsv(updatedHsv);
-            const { r, g, b } = hsvToRgb(updatedHsv.h / 360, updatedHsv.s, updatedHsv.v);
-            const extractedColor = extractWhite(r, g, b);
-            setColor(extractedColor);
+            const rgb = hsvToRgbCached(updatedHsv);
+            const rgbw = rgbToRgbwCached(rgb);
+            setColor(rgbw);
         },
-        [hsv, hsvToRgb, extractWhite],
+        [hsv, hsvToRgbCached, rgbToRgbwCached],
     );
 
     const handleColorPickerChange = useCallback(
@@ -216,7 +138,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, defaultColor, onChange
     }, [isDragging, handleMouseMove, handleMouseUp]);
 
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(rgbwToHex(color));
+        navigator.clipboard.writeText(rgbwToHexLocal(color));
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -336,7 +258,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, defaultColor, onChange
                     </Tabs>
 
                     <div className="flex items-center gap-2">
-                        <Input value={rgbwToHex(color)} readOnly className="h-8" />
+                        <Input value={rgbwToHexLocal(color)} readOnly className="h-8" />
                         <Button size="icon" variant="outline" className="h-8 w-8" onClick={copyToClipboard}>
                             {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                         </Button>
