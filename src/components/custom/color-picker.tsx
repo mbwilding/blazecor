@@ -1,5 +1,5 @@
 import { ReactNode, useState } from "react";
-import { RgbColorPicker } from "react-colorful";
+import { RgbaColorPicker, RgbColorPicker } from "react-colorful";
 import { colord } from "colord";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
@@ -25,6 +25,7 @@ export default function ColorPicker({ index, defaultColor, onChange, children }:
             <PopoverTrigger asChild>{children}</PopoverTrigger>
             <PopoverContent className="flex flex-col w-full gap-4 items-center">
                 <RgbColorPicker color={color} onChange={handleColorChange} />
+                <RgbaColorPicker color={color} onChange={handleColorChange} />
                 <Input
                     className="font-mono w-51 text-center"
                     maxLength={7}

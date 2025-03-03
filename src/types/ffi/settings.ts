@@ -90,13 +90,7 @@ export interface RGB {
 }
 
 /** The LED color. */
-export interface RGBW {
-    /** Red component of the color. */
-    r: number;
-    /** Green component of the color. */
-    g: number;
-    /** Blue component of the color. */
-    b: number;
+export interface RGBW extends RGB {
     /** White component of the color. */
     w: number;
 }
