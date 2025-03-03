@@ -1,8 +1,8 @@
-import { ReactNode, useState } from "react";
-import { RgbColorPicker } from "react-colorful";
-import { colord } from "colord";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
+import { ReactNode, useState } from 'react';
+import { RgbColorPicker } from 'react-colorful';
+import { colord } from 'colord';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Input } from '@/components/ui/input';
 import { RGB } from "@/types/ffi/settings";
 
 interface ColorPickerProps {
@@ -24,12 +24,14 @@ export default function ColorPicker({ index, defaultColor, onChange, children }:
 
     return (
         <Popover>
-            <PopoverTrigger asChild>{children}</PopoverTrigger>
-            <PopoverContent className="w-full">
+            <PopoverTrigger asChild>
+                {children}
+            </PopoverTrigger>
+            <PopoverContent className='w-full'>
                 <RgbColorPicker color={color} onChange={handleColorChange} />
                 <Input
                     maxLength={7}
-                    onChange={e => {
+                    onChange={(e) => {
                         const hex = e.currentTarget.value.trim();
                         const newColor = colord(hex).toRgb();
                         if (colord(hex).isValid()) {

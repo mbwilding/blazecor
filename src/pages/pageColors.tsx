@@ -27,7 +27,8 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     const keymap: KeyType[] = keyMap.map((x, index) => ({
         keyCode: index, // TODO: 255 is max
         label: index.toString(),
-        extraLabel: x.toString(),
+        extraLabel: "",
+        // extraLabel: x.toString(),
         verbose: undefined,
         alt: false,
     }));
@@ -37,18 +38,12 @@ export default function PageColors({ device, settings }: PageColorsProps) {
         setColorMap(settings.colorMap.slice(colorMapIndex, colorMapIndex + leds));
     }, [currentLayer]);
 
-    const handleSelectedColorChange = (index: number, color: RGB | RGBW) => {
-        console.debug(`index: ${index} | color: ${color.r}, ${color.g}, ${color.b}`);
-
+    const handleSelectedColorChange = (index: number, color: RGB) => {
         if (palette) {
-            palette[index] = color;
+            const newPalette = [...palette];
+            newPalette[index] = color;
+            setPalette(newPalette);
         }
-
-        // if (palette) {
-        //     const newPalette = [...palette];
-        //     newPalette[index] = color;
-        //     setPalette(newPalette);
-        // }
     };
 
     const handleSelectedLayerChange = (index: number) => {
