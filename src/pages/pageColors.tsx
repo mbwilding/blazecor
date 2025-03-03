@@ -25,7 +25,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     const [colorMap, setColorMap] = useState(settings.colorMap.slice(currentLayer, leds));
     const [keyMap, setKeyMap] = useState(settings.keymapCustom.slice(currentLayer, keys));
 
-    const [palette, setPalette] = useState(settings.paletteRgbw);
+    const [palette, setPalette] = useState(structuredClone(settings.paletteRgbw));
 
     // TODO: Figure out what is what, svg does math to calculate indexes into keymap array
     const keymap: KeyType[] = keyMap.map((_, index) => ({
@@ -60,7 +60,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     };
 
     const handleReset = () => {
-        setPalette(settings.paletteRgbw)
+        setPalette(settings.paletteRgbw);
     };
 
     return (
