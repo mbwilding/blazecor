@@ -14,23 +14,28 @@ export interface PageColorsProps {
 // NOTE: Defy
 const layers = 10;
 const leds = 177;
-const keymap = Array(80).fill({ keyCode: "0"}); // TODO: Implement from Bazecor
+const keymap = Array(80).fill({ keyCode: "0" }); // TODO: Implement from Bazecor
 
 export default function PageColors({ device, settings }: PageColorsProps) {
     const [currentLayer, setCurrentLayer] = useState(settings.settingsDefaultLayer);
     const [colorMap, setColorMap] = useState(() => settings.colorMap.slice(0, leds));
+    const [palette, setPalette] = useState(device.hardware.rgbwMode ? settings.paletteRgbw : settings.paletteRgb);
 
     useEffect(() => {
         const colorMapIndex = currentLayer * leds + currentLayer;
         setColorMap(settings.colorMap.slice(colorMapIndex, colorMapIndex + leds));
     }, [currentLayer]);
 
-    const palette = device.hardware.rgbwMode ? settings.paletteRgbw : settings.paletteRgb;
-
     const handleSelectedColorChange = (index: number, newColor: Color) => {
-        if (palette) {
-            palette[index] = newColor;
-        }
+        // const newPalette = [...palette || []];
+        // newPalette[index] = newColor;
+        // setPalette(newPalette);
+
+        // HACK: Top code not working, even then, this isn't re-rendering
+        let hackPalette = device.hardware.rgbwMode ? settings.paletteRgbw : settings.paletteRgb
+        hackPalette![index] = newColor;
+
+        setPalette(palette);
     };
 
     const handleSelectedLayerChange = (index: number) => {
