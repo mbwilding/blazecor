@@ -28,7 +28,7 @@ export function ColorPalette({ colors: initialColors, onChange }: ColorPalettePr
                 <ColorPicker key={index} index={index} defaultColor={color} onChange={handleColorChange}>
                     <Button
                         variant="outline"
-                        className={cn("h-10 w-10 p-0 rounded-md", "border border-border shadow-sm hover:border-accent")}
+                        className={cn("h-9 w-9 p-0 rounded-md", "border border-border shadow-sm hover:border-accent")}
                         style={{ backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})` }}
                     />
                 </ColorPicker>

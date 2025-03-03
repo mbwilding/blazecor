@@ -23,7 +23,7 @@ export function LayerSelector({ defaultLayer, layers, onChange }: LayerSelectorP
                     key={layer}
                     variant={selectedLayer === layer ? "default" : "outline"}
                     className={cn(
-                        "h-10 w-10 p-0 font-medium",
+                        "h-9 w-9 p-0 font-medium",
                         selectedLayer === layer
                             ? "bg-primary text-primary-foreground"
                             : "hover:bg-accent hover:text-accent-foreground",

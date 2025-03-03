@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Device } from "@/types/ffi/hardware";
 import { Container } from "@/components/custom/container";
 import { KeyType } from "@/components/dygma/types/layout";
+import { Button } from "@/components/ui/button";
 
 export interface PageColorsProps {
     device: Device;
@@ -55,6 +56,8 @@ export default function PageColors({ device, settings }: PageColorsProps) {
             <div className="flex flex-row gap-4">
                 <Container title="Palette">
                     <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
+                    <Button variant="outline">Apply</Button>
+                    <Button variant="outline">Reset</Button>
                 </Container>
                 <Container title="Layers">
                     <LayerSelector defaultLayer={currentLayer + 1} layers={layers} onChange={handleSelectedLayerChange} />

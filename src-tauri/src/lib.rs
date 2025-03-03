@@ -57,13 +57,38 @@ fn settings_get(storage: State<Storage>) -> Result<Settings> {
 }
 
 #[tauri::command]
+fn settings_set(input: Settings, storage: State<Storage>) -> Result<()> {
+    with_focus(storage, |focus| Ok(focus.settings_set(&input)?))
+}
+
+#[tauri::command]
+fn palette_rgb_get(storage: State<Storage>) -> Result<Vec<RGB>> {
+    with_focus(storage, |focus| Ok(focus.palette_rgb_get()?))
+}
+
+#[tauri::command]
+fn palette_rgb_set(input: Vec<RGB>, storage: State<Storage>) -> Result<()> {
+    with_focus(storage, |focus| Ok(focus.palette_rgb_set(&input)?))
+}
+
+#[tauri::command]
 fn palette_rgbw_get(storage: State<Storage>) -> Result<Vec<RGBW>> {
     with_focus(storage, |focus| Ok(focus.palette_rgbw_get()?))
 }
 
 #[tauri::command]
+fn palette_rgbw_set(input: Vec<RGBW>, storage: State<Storage>) -> Result<()> {
+    with_focus(storage, |focus| Ok(focus.palette_rgbw_set(&input)?))
+}
+
+#[tauri::command]
 fn color_map_get(storage: State<Storage>) -> Result<Vec<u8>> {
     with_focus(storage, |focus| Ok(focus.color_map_get()?))
+}
+
+#[tauri::command]
+fn color_map_set(input: Vec<u8>, storage: State<Storage>) -> Result<()> {
+    with_focus(storage, |focus| Ok(focus.color_map_set(&input)?))
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -80,8 +105,13 @@ pub fn run() {
             disconnect,
             version,
             settings_get,
+            settings_set,
+            palette_rgb_get,
+            palette_rgb_set,
             palette_rgbw_get,
-            color_map_get
+            palette_rgbw_set,
+            color_map_get,
+            color_map_set,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -1,15 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ReactNode } from "react";
 
-interface ContainerProps {
+interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
     title?: string;
     children?: ReactNode;
     top?: boolean;
 }
 
-export function Container({ title, children, top = false }: ContainerProps) {
+export function Container({ title, children, top = false, className }: ContainerProps) {
     return (
-        <Card className="w-fit h-fit">
+        <Card className={`w-fit h-fit bg-secondary ${className ?? ''}`}>
             {top && title && (
                 <CardHeader>
                     <CardTitle>{title}</CardTitle>
@@ -22,3 +22,4 @@ export function Container({ title, children, top = false }: ContainerProps) {
         </Card>
     );
 }
+
