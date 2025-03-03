@@ -14,7 +14,7 @@ const meta = {
     args: {
         index: 0,
         onChange: undefined,
-        children: <Button>Open</Button>
+        children: <Button>Open</Button>,
     },
 } satisfies Meta<typeof ColorPicker>;
 

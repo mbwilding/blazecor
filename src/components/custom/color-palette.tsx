@@ -15,10 +15,9 @@ export function ColorPalette({ colors: initialColors, onChange }: ColorPalettePr
 
     const handleColorChange = useCallback(
         (index: number, color: RGBW) => {
-            // TODO: ENABLE
-            // const newColors = [...colors];
-            // newColors[index] = color;
-            // setColors(newColors);
+            const newColors = [...colors];
+            newColors[index] = color;
+            setColors(newColors);
             onChange?.(index, color);
         },
         [colors, onChange],

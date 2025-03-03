@@ -125,16 +125,12 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, defaultColor, onChange
     };
 
     useEffect(() => {
-        // Update hsv when color (rgbw) changes
         setHsv(rgbwToHsv(color.r, color.g, color.b, color.w));
     }, [color, rgbwToHsv]);
 
     useEffect(() => {
-        // Call onChange handler if provided
-        if (onChange) {
-            onChange(index, color);
-        }
-    }, [color, index, onChange]);
+        onChange && onChange(index, color);
+    }, [color, index]);
 
     const updateColor = useCallback(
         (newColor: Partial<RGBW>) => {
