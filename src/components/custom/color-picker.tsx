@@ -23,10 +23,10 @@ export default function ColorPicker({ index, defaultColor, onChange, children }:
     return (
         <Popover>
             <PopoverTrigger asChild>{children}</PopoverTrigger>
-            <PopoverContent className="w-full">
+            <PopoverContent className="flex flex-col w-full gap-4 items-center">
                 <RgbColorPicker color={color} onChange={handleColorChange} />
                 <Input
-                    className="font-mono"
+                    className="font-mono w-51 text-center"
                     maxLength={7}
                     onChange={e => {
                         const hex = e.currentTarget.value.trim();
