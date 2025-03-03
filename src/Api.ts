@@ -86,10 +86,20 @@ export function useConnect(device?: Device) {
     });
 }
 
+export function useDisconnect(device?: Device) {
+    useFocus("diconnect", device, () => {
+        if (device) {
+            console.debug(`Disconnecting: ${device.hardware.info.displayName} (${device.serialPort})`);
+        } else {
+            console.warn("Already disconnected");
+        }
+    });
+}
+
 export function useVersion(device?: Device) {
     return useFocusData<string>("version", device);
 }
 
-export function useSettings(device?: Device) {
+export function useSettingsGet(device?: Device) {
     return useFocusData<Settings>("settings_get", device);
 }
