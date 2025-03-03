@@ -17,9 +17,7 @@ export default function ColorPicker({ index, defaultColor, onChange, children }:
 
     const handleColorChange = (newColor: RGB | RGBW) => {
         setColor(newColor);
-        if (onChange) {
-            onChange(index, newColor);
-        }
+        onChange && onChange(index, newColor);
     };
 
     return (
@@ -28,6 +26,7 @@ export default function ColorPicker({ index, defaultColor, onChange, children }:
             <PopoverContent className="w-full">
                 <RgbColorPicker color={color} onChange={handleColorChange} />
                 <Input
+                    className="font-mono"
                     maxLength={7}
                     onChange={e => {
                         const hex = e.currentTarget.value.trim();
