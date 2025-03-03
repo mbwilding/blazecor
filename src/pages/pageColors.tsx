@@ -47,7 +47,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
     }, [currentLayer]);
 
     const handleSelectedColorChange = (index: number, color: RGB | RGBW) => {
-        console.error(`index: ${index} | color: ${color.r}, ${color.g}, ${color.b}`)
+        console.debug(`index: ${index} | color: ${color.r}, ${color.g}, ${color.b}`)
 
         if (palette) {
             palette[index] = color;
