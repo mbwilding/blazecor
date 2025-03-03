@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { ColorPicker } from "./color-picker";
+import ColorPicker from "./color-picker";
 
 const meta = {
     title: "Custom/ColorPicker",
@@ -20,6 +20,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Red: Story = {
     args: {
+        index: 0,
         defaultColor: { r: 255, g: 0, b: 0 },
     },
 };
