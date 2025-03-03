@@ -1,16 +1,16 @@
 import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { RGB } from "@/types/ffi/settings";
+import { RGB, RGBW } from "@/types/ffi/settings";
 import ColorPicker from "./color-picker";
 
 interface ColorPaletteProps {
-    colors: RGB[];
-    onChange?: (index: number, color: RGB) => void;
+    colors: RGB[] | RGBW[];
+    onChange?: (index: number, color: RGB | RGBW) => void;
 }
 
 export function ColorPalette({ colors: initialColors, onChange }: ColorPaletteProps) {
-    const [colors, setColors] = useState<RGB[]>(initialColors);
+    const [colors, setColors] = useState<RGB[] | RGBW[]>(initialColors);
 
     const handleColorChange = useCallback(
         (index: number, color: RGB) => {

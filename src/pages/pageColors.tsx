@@ -20,15 +20,15 @@ const leds = 177;
 export default function PageColors({ device, settings }: PageColorsProps) {
     const [currentLayer, setCurrentLayer] = useState(settings.settingsDefaultLayer);
     const [colorMap, setColorMap] = useState(settings.colorMap.slice(currentLayer, leds));
-    const [keyMap, setKeyMap] = useState(settings.keymapCustom.slice(currentLayer, keys));
+    const [keyMap, _setKeyMap] = useState(settings.keymapCustom.slice(currentLayer, keys));
     const [palette, setPalette] = useState(device.hardware.rgbwMode ? settings.paletteRgbw : settings.paletteRgb);
 
     // TODO: Figure out what is what, svg does math to calculate indexes into keymap array
-    const keymap: KeyType[] = keyMap.map((x, index) => ({
+    const keymap: KeyType[] = keyMap.map((_, index) => ({
         keyCode: index, // TODO: 255 is max
         label: index.toString(),
         extraLabel: "",
-        // extraLabel: x.toString(),
+        // extraLabel: _.toString(),
         verbose: undefined,
         alt: false,
     }));
@@ -38,7 +38,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
         setColorMap(settings.colorMap.slice(colorMapIndex, colorMapIndex + leds));
     }, [currentLayer]);
 
-    const handleSelectedColorChange = (index: number, color: RGB) => {
+    const handleSelectedColorChange = (index: number, color: RGB | RGBW) => {
         if (palette) {
             const newPalette = [...palette];
             newPalette[index] = color;
