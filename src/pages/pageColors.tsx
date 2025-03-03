@@ -62,7 +62,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
         <div className="flex flex-col justify-center items-center">
             <div className="flex flex-row gap-4">
                 <Container title="Palette">
-                    <ColorPalette colors={palette || []} onChange={handleSelectedColorChange} />
+                    <ColorPalette colors={palette} onChange={handleSelectedColorChange} />
                 </Container>
                 <Container title="Layers">
                     <LayerSelector defaultLayer={currentLayer + 1} layers={layers} onChange={handleSelectedLayerChange} />
@@ -75,7 +75,7 @@ export default function PageColors({ device, settings }: PageColorsProps) {
                 showUnderglow={device.hardware.keyboardUnderglow !== undefined}
                 isStandardView={false}
                 colorMap={colorMap}
-                palette={palette || []}
+                palette={palette}
                 keymap={keymap}
                 onKeySelect={e => console.log(e)}
             />
