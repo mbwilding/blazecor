@@ -205,9 +205,9 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <Input value={rgbwToHexLocal(color)} readOnly className="h-8" />
-                        <Button size="icon" variant="outline" className="h-8 w-8" onClick={copyToClipboard}>
-                            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                        <Input value={rgbwToHexLocal(color)} />
+                        <Button size="icon" variant="outline" className="h-9.5 w-9.5" onClick={copyToClipboard}>
+                            {copied ? <Check /> : <Copy />}
                         </Button>
                     </div>
                 </div>
