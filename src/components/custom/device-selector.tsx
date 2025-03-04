@@ -12,10 +12,6 @@ interface DeviceConnectionProps {
 }
 
 const DeviceSelector: React.FC<DeviceConnectionProps> = ({ devices, handleDeviceSelection, fetchDevices }) => {
-    useEffect(() => {
-        fetchDevices();
-    }, [fetchDevices]);
-
     return (
         <Dialog open>
             <DialogContent className="w-[260px]">
