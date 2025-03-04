@@ -58,9 +58,7 @@ function DeviceConnection({ devices, handleDeviceSelection, fetchDevices }: Devi
                             <RefreshCcw />
                         </Button>
                     </div>
-                    <DialogDescription>
-                        Please select a device or refresh
-                    </DialogDescription>
+                    <DialogDescription>Please select a device or refresh</DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col space-y-2">
                     {devices?.map((device, index) => (
@@ -80,7 +78,7 @@ function App() {
     enum AppState {
         DEVICE_SELECTION,
         LOADING_SETTINGS,
-        SHOW_PAGE
+        SHOW_PAGE,
     }
 
     let currentState: AppState;
@@ -104,9 +102,7 @@ function App() {
                     />
                 )}
                 {currentState === AppState.LOADING_SETTINGS && <Loading message="Loading settings" />}
-                {currentState === AppState.SHOW_PAGE && (
-                    <PageColors device={device!} settings={settings!} />
-                )}
+                {currentState === AppState.SHOW_PAGE && <PageColors device={device!} settings={settings!} />}
             </main>
 
             {version && (
