@@ -101,7 +101,7 @@ export function useDevices() {
 
         try {
             const devices = await invoke<Device[]>("find_all_devices");
-            console.info(`Found ${devices.length} devices`);
+            console.info(`Fetched ${devices.length} devices`);
             if (devices.length) setDevices(devices);
         } catch (e) {
             console.error(e);
@@ -144,7 +144,10 @@ export function useVersion(device?: Device) {
 }
 
 export function useSettingsGet(device?: Device) {
-    return useFocusGet<Settings>("settings_get", device);
+    console.info("Fetching settings...");
+    const settings = useFocusGet<Settings>("settings_get", device);
+    console.info("Fetched settings...");
+    return settings;
 }
 
 export async function paletteSet(rgbw: boolean, data?: RGB[] | RGBW[]) {
