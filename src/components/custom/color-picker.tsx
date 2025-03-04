@@ -19,6 +19,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
     const [hsv, setHsv] = useState<HSV>(rgbwToHsv(color));
     const [copied, setCopied] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+    const [draggingElement, setDraggingElement] = useState<"colorPicker" | "hueSlider" | null>(null);
     const colorPickerRef = useRef<HTMLDivElement>(null);
     const hueSliderRef = useRef<HTMLDivElement>(null);
 
@@ -75,11 +76,13 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
 
     const handleMouseDown = useCallback(
         (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-            setIsDragging(true);
             if ("button" in event && event.button !== 0) return; // Only handle left mouse button
+            setIsDragging(true);
             if (colorPickerRef.current && event.currentTarget === colorPickerRef.current) {
+                setDraggingElement("colorPicker");
                 handleColorPickerChange(event);
             } else if (hueSliderRef.current && event.currentTarget === hueSliderRef.current) {
+                setDraggingElement("hueSlider");
                 handleHueChange(event);
             }
         },
@@ -88,18 +91,19 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
 
     const handleMouseMove = useCallback(
         (event: MouseEvent | TouchEvent) => {
-            if (!isDragging) return;
-            if (event.target === colorPickerRef.current) {
+            if (!isDragging || !draggingElement) return;
+            if (draggingElement === "colorPicker") {
                 handleColorPickerChange(event as any);
-            } else if (event.target === hueSliderRef.current) {
+            } else if (draggingElement === "hueSlider") {
                 handleHueChange(event as any);
             }
         },
-        [isDragging, handleColorPickerChange, handleHueChange],
+        [isDragging, draggingElement, handleColorPickerChange, handleHueChange],
     );
 
     const handleMouseUp = useCallback(() => {
         setIsDragging(false);
+        setDraggingElement(null);
     }, []);
 
     useEffect(() => {
@@ -131,7 +135,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
                 <div className="space-y-4">
                     <div
                         ref={colorPickerRef}
-                        className="w-full h-[200px] cursor-crosshair relative"
+                        className="w-full h-[200px] rounded-md cursor-crosshair relative"
                         style={{
                             backgroundColor: `hsl(${hsv.h}, 100%, 50%)`,
                             backgroundImage: `
