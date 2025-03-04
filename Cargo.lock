@@ -931,9 +931,9 @@ checksum = "92773504d58c093f6de2459af4af33faa518c13451eb8f2b5698ed3d36e7c813"
 
 [[package]]
 name = "dygma_focus"
-version = "0.4.17"
+version = "0.4.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c178026947029fdb6c7fb04714827e952d6940854d7c105aa2480b6e12e90545"
+checksum = "287950e56b3e72e7421dd88faaf9f03831ce9734c5bf8d910d6529d872ef41ca"
 dependencies = [
  "anyhow",
  "dygma_focus_proc_macros",
@@ -947,9 +947,9 @@ dependencies = [
 
 [[package]]
 name = "dygma_focus_proc_macros"
-version = "0.4.17"
+version = "0.4.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cd5053eb31ef7c558213c283c26b21556e9885af04e6e175e66d695e5733f710"
+checksum = "53dc92bb9aa6dbc8f118b71501e93983910afbbdc3795b26d535f39863b6f5d4"
 dependencies = [
  "quote",
  "syn 2.0.99",
