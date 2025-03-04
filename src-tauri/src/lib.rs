@@ -1,8 +1,5 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-
 use anyhow::anyhow;
 use dygma_focus::prelude::*;
-use log::info;
 use std::sync::Mutex;
 use tauri::{Result, State};
 
@@ -12,7 +9,6 @@ struct Storage {
 
 #[tauri::command]
 fn find_all_devices() -> Result<Vec<Device>> {
-    info!("RUST FIND DEVICES");
     Ok(Focus::find_all_devices()?
         .into_iter()
         // For macOS as it will return 2 serial devices per dygma device
@@ -80,7 +76,6 @@ fn palette_rgbw_get(storage: State<Storage>) -> Result<Vec<RGBW>> {
 
 #[tauri::command]
 fn palette_rgbw_set(data: Vec<RGBW>, storage: State<Storage>) -> Result<()> {
-    println!("palette_rgbw_set: {:?}", &data);
     with_focus(storage, |focus| Ok(focus.palette_rgbw_set(&data)?))
 }
 
