@@ -77,9 +77,12 @@ export function useDevices() {
     const [devices, setDevices] = useState<Device[]>();
 
     const fetchDevices = useCallback(async () => {
+        console.info("Fetching devices...");
+
         try {
             const devices = await invoke<Device[]>("find_all_devices");
-            setDevices(devices);
+            console.info(`Found ${devices.length} devices`);
+            if (devices.length) setDevices(devices);
         } catch (e) {
             console.error(e);
             setDevices(undefined);

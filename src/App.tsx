@@ -34,6 +34,8 @@ function useDeviceConnection() {
         }
     }, [devices, device]);
 
+    // fetchDevices();
+
     return { device, version, settings, devices, handleDeviceSelection, fetchDevices };
 }
 
@@ -96,7 +98,7 @@ function App() {
     return (
         <>
             <main>
-                {currentState === AppState.LOADING_DEVICES && <Loading message="devices" />}
+                {currentState === AppState.LOADING_DEVICES && <Loading message="Loading devices..." />}
                 {currentState === AppState.DEVICE_SELECTION && (
                     <DeviceConnection
                         devices={devices}
@@ -104,7 +106,7 @@ function App() {
                         fetchDevices={fetchDevices}
                     />
                 )}
-                {currentState === AppState.LOADING_SETTINGS && <Loading message="settings" />}
+                {currentState === AppState.LOADING_SETTINGS && <Loading message="Loading settings..." />}
                 {currentState === AppState.SHOW_PAGE && (
                     <PageColors device={device!} settings={settings!} />
                 )}
