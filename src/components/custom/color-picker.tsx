@@ -199,7 +199,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
                                     max={255}
                                     value={color[channel as keyof RGBW]}
                                     onChange={e => updateColor({ [channel]: Number(e.target.value) })}
-                                    className="h-12 w-18"
+                                    className="h-12"
                                 />
                             </div>
                         ))}
