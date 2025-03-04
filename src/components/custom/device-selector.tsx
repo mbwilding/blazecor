@@ -1,8 +1,8 @@
 import { Device } from "@/types/ffi/hardware";
-import { useEffect } from "node_modules/react-resizable-panels/dist/declarations/src/vendor/react";
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogDescription } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { RefreshCcw } from "lucide-react";
+import { useEffect } from "react";
 
 interface DeviceConnectionProps {
     devices?: Device[];
