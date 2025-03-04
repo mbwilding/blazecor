@@ -28,11 +28,7 @@ function App() {
         <>
             <main>
                 {currentState === AppState.DEVICE_SELECTION && (
-                    <DeviceSelector
-                        devices={devices}
-                        handleDeviceSelection={handleDeviceSelection}
-                        fetchDevices={fetchDevices}
-                    />
+                    <DeviceSelector devices={devices} handleDeviceSelection={handleDeviceSelection} fetchDevices={fetchDevices} />
                 )}
                 {currentState === AppState.LOADING_SETTINGS && <Loading message="Loading settings" />}
                 {currentState === AppState.SHOW_PAGE && <PageColors device={device!} settings={settings!} />}

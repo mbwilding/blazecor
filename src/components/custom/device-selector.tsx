@@ -29,19 +29,19 @@ const DeviceSelector: React.FC<DeviceConnectionProps> = ({ devices, handleDevice
                     <DialogDescription>Please select a device or refresh</DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col space-y-2">
-                  {devices && devices.length > 0 ? (
-                    devices.map((device, index) => (
-                      <Button key={index} variant="default" onClick={() => handleDeviceSelection(device)}>
-                        {device.hardware.info.displayName}
-                      </Button>
-                    ))
-                  ) : (
-                    <Label className="justify-center">No devices found</Label>
-                  )}
+                    {devices && devices.length > 0 ? (
+                        devices.map((device, index) => (
+                            <Button key={index} variant="default" onClick={() => handleDeviceSelection(device)}>
+                                {device.hardware.info.displayName}
+                            </Button>
+                        ))
+                    ) : (
+                        <Label className="justify-center">No devices found</Label>
+                    )}
                 </div>
             </DialogContent>
         </Dialog>
     );
-}
+};
 
 export default DeviceSelector;
