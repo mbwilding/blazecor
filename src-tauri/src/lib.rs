@@ -100,7 +100,8 @@ pub fn run() {
         .plugin(
             tauri_plugin_log::Builder::new()
                 .format(|out, message, record| {
-                    out.finish(format_args!("[{}] frontend: {}", record.level(), message))
+                    let label = if record.target() == "blazecor_lib" { "B" } else { "F" };
+                    out.finish(format_args!("[{}] {}: {}", record.level(), label, message))
                 })
                 .level(log::LevelFilter::Debug)
                 .build(),
