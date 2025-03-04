@@ -3,11 +3,9 @@ import { useState, useEffect, useCallback } from "react";
 import PageColors from "./pages/pageColors";
 import { Device } from "./types/ffi/hardware";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import Loading from "@/components/custom/loading";
+import DeviceSelector from "@/components/custom/device-selector";
 import { useConnect, useDevices, useSettingsGet, useVersion } from "./Api";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { RefreshCcw } from "lucide-react";
 
 function useDeviceConnection() {
     const [device, setDevice] = useState<Device>();
@@ -37,41 +35,6 @@ function useDeviceConnection() {
     return { device, version, settings, devices, handleDeviceSelection, fetchDevices };
 }
 
-interface DeviceConnectionProps {
-    devices?: Device[];
-    handleDeviceSelection: (device: Device) => void;
-    fetchDevices: () => void;
-}
-
-function DeviceConnection({ devices, handleDeviceSelection, fetchDevices }: DeviceConnectionProps) {
-    useEffect(() => {
-        fetchDevices();
-    }, [fetchDevices]);
-
-    return (
-        <Dialog open>
-            <DialogContent className="w-[260px]">
-                <DialogHeader>
-                    <div className="flex items-center justify-between">
-                        <DialogTitle>Devices</DialogTitle>
-                        <Button variant="secondary" onClick={fetchDevices}>
-                            <RefreshCcw />
-                        </Button>
-                    </div>
-                    <DialogDescription>Please select a device or refresh</DialogDescription>
-                </DialogHeader>
-                <div className="flex flex-col space-y-2">
-                    {devices?.map((device, index) => (
-                        <Button key={index} variant="default" onClick={() => handleDeviceSelection(device)}>
-                            {device.hardware.info.displayName}
-                        </Button>
-                    ))}
-                </div>
-            </DialogContent>
-        </Dialog>
-    );
-}
-
 function App() {
     const { device, version, settings, devices, handleDeviceSelection, fetchDevices } = useDeviceConnection();
 
@@ -95,7 +58,7 @@ function App() {
         <>
             <main>
                 {currentState === AppState.DEVICE_SELECTION && (
-                    <DeviceConnection
+                    <DeviceSelector
                         devices={devices}
                         handleDeviceSelection={handleDeviceSelection}
                         fetchDevices={fetchDevices}
