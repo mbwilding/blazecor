@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/custom/loading";
 import { useConnect, useDevices, useSettingsGet, useVersion } from "./Api";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { RefreshCcw } from "lucide-react";
 
 function useDeviceConnection() {
@@ -50,14 +50,17 @@ function DeviceConnection({ devices, handleDeviceSelection, fetchDevices }: Devi
 
     return (
         <Dialog open>
-            <DialogContent className="w-[250px]" aria-describedby="Select device">
+            <DialogContent className="w-[260px]">
                 <DialogHeader>
                     <div className="flex items-center justify-between">
-                        <DialogTitle>Select a Device</DialogTitle>
+                        <DialogTitle>Devices</DialogTitle>
                         <Button variant="secondary" onClick={fetchDevices}>
                             <RefreshCcw />
                         </Button>
                     </div>
+                    <DialogDescription>
+                        Please select a device or refresh
+                    </DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col space-y-2">
                     {devices?.map((device, index) => (

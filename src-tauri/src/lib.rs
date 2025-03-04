@@ -2,6 +2,7 @@
 
 use anyhow::anyhow;
 use dygma_focus::prelude::*;
+use log::info;
 use std::sync::Mutex;
 use tauri::{Result, State};
 
@@ -11,6 +12,7 @@ struct Storage {
 
 #[tauri::command]
 fn find_all_devices() -> Result<Vec<Device>> {
+    info!("RUST FIND DEVICES");
     Ok(Focus::find_all_devices()?
         .into_iter()
         // For macOS as it will return 2 serial devices per dygma device
@@ -97,9 +99,9 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(
             tauri_plugin_log::Builder::new()
-                .target(tauri_plugin_log::Target::new(
-                    tauri_plugin_log::TargetKind::Webview,
-                ))
+                .format(|out, message, record| {
+                    out.finish(format_args!("[{}] frontend: {}", record.level(), message))
+                })
                 .level(log::LevelFilter::Debug)
                 .build(),
         )
