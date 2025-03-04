@@ -22,8 +22,8 @@ function App() {
         currentState = AppState.DEVICE_SELECTION;
     } else if (!settings) {
         currentState = AppState.LOADING_SETTINGS;
-    // } else if (settings) {
-    //     currentState = AppState.SHOW_SETTINGS;
+        // } else if (settings) {
+        //     currentState = AppState.SHOW_SETTINGS;
     } else {
         currentState = AppState.SHOW_COLORS;
     }

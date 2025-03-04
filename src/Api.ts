@@ -140,13 +140,16 @@ export function useDisconnect(device?: Device) {
 }
 
 export function useVersion(device?: Device) {
-    return useFocusGet<string>("version", device);
+    console.info("Fetching version...");
+    const version = useFocusGet<string>("version", device);
+    console.info("Fetched version");
+    return version;
 }
 
 export function useSettingsGet(device?: Device) {
     console.info("Fetching settings...");
     const settings = useFocusGet<Settings>("settings_get", device);
-    console.info("Fetched settings...");
+    console.info("Fetched settings");
     return settings;
 }
 
