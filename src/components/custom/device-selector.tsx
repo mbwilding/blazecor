@@ -2,7 +2,6 @@ import { Device } from "@/types/ffi/hardware";
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogDescription } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { RefreshCcw } from "lucide-react";
-import { useEffect } from "react";
 import { Label } from "../ui/label";
 
 interface DeviceConnectionProps {

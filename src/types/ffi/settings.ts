@@ -1,43 +1,43 @@
 import { RGB, RGBW } from "../colors";
 
 export interface Settings {
-    keymapCustom: number[]; // Vec<u16>
-    keymapDefault: number[]; // Vec<u16>
+    keymapCustom: number[];
+    keymapDefault: number[];
     keymapOnlyCustom: boolean;
-    settingsDefaultLayer: number; // u8
-    superkeysMap: number[]; // Vec<u16>
-    superkeysWaitFor: number; // Duration
-    superkeysTimeout: number; // Duration
-    superkeysRepeat: number; // Duration
-    superkeysHoldStart: number; // Duration
-    superkeysOverlap: number; // u8
+    settingsDefaultLayer: number;
+    superkeysMap: number[];
+    superkeysWaitFor: number;
+    superkeysTimeout: number;
+    superkeysRepeat: number;
+    superkeysHoldStart: number;
+    superkeysOverlap: number;
     ledMode: LedMode;
-    ledBrightnessKeysWired: number; // u8
-    ledBrightnessUnderglowWired?: number; // Option<u8>
-    ledBrightnessKeysWireless?: number; // Option<u8>
-    ledBrightnessUnderglowWireless?: number; // Option<u8>
-    ledFade?: number; // Option<u16>
+    ledBrightnessKeysWired: number;
+    ledBrightnessUnderglowWired?: number;
+    ledBrightnessKeysWireless?: number;
+    ledBrightnessUnderglowWireless?: number;
+    ledFade?: number;
     ledTheme: RGB[];
     paletteRgb?: RGB[];
     paletteRgbw?: RGBW[];
-    colorMap: number[]; // Vec<u8>
-    ledIdleTrueSleep?: boolean; // Option<bool>
-    ledIdleTrueSleepTime?: number; // Option<Duration>
-    ledIdleTimeLimitWired: number; // Duration
-    ledIdleTimeLimitWireless?: number; // Option<Duration>
-    qukeysHoldTimeout: number; // Duration
-    qukeysOverlapThreshold: number; // Duration
-    macrosMap: number[]; // Vec<u8>
-    mouseSpeed: number; // u8
-    mouseDelay: number; // Duration
-    mouseAccelerationSpeed: number; // u8
-    mouseAccelerationDelay: number; // Duration
-    mouseWheelSpeed: number; // u8
-    mouseWheelDelay: number; // Duration
-    mouseSpeedLimit: number; // u8
-    wirelessBatterySavingMode?: boolean; // Option<bool>
-    wirelessRfPowerLevel?: WirelessPowerMode; // Option<WirelessPowerMode>
-    wirelessRfChannelHop?: boolean; // Option<bool>
+    colorMap: number[];
+    ledIdleTrueSleep?: boolean;
+    ledIdleTrueSleepTime?: number;
+    ledIdleTimeLimitWired: number;
+    ledIdleTimeLimitWireless?: number;
+    qukeysHoldTimeout: number;
+    qukeysOverlapThreshold: number;
+    macrosMap: number[];
+    mouseSpeed: number;
+    mouseDelay: number;
+    mouseAccelerationSpeed: number;
+    mouseAccelerationDelay: number;
+    mouseWheelSpeed: number;
+    mouseWheelDelay: number;
+    mouseSpeedLimit: number;
+    wirelessBatterySavingMode?: boolean;
+    wirelessRfPowerLevel?: WirelessPowerMode;
+    wirelessRfChannelHop?: boolean;
 }
 
 export enum LedMode {

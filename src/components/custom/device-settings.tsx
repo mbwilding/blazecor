@@ -1,3 +1,5 @@
+// TODO: All settings
+
 import { LedMode, Settings, WirelessPowerMode } from "@/types/ffi/settings";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectTrigger, SelectValue, SelectItem } from "@/components/ui/select";
@@ -5,11 +7,11 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 
-export interface PageSettingsProps {
+export interface DeviceSettingsProps {
     settings: Settings;
 }
 
-const PageSettings = ({ settings }: PageSettingsProps) => {
+const DeviceSettings: React.FC<DeviceSettingsProps> = ({ settings }) => {
     return (
         <Accordion type="multiple">
             {/* Keymap Settings */}
@@ -154,4 +156,4 @@ const PageSettings = ({ settings }: PageSettingsProps) => {
     );
 };
 
-export default PageSettings;
+export default DeviceSettings;

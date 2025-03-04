@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import Loading from "@/components/custom/loading";
 import DeviceSelector from "@/components/custom/device-selector";
 import { useDeviceConnection } from "./Api";
-import PageSettings from "./pages/PageSettings";
 
 function App() {
     const { device, version, settings, devices, handleDeviceSelection, fetchDevices } = useDeviceConnection();
@@ -13,7 +12,6 @@ function App() {
         DEVICE_SELECTION,
         LOADING_SETTINGS,
         SHOW_COLORS,
-        SHOW_SETTINGS,
     }
 
     let currentState: AppState;
@@ -22,8 +20,6 @@ function App() {
         currentState = AppState.DEVICE_SELECTION;
     } else if (!settings) {
         currentState = AppState.LOADING_SETTINGS;
-        // } else if (settings) {
-        //     currentState = AppState.SHOW_SETTINGS;
     } else {
         currentState = AppState.SHOW_COLORS;
     }
@@ -35,7 +31,6 @@ function App() {
                     <DeviceSelector devices={devices} handleDeviceSelection={handleDeviceSelection} fetchDevices={fetchDevices} />
                 )}
                 {currentState === AppState.LOADING_SETTINGS && <Loading message="Loading settings" />}
-                {false && currentState === AppState.SHOW_SETTINGS && <PageSettings settings={settings!} />}
                 {currentState === AppState.SHOW_COLORS && <PageColors device={device!} settings={settings!} />}
             </main>
 
