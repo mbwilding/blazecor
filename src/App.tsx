@@ -74,25 +74,42 @@ function DeviceConnection({ devices, handleDeviceSelection, fetchDevices }: Devi
 function App() {
     const { device, version, settings, devices, handleDeviceSelection, fetchDevices } = useDeviceConnection();
 
+    enum AppState {
+        LOADING_DEVICES,
+        DEVICE_SELECTION,
+        LOADING_SETTINGS,
+        SHOW_PAGE
+    }
+
+    let currentState: AppState;
+
+    if (!devices) {
+        currentState = AppState.LOADING_DEVICES;
+    } else if (!device || !settings) {
+        currentState = AppState.DEVICE_SELECTION;
+    } else if (devices.length > 1) {
+        currentState = AppState.LOADING_SETTINGS;
+    } else {
+        currentState = AppState.SHOW_PAGE;
+    }
+
     return (
         <>
             <main>
-                {device && settings ? (
-                    <PageColors device={device} settings={settings} />
-                ) : devices ? (
-                    devices.length > 1 ? (
-                        <DeviceConnection
-                            devices={devices}
-                            handleDeviceSelection={handleDeviceSelection}
-                            fetchDevices={fetchDevices}
-                        />
-                    ) : (
-                        <Loading message="settings" />
-                    )
-                ) : (
-                    <Loading message="devices" />
+                {currentState === AppState.LOADING_DEVICES && <Loading message="devices" />}
+                {currentState === AppState.DEVICE_SELECTION && (
+                    <DeviceConnection
+                        devices={devices}
+                        handleDeviceSelection={handleDeviceSelection}
+                        fetchDevices={fetchDevices}
+                    />
+                )}
+                {currentState === AppState.LOADING_SETTINGS && <Loading message="settings" />}
+                {currentState === AppState.SHOW_PAGE && (
+                    <PageColors device={device!} settings={settings!} />
                 )}
             </main>
+
             {version && (
                 <div className="fixed bottom-4 right-4 z-50">
                     <Badge>{`Firmware: ${version}`}</Badge>
