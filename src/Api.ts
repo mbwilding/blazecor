@@ -4,6 +4,36 @@ import { Settings } from "./types/ffi/settings";
 import { invoke, InvokeArgs } from "@tauri-apps/api/core";
 import { useCallback, useEffect, useState } from "react";
 
+// Hooks
+
+export function useDeviceConnection() {
+    const [device, setDevice] = useState<Device>();
+    const { devices, fetchDevices } = useDevices();
+
+    useConnect(device);
+
+    const version = useVersion(device);
+    const settings = useSettingsGet(device);
+
+    const handleDeviceSelection = useCallback((device: Device) => {
+        setDevice(device);
+    }, []);
+
+    useEffect(() => {
+        if (!devices) {
+            fetchDevices();
+        }
+    }, [devices, fetchDevices]);
+
+    useEffect(() => {
+        if (devices?.length === 1 && !device) {
+            setDevice(devices[0]);
+        }
+    }, [devices, device]);
+
+    return { device, version, settings, devices, handleDeviceSelection, fetchDevices };
+}
+
 // Helpers
 
 function useInvokeGet(device?: Device) {

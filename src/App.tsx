@@ -1,39 +1,9 @@
 import "./App.css";
-import { useState, useEffect, useCallback } from "react";
-import PageColors from "./pages/pageColors";
-import { Device } from "./types/ffi/hardware";
+import PageColors from "./pages/PageColors";
 import { Badge } from "@/components/ui/badge";
 import Loading from "@/components/custom/loading";
 import DeviceSelector from "@/components/custom/device-selector";
-import { useConnect, useDevices, useSettingsGet, useVersion } from "./Api";
-
-function useDeviceConnection() {
-    const [device, setDevice] = useState<Device>();
-    const { devices, fetchDevices } = useDevices();
-
-    useConnect(device);
-
-    const version = useVersion(device);
-    const settings = useSettingsGet(device);
-
-    const handleDeviceSelection = useCallback((device: Device) => {
-        setDevice(device);
-    }, []);
-
-    useEffect(() => {
-        if (!devices) {
-            fetchDevices();
-        }
-    }, [devices, fetchDevices]);
-
-    useEffect(() => {
-        if (devices?.length === 1 && !device) {
-            setDevice(devices[0]);
-        }
-    }, [devices, device]);
-
-    return { device, version, settings, devices, handleDeviceSelection, fetchDevices };
-}
+import { useDeviceConnection } from "./Api";
 
 function App() {
     const { device, version, settings, devices, handleDeviceSelection, fetchDevices } = useDeviceConnection();
