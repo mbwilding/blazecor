@@ -180,7 +180,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
                     <div className="space-y-2">
                         {["r", "g", "b", "w"].map(channel => (
                             <div key={channel} className="flex flex-cols items-center gap-2">
-                                    <Label htmlFor={`${channel}-slider`} className="text-xs font-bold uppercase mb-3">
+                                    <Label htmlFor={`${channel}-slider`} className="text-xs font-bold uppercase">
                                         {channel.toUpperCase()}
                                     </Label>
                                     <Slider
@@ -197,7 +197,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
                                     max={255}
                                     value={color[channel as keyof RGBW]}
                                     onChange={e => updateColor({ [channel]: Number(e.target.value) })}
-                                    className="h-12 w-21"
+                                    className="w-21"
                                 />
                             </div>
                         ))}
