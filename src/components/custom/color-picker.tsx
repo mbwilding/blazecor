@@ -131,7 +131,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
                 <div className="space-y-4">
                     <div
                         ref={colorPickerRef}
-                        className="w-full h-[200px] rounded-md cursor-crosshair relative"
+                        className="w-full h-[200px] cursor-crosshair relative"
                         style={{
                             backgroundColor: `hsl(${hsv.h}, 100%, 50%)`,
                             backgroundImage: `
@@ -174,11 +174,11 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
                     </div>
 
                     <div className="space-y-2">
-                        {["R", "g", "b", "w"].map(channel => (
+                        {["r", "g", "b", "w"].map(channel => (
                             <div key={channel} className="grid grid-cols-[1fr_72px] items-center gap-2">
                                 <div>
                                     <Label htmlFor={`${channel}-slider`} className="text-xs font-bold uppercase mb-3">
-                                        {channel}
+                                        {channel.toUpperCase()}
                                     </Label>
                                     <Slider
                                         id={`${channel}-slider`}
@@ -192,13 +192,14 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ index, color, onChange, child
                                 <Input
                                     type="number"
                                     min={0}
-                                    max={3}
+                                    max={255}
                                     value={color[channel as keyof RGBW]}
                                     onChange={e => updateColor({ [channel]: Number(e.target.value) })}
                                     className="h-12 w-18"
                                 />
                             </div>
                         ))}
+
                     </div>
 
                     <div className="flex items-center gap-2">
