@@ -1,5 +1,6 @@
+import { RGB, RGBW } from "./types/colors";
 import { Device } from "./types/ffi/hardware";
-import { RGB, RGBW, Settings } from "./types/ffi/settings";
+import { Settings } from "./types/ffi/settings";
 import { invoke, InvokeArgs } from "@tauri-apps/api/core";
 import { useCallback, useEffect, useState } from "react";
 
@@ -10,17 +11,6 @@ function useInvokeGet(device?: Device) {
         if (device) {
             const port = device.serialPort;
             return await invoke<T>(call, { port, args });
-        } else {
-            throw new Error("Cannot contact device");
-        }
-    };
-}
-
-function useInvokeSet(device?: Device) {
-    return async function (call: string, args: InvokeArgs): Promise<void> {
-        if (device) {
-            const port = device.serialPort;
-            await invoke(call, { port, args });
         } else {
             throw new Error("Cannot contact device");
         }
@@ -93,19 +83,28 @@ export function useDevices() {
 }
 
 export function useConnect(device?: Device) {
+    if (device) {
+        console.info(`Connecting: ${device.hardware.info.displayName} (${device.serialPort})`);
+    }
+
     useFocus("connect", device, () => {
         if (device) {
-            console.debug(`Connecting: ${device.hardware.info.displayName} (${device.serialPort})`);
+            console.info(`Connected: ${device.hardware.info.displayName} (${device.serialPort})`);
         }
     });
 }
 
 export function useDisconnect(device?: Device) {
+    if (device) {
+        console.info(`Disconnecting: ${device.hardware.info.displayName} (${device.serialPort})`);
+    } else {
+        console.warn("Already disconnected");
+        return;
+    }
+
     useFocus("diconnect", device, () => {
         if (device) {
-            console.debug(`Disconnecting: ${device.hardware.info.displayName} (${device.serialPort})`);
-        } else {
-            console.warn("Already disconnected");
+            console.info(`Disconnected: ${device.hardware.info.displayName} (${device.serialPort})`);
         }
     });
 }

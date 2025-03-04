@@ -24,6 +24,7 @@ dygma_focus = { version = "0.4", default-features = false, features = [
     "serde",
     "serde_camel_case",
 ] }
+log = "0.4"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tauri = { version = "2", features = [] }

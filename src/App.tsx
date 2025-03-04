@@ -34,8 +34,6 @@ function useDeviceConnection() {
         }
     }, [devices, device]);
 
-    // fetchDevices();
-
     return { device, version, settings, devices, handleDeviceSelection, fetchDevices };
 }
 
@@ -52,7 +50,7 @@ function DeviceConnection({ devices, handleDeviceSelection, fetchDevices }: Devi
 
     return (
         <Dialog open>
-            <DialogContent className="w-[250px]">
+            <DialogContent className="w-[250px]" aria-describedby="Select device">
                 <DialogHeader>
                     <div className="flex items-center justify-between">
                         <DialogTitle>Select a Device</DialogTitle>
@@ -77,7 +75,6 @@ function App() {
     const { device, version, settings, devices, handleDeviceSelection, fetchDevices } = useDeviceConnection();
 
     enum AppState {
-        LOADING_DEVICES,
         DEVICE_SELECTION,
         LOADING_SETTINGS,
         SHOW_PAGE
@@ -85,11 +82,9 @@ function App() {
 
     let currentState: AppState;
 
-    if (!devices) {
-        currentState = AppState.LOADING_DEVICES;
-    } else if (!device || !settings) {
+    if (!devices || !device || !settings) {
         currentState = AppState.DEVICE_SELECTION;
-    } else if (devices.length > 1) {
+    } else if (!settings) {
         currentState = AppState.LOADING_SETTINGS;
     } else {
         currentState = AppState.SHOW_PAGE;
@@ -98,7 +93,6 @@ function App() {
     return (
         <>
             <main>
-                {currentState === AppState.LOADING_DEVICES && <Loading message="Loading devices..." />}
                 {currentState === AppState.DEVICE_SELECTION && (
                     <DeviceConnection
                         devices={devices}
@@ -106,7 +100,7 @@ function App() {
                         fetchDevices={fetchDevices}
                     />
                 )}
-                {currentState === AppState.LOADING_SETTINGS && <Loading message="Loading settings..." />}
+                {currentState === AppState.LOADING_SETTINGS && <Loading message="Loading settings" />}
                 {currentState === AppState.SHOW_PAGE && (
                     <PageColors device={device!} settings={settings!} />
                 )}
