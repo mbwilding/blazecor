@@ -1,6 +1,6 @@
 import "./App.css";
 import { useState, useEffect, useCallback } from "react";
-import PageColors from "./pages/PageColors";
+import PageColors from "./pages/pageColors";
 import { Device } from "./types/ffi/hardware";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
